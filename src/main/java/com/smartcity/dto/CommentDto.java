@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class CommentDto {
 
@@ -101,4 +102,33 @@ public class CommentDto {
         this.taskId = taskId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommentDto commentDto = (CommentDto) o;
+        return Objects.equals(id, commentDto.id) &&
+                Objects.equals(description, commentDto.description) &&
+                Objects.equals(taskId, commentDto.taskId) &&
+                Objects.equals(createdDate, commentDto.createdDate) &&
+                Objects.equals(updatedDate, commentDto.updatedDate) &&
+                Objects.equals(userId, commentDto.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, description, createdDate, updatedDate, userId, taskId);
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\":" + id +
+                ",\"description\":\"" + description + '\"' +
+                ",\"createdDate\":\"" + createdDate + '\"' +
+                ",\"updatedDate\":\"" + updatedDate + '\"' +
+                ",\"userId\":" + userId + '\"' +
+                ",\"taskId\":\"" + taskId + '\"' +
+                '}';
+    }
 }

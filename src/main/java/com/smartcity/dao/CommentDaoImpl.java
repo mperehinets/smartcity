@@ -117,7 +117,7 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     @Override
-    public List<Comment> findAllByTaskId(Long id) {
+    public List<Comment> findByTaskId(Long id) {
         List<Comment> list;
         try {
             list = jdbcTemplate.query(Queries.SQL_COMMENT_GET_BY_TASK_ID,
@@ -134,7 +134,7 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     @Override
-    public List<Comment> findAllByUserId(Long id) {
+    public List<Comment> findByUserId(Long id) {
         List<Comment> list;
         try {
             list = jdbcTemplate.query(Queries.SQL_COMMENT_GET_BY_USER_ID,

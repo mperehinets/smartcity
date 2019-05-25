@@ -16,8 +16,8 @@ public interface CommentService {
 
     boolean delete(Long id);
 
-    List<CommentDto> findAllByTaskId(Long id);
+    List<CommentDto> findByTaskId(Long id);
 
-    List<CommentDto> findAllByUserId(Long id);
+    List<CommentDto> findByUserId(Long id);
 
 }
