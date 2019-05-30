@@ -38,11 +38,27 @@ public class UserDaoImplTest extends BaseTest {
 
     @Test
     public void testCreate_successFlow() {
-        // should return reference to that same object
-        assertEquals(user, userDao.create(user));
-        assertThat(user.getId()).isNotNull();
-        assertTrue(user.isActive());
+        // Instantiating new user object
+        User newUser = new User();
+        newUser.setEmail("someAnotherEmail@gmail.com");
+        newUser.setPassword("12345");
+        newUser.setSurname("Johnson");
+        newUser.setName("John");
+        newUser.setPhoneNumber("0626552521415");
+
+        // Should return reference to that same object
+        assertEquals(newUser, userDao.create(newUser));
+        assertThat(newUser.getId()).isNotNull();
+        assertTrue(newUser.isActive());
     }
+
+    @Test
+    public void testCreate_duplicateUsername() {
+        // A user with this name already exists
+        // Should throw DbOperationException
+        assertThrows(DbOperationException.class, () -> userDao.create(user));
+    }
+
 
     @Test
     public void testCreate_omittedNotNullFields() {
