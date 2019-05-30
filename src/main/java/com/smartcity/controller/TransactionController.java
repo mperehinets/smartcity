@@ -7,6 +7,7 @@ import com.smartcity.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,12 +24,14 @@ public class TransactionController {
         this.transService = transService;
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerFindById())")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TransactionDto findById(@PathVariable("id") Long id) {
         return transService.findById(id);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerUpdateTransaction())")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public TransactionDto updateTransaction(
@@ -39,18 +42,21 @@ public class TransactionController {
         return transService.update(transactionDto);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerDeleteTransaction())")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public boolean deleteTransaction(@PathVariable("id") Long id) {
         return transService.delete(id);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerFindByTaskId())")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/taskId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TransactionDto> findByTaskId(@PathVariable("id") Long taskId) {
         return transService.findByTaskId(taskId);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerCreateTransaction())")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public TransactionDto createTransaction(@Validated(NewRecord.class) @RequestBody TransactionDto transactionDto) {

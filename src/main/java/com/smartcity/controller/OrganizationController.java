@@ -9,6 +9,7 @@ import com.smartcity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ public class OrganizationController {
         this.userService = userService;
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerCreate())")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public OrganizationDto create(@Validated(NewRecord.class) @RequestBody OrganizationDto organizationDto) {
@@ -38,6 +40,7 @@ public class OrganizationController {
         return organizationService.findById(id);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerUpdate())")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public OrganizationDto update(
@@ -48,6 +51,7 @@ public class OrganizationController {
         return organizationService.update(organizationDto);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerDelete())")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public boolean delete(@PathVariable("id") Long id) {
@@ -60,6 +64,7 @@ public class OrganizationController {
         return organizationService.findAll();
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerAddUserToOrganization())")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{organizationId}/addUser/{userId}")
     public boolean addUserToOrganization(@PathVariable("organizationId") Long organizationId,
@@ -69,10 +74,11 @@ public class OrganizationController {
         return organizationService.addUserToOrganization(organizationDto, userDto);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerRemoveUserFromOrganization())")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{organizationId}/removeUser/{userId}")
     public boolean removeUserFromOrganization(@PathVariable("organizationId") Long organizationId,
-                                            @PathVariable("userId") Long userId) {
+                                              @PathVariable("userId") Long userId) {
         UserDto userDto = userService.findById(userId);
         OrganizationDto organizationDto = organizationService.findById(organizationId);
         return organizationService.removeUserFromOrganization(organizationDto, userDto);

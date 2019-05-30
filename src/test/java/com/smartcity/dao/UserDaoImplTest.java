@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
         user.setSurname("Johnson");
         user.setName("John");
         user.setPhoneNumber("0626552521415");
+        user.setActive(true);
 
         // Creating user
         userDao.create(user);
@@ -52,7 +53,6 @@ import static org.junit.jupiter.api.Assertions.*;
         // Should return reference to that same object
         assertEquals(newUser, userDao.create(newUser));
         assertThat(newUser.getId()).isNotNull();
-        assertTrue(newUser.isActive());
     }
 
     @Test
@@ -100,12 +100,15 @@ import static org.junit.jupiter.api.Assertions.*;
         user1.setSurname("Test");
         user1.setName("User");
         user1.setPhoneNumber("06558818");
+        user1.setActive(true);
         User user2 = new User();
         user2.setEmail("another@email.com");
         user2.setPassword("trewq");
         user2.setSurname("tset");
         user2.setName("Resu");
         user2.setPhoneNumber("05811451");
+        user2.setActive(false);
+
         users.add(user1);
         users.add(user2);
         // Adding more users to database
