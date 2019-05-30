@@ -7,6 +7,7 @@ import com.smartcity.exceptions.RecordExistsException;
 import com.smartcity.exceptions.json.ExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -74,13 +75,27 @@ public class ExceptionInterceptor {
         StringBuilder message = new StringBuilder();
 
         for (FieldError f:fieldErrors) {
-             message.append(f.getField() + ": "+ f.getDefaultMessage() + "; ");
+            message.append(f.getField() + ": "+ f.getDefaultMessage() + "; ");
         }
         String errorMessage = message.toString();
 
         return ExceptionResponse.builder()
                 .url(request.getRequestURI())
                 .message(errorMessage)
+                .build();
+    }
+
+    @ResponseStatus(code = HttpStatus.FORBIDDEN)
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseBody
+    ExceptionResponse badCredentialsException(@NonNull HttpServletRequest request,
+                                                      @NonNull BadCredentialsException ex) {
+        Preconditions.checkNotNull(request.getRequestURI());
+        Preconditions.checkNotNull(ex.getLocalizedMessage());
+
+        return ExceptionResponse.builder()
+                .url(request.getRequestURI())
+                .message(ex.getLocalizedMessage())
                 .build();
     }
 }

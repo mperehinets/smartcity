@@ -21,7 +21,7 @@ public class LessThanValidator implements ConstraintValidator<LessThan, TaskDto>
             return true;
         }
 
-        return approvedBudget < budget;
+        return approvedBudget <= budget;
     }
 
 }

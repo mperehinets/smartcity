@@ -37,7 +37,7 @@ public class UserDto {
     @NotBlank(groups = {NewRecord.class, ExistingRecord.class},
             message = "Please provide a phone number")
     @Pattern(groups = {NewRecord.class, ExistingRecord.class},
-            regexp = "^\\+(?:[0-9] ?){6,14}[0-9]$",
+            regexp = "/\\(?([0-9]{3})\\)?([ .-]?)([0-9]{3})\\2([0-9]{4})/",
             message = "Please provide a valid phone number")
     private String phoneNumber;
 
@@ -45,13 +45,9 @@ public class UserDto {
             message = "This field can't be empty")
     private boolean active;
 
-    @Null(groups = {NewRecord.class, ExistingRecord.class},
-            message = "This field must be empty due to auto generation")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdDate;
 
-    @Null(groups = {NewRecord.class, ExistingRecord.class},
-            message = "This field must be empty due to auto generation")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updatedDate;
 

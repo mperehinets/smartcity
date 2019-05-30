@@ -23,14 +23,8 @@ public class CommentDto {
             message = "Please, provide a description")
     private String description;
 
-
-    @Null(groups = {NewRecord.class, ExistingRecord.class},
-            message = "This field must be empty due to auto generation")
     private LocalDateTime createdDate;
 
-
-    @Null(groups = {NewRecord.class, ExistingRecord.class},
-            message = "This field must be empty due to auto generation")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updatedDate;
 
