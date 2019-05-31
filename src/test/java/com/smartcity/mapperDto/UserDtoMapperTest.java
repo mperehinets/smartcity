@@ -63,7 +63,7 @@ class UserDtoMapperTest {
     void convertUserIntoUserDto() {
         UserDto resultUserDto = userDtoMapper.convertUserIntoUserDto(user);
 
-        assertThat(user).isEqualToIgnoringGivenFields(resultUserDto, "password");
+        assertThat(user).isEqualToIgnoringGivenFields(resultUserDto, "password", "authorities");
 
         // Checking if password is null
         assertNull(resultUserDto.getPassword());

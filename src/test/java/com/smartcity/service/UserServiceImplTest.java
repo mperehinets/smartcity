@@ -1,6 +1,7 @@
 package com.smartcity.service;
 
 import com.smartcity.config.ProfileConfig;
+import com.smartcity.dao.RoleDao;
 import com.smartcity.dao.UserDao;
 import com.smartcity.domain.User;
 import com.smartcity.dto.UserDto;
@@ -37,13 +38,15 @@ class UserServiceImplTest {
 
     private User user;
 
+    private RoleDao roleDao;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
         userDtoMapper = new UserDtoMapper();
 
-        userService = new UserServiceImpl(userDao, userDtoMapper);
+        userService = new UserServiceImpl(userDao, userDtoMapper, roleDao);
 
         userDto = new UserDto();
         userDto.setName("User");
@@ -56,7 +59,7 @@ class UserServiceImplTest {
     @Test
     void create_successFlow() {
         Mockito.when(userDao.create(user)).then(invocationOnMock -> {
-            User user = (User) invocationOnMock.getArgument(0);
+            User user = invocationOnMock.getArgument(0);
             user.setId(1L);
             user.setActive(true);
             return user;

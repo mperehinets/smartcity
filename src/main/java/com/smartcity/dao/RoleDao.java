@@ -2,6 +2,8 @@ package com.smartcity.dao;
 
 import com.smartcity.domain.Role;
 
+import java.util.List;
+
 public interface RoleDao {
 
     Role create(Role role);
@@ -11,4 +13,6 @@ public interface RoleDao {
     Role update(Role role);
 
     boolean delete(Long id);
+
+    List<Role> getRolesByUserId(Long userId);
 }
