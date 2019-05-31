@@ -119,47 +119,47 @@ public class CommentDaoImplTest extends BaseTest {
     @Test
     public void testFindCommentByTaskId() {
         commentDao.create(comment);
-        assertThat(comment).isEqualToIgnoringGivenFields(commentDao.findAllByTaskId(1L).get(0),
+        assertThat(comment).isEqualToIgnoringGivenFields(commentDao.findByTaskId(1L).get(0),
                 "createdDate", "updatedDate");
     }
 
     @Test
     public void testFindCommentByUserId() {
         commentDao.create(comment);
-        assertThat(comment).isEqualToIgnoringGivenFields(commentDao.findAllByTaskId(1L).get(0),
+        assertThat(comment).isEqualToIgnoringGivenFields(commentDao.findByTaskId(1L).get(0),
                 "createdDate", "updatedDate");
     }
 
     @Test
     public void testFindCommentByTaskId_nullList() {
-        assertThrows(NotFoundException.class, () -> commentDao.findAllByTaskId(1L));
+        assertThrows(NotFoundException.class, () -> commentDao.findByTaskId(1L));
     }
 
     @Test
     public void testFindCommentByUserId_nullList() {
-        assertThrows(NotFoundException.class, () -> commentDao.findAllByUserId(1L));
+        assertThrows(NotFoundException.class, () -> commentDao.findByUserId(1L));
     }
 
     @Test
-    public void testFindAllCommentByTaskId_amountOfComment() {
+    public void testFindCommentByTaskId_amountOfComment() {
         List<Comment> list = new ArrayList<>();
         for (int i = 1; i < 4; i++) {
             comment.setId((long) i);
             commentDao.create(comment);
             list.add(comment);
-            assertThat(list.get(i - 1)).isEqualToIgnoringGivenFields(commentDao.findAllByTaskId(1L).get(i - 1),
+            assertThat(list.get(i - 1)).isEqualToIgnoringGivenFields(commentDao.findByTaskId(1L).get(i - 1),
                     "createdDate", "updatedDate");
         }
     }
 
     @Test
-    public void testFindAllCommentByUserId_amountOfComment() {
+    public void testFindCommentByUserId_amountOfComment() {
         List<Comment> list = new ArrayList<>();
         for (int i = 1; i < 4; i++) {
             comment.setId((long) i);
             commentDao.create(comment);
             list.add(comment);
-            assertThat(list.get(i - 1)).isEqualToIgnoringGivenFields(commentDao.findAllByUserId(1L).get(i - 1),
+            assertThat(list.get(i - 1)).isEqualToIgnoringGivenFields(commentDao.findByUserId(1L).get(i - 1),
                     "createdDate", "updatedDate");
         }
     }

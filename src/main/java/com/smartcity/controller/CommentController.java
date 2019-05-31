@@ -4,8 +4,9 @@ import com.smartcity.dto.CommentDto;
 import com.smartcity.dto.transfer.ExistingRecord;
 import com.smartcity.dto.transfer.NewRecord;
 import com.smartcity.service.CommentService;
-import com.smartcity.service.CommentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,42 +19,49 @@ public class CommentController {
     private CommentService commentService;
 
     @Autowired
-    public CommentController(CommentServiceImpl commentService) {
+    public CommentController(CommentService commentService) {
         this.commentService = commentService;
     }
 
-    @GetMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    public CommentDto createComment(@Validated(NewRecord.class) @RequestBody CommentDto commentDto) {
+        return commentService.create(commentDto);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CommentDto findById(@PathVariable("id") Long id) {
         return commentService.findById(id);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}")
     public CommentDto updateComment(
             @Validated(ExistingRecord.class)
             @PathVariable("id") Long id,
-            @RequestBody CommentDto commentDto)  {
+            @RequestBody CommentDto commentDto) {
         commentDto.setId(id);
         return commentService.update(commentDto);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     public boolean deleteComment(@PathVariable("id") Long id) {
         return commentService.delete(id);
     }
 
-    @GetMapping("/findAllByUserId = {id}")
-    public List<CommentDto> findByAllByTaskId(@RequestParam("id") Long id) {
-        return commentService.findAllByTaskId(id);
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/findByTask", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CommentDto> findByTaskId(@RequestParam("findByTaskId") Long id) {
+        return commentService.findByTaskId(id);
     }
 
-    @GetMapping("/findAllByTaskId = {id}")
-    public List<CommentDto> findByAllByUserId(@RequestParam("id") Long id) {
-        return commentService.findAllByUserId(id);
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/findByUser", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CommentDto> findByUserId(@RequestParam("findByUserId") Long id) {
+        return commentService.findByUserId(id);
     }
 
-    @PostMapping("")
-    public CommentDto createComment(@Validated(NewRecord.class) @RequestBody CommentDto commentDto) {
-        return commentService.create(commentDto);
-    }
 
 }

@@ -79,13 +79,13 @@ public class Comment {
 
     @Override
     public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", createdDate=" + createdDate +
-                ", updatedDate=" + updatedDate +
-                ", userId=" + userId +
-                ", taskId=" + taskId +
+        return "{" +
+                "\"id\":" + id +
+                ",\"description\":\"" + description + '\"' +
+                ",\"createdDate\":\"" + createdDate + '\"' +
+                ",\"updatedDate\":\"" + updatedDate + '\"' +
+                ",\"userId\":" + userId + '\"' +
+                ",\"taskId\":\"" + taskId + '\"' +
                 '}';
     }
 

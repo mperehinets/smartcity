@@ -1,7 +1,6 @@
 package com.smartcity.service;
 
 import com.smartcity.dao.CommentDao;
-import com.smartcity.dao.CommentDaoImpl;
 import com.smartcity.dto.CommentDto;
 import com.smartcity.mapperDto.CommentDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Autowired
-    public CommentServiceImpl(CommentDaoImpl commentDao, CommentDtoMapper mapper) {
+    public CommentServiceImpl(CommentDao commentDao, CommentDtoMapper mapper) {
         this.commentDao = commentDao;
         this.mapper = mapper;
     }
@@ -49,14 +48,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDto> findAllByTaskId(Long id) {
-        return commentDao.findAllByTaskId(id).stream()
+    public List<CommentDto> findByTaskId(Long id) {
+        return commentDao.findByTaskId(id).stream()
                 .map(t -> mapper.commentToCommentDto(t)).collect(Collectors.toList());
     }
 
     @Override
-    public List<CommentDto> findAllByUserId(Long id) {
-        return commentDao.findAllByUserId(id).stream()
+    public List<CommentDto> findByUserId(Long id) {
+        return commentDao.findByUserId(id).stream()
                 .map(t -> mapper.commentToCommentDto(t)).collect(Collectors.toList());
     }
 

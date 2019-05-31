@@ -16,8 +16,8 @@ public interface CommentDao {
 
     boolean delete(Long id);
 
-    List<Comment> findAllByTaskId(Long id);
+    List<Comment> findByTaskId(Long id);
 
-    List<Comment> findAllByUserId(Long id);
+    List<Comment> findByUserId(Long id);
 
 }
