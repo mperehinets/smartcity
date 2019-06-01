@@ -2,6 +2,9 @@ package com.smartcity.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartcity.dto.UserDto;
+import com.smartcity.exceptions.DbOperationException;
+import com.smartcity.exceptions.NotFoundException;
+import com.smartcity.exceptions.interceptor.ExceptionInterceptor;
 import com.smartcity.service.UserService;
 import name.falgout.jeffrey.testing.junit.mockito.MockitoExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,12 +36,18 @@ class UserControllerTest {
 
     private UserDto userDto;
 
+    private final Long fakeId = 5L;
+    private final String fakeEmail = "";
+    private final DbOperationException dbOperationException = new DbOperationException("Can't create transaction");
+    private final NotFoundException notFoundException = new NotFoundException("Transaction with id: " + fakeId + " not found");
+
     @BeforeEach
     void setUp() {
         // Getting instance of mockMvc
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(userController)
+                .setControllerAdvice(ExceptionInterceptor.class)
                 .build();
 
         userDto = new UserDto();
@@ -46,6 +55,18 @@ class UserControllerTest {
         userDto.setName("User");
         userDto.setSurname("Test");
         userDto.setEmail("example@gmail.com");
+    }
+
+    @Test
+    void getById_failFlow() throws Exception {
+        Mockito.when(userService.get(fakeId))
+                .thenThrow(notFoundException);
+
+        mockMvc.perform(get("/users/" + fakeId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("url").value("/users/" + fakeId))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
     }
 
     @Test
@@ -59,6 +80,18 @@ class UserControllerTest {
                 .andExpect(jsonPath("name").value(userDto.getName()))
                 .andExpect(jsonPath("surname").value(userDto.getSurname()))
                 .andExpect(jsonPath("email").value(userDto.getEmail()));
+    }
+
+    @Test
+    void findByEmail_failFlow() throws Exception {
+        Mockito.when(userService.findByEmail(fakeEmail))
+                .thenThrow(notFoundException);
+
+        mockMvc.perform(get("/users/?=email=" + fakeEmail)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("url").value("/users/"))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
     }
 
     @Test
@@ -99,7 +132,17 @@ class UserControllerTest {
                 .andExpect(jsonPath("surname").value(updatedUserDto.getSurname()))
                 .andExpect(jsonPath("email").value(updatedUserDto.getEmail()))
                 .andDo(print());
+    }
 
+    @Test
+    void deleteUser_failFlow() throws Exception {
+        Mockito.when(userService.delete(fakeId))
+                .thenThrow(notFoundException);
+
+        mockMvc.perform(delete("/users/" + fakeId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("url").value("/users/" + fakeId))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
     }
 
     @Test

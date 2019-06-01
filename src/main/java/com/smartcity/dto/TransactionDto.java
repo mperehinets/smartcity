@@ -29,13 +29,9 @@ public class TransactionDto {
             message = "This field can't be empty")
     private Long transactionBudget;
 
-    @Null(groups = {NewRecord.class, ExistingRecord.class},
-            message = "This field must be empty due to auto generation")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdDate;
 
-    @Null(groups = {NewRecord.class, ExistingRecord.class},
-            message = "This field must be empty due to auto generation")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updatedDate;
 

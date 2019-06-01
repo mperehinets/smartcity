@@ -3,6 +3,9 @@ package com.smartcity.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.smartcity.dto.TaskDto;
+import com.smartcity.exceptions.DbOperationException;
+import com.smartcity.exceptions.NotFoundException;
+import com.smartcity.exceptions.interceptor.ExceptionInterceptor;
 import com.smartcity.service.TaskService;
 import name.falgout.jeffrey.testing.junit.mockito.MockitoExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +27,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,6 +42,10 @@ class TaskControllerTest {
 
     private MockMvc mockMvc;
 
+    private final Long fakeId = 5L;
+    private final DbOperationException dbOperationException = new DbOperationException("Can't create task");
+    private final NotFoundException notFoundException = new NotFoundException("Task with id: " + fakeId + " not found");
+
     @Mock
     private TaskService taskService;
 
@@ -45,15 +53,32 @@ class TaskControllerTest {
     private TaskController taskController;
 
     @BeforeEach
-    public void init() {
+    void init() {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(taskController)
+                .setControllerAdvice(ExceptionInterceptor.class)
                 .build();
     }
 
     @Test
-    public void testCreateTask() throws Exception {
+    void testCreateTask_failFlow() throws Exception {
+        task.setUsersOrganizationsId(3L);
+        doThrow(dbOperationException).when(taskService).create(task);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        String resultJson = objectMapper.writeValueAsString(task);
+        mockMvc.perform(post("/tasks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(resultJson))
+                .andExpect(status().is5xxServerError())
+                .andExpect(jsonPath("url").value("/tasks"))
+                .andExpect(jsonPath("message").value(dbOperationException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testCreateTask_successFlow() throws Exception {
         doReturn(task).when(taskService).create(task);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -73,7 +98,18 @@ class TaskControllerTest {
     }
 
     @Test
-    public void testFindTaskById() throws Exception {
+    void testFindTaskById_failFlow() throws Exception {
+        doThrow(notFoundException).when(taskService).findById(fakeId);
+
+        mockMvc.perform(get("/tasks/" + fakeId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("url").value("/tasks/" + fakeId))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testFindTaskById_successFlow() throws Exception {
         doReturn(task).when(taskService).findById(task.getId());
 
         mockMvc.perform(get("/tasks/" + task.getId())
@@ -89,7 +125,18 @@ class TaskControllerTest {
     }
 
     @Test
-    public void testDeleteTask() throws Exception {
+    void testDeleteTask_failFlow() throws Exception {
+        doThrow(notFoundException).when(taskService).delete(fakeId);
+
+        mockMvc.perform(delete("/tasks/" + fakeId)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("url").value("/tasks/" + fakeId))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testDeleteTask_successFlow() throws Exception {
         doReturn(true).when(taskService).delete(task.getId());
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.delete("/tasks/" + task.getId())
@@ -100,7 +147,24 @@ class TaskControllerTest {
     }
 
     @Test
-    public void testUpdateTask() throws Exception {
+    void testUpdateTaskDbOperationException_failFlow() throws Exception {
+        task.setUsersOrganizationsId(6L);
+        doThrow(dbOperationException).when(taskService).update(task);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        String resultJson = objectMapper.writeValueAsString(task);
+
+        mockMvc.perform(put("/tasks/" + task.getId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(resultJson))
+                .andExpect(status().is5xxServerError())
+                .andExpect(jsonPath("url").value("/tasks/" + task.getId()))
+                .andExpect(jsonPath("message").value(dbOperationException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testUpdateTask_successFlow() throws Exception {
         doReturn(task).when(taskService).update(task);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -121,7 +185,19 @@ class TaskControllerTest {
     }
 
     @Test
-    public void testFindTaskByOrganizationId() throws Exception {
+    void testFindTaskByOrganizationId_failFlow() throws Exception {
+        doThrow(notFoundException).when(taskService).findByOrganizationId(fakeId);
+
+        mockMvc.perform(get("/tasks/findByOrg")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .param("findByOrganizationId", fakeId.toString()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("url").value("/tasks/findByOrg"))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testFindTaskByOrganizationId_successFlow() throws Exception {
         List<TaskDto> expectedTaskDtoList = Arrays.asList(task);
         doReturn(expectedTaskDtoList).when(taskService).findByOrganizationId(task.getUsersOrganizationsId());
 
@@ -134,7 +210,19 @@ class TaskControllerTest {
     }
 
     @Test
-    public void testFindTaskByUserId() throws Exception {
+    void testFindTaskByUserId_failFlow() throws Exception {
+        doThrow(notFoundException).when(taskService).findByUserId(fakeId);
+
+        mockMvc.perform(get("/tasks/findByUser")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .param("findByUserId", fakeId.toString()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("url").value("/tasks/findByUser"))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testFindTaskByUserId_successFlow() throws Exception {
         List<TaskDto> expectedTaskDtoList = Arrays.asList(task);
         doReturn(expectedTaskDtoList).when(taskService).findByUserId(task.getUsersOrganizationsId());
 

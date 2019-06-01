@@ -26,14 +26,9 @@ public class OrganizationDto {
             message = "Please, provide an address")
     private String address;
 
-
-    @Null(groups = {NewRecord.class, ExistingRecord.class},
-            message = "This field must be empty due to auto generation")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdDate;
 
-    @Null(groups = {NewRecord.class, ExistingRecord.class},
-            message = "This field must be empty due to auto generation")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updatedDate;
 

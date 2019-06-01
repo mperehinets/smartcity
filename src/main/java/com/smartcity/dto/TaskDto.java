@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @LessThan(groups = {NewRecord.class, ExistingRecord.class},
-        message = "Approved budget should be less than budget")
+        message = "Approved budget should be less than or equals budget")
 public class TaskDto {
 
     @Null(groups = {NewRecord.class},
@@ -46,13 +46,9 @@ public class TaskDto {
 
     private Long approvedBudget;
 
-    @Null(groups = {NewRecord.class, ExistingRecord.class},
-            message = "This field must be empty due to auto generation")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdAt;
 
-    @Null(groups = {NewRecord.class, ExistingRecord.class},
-            message = "This field must be empty due to auto generation")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updatedAt;
 

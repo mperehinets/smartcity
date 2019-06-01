@@ -2,6 +2,8 @@ package com.smartcity.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartcity.dto.OrganizationDto;
+import com.smartcity.exceptions.NotFoundException;
+import com.smartcity.exceptions.interceptor.ExceptionInterceptor;
 import com.smartcity.service.OrganizationServiceImpl;
 import name.falgout.jeffrey.testing.junit.mockito.MockitoExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,20 +39,25 @@ class OrganizationControllerTest {
     private OrganizationDto organizationDto;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final Long fakeId = 2L;
+    private final NotFoundException notFoundException = new NotFoundException("Organization with id: " + fakeId + " not found");
+
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(organizationController)
+                .setControllerAdvice(ExceptionInterceptor.class)
                 .build();
         organizationDto = new OrganizationDto();
         organizationDto.setId(1L);
         organizationDto.setName("komunalna");
         organizationDto.setAddress("saharova 13");
+
     }
 
     @Test
-    public void createOrganization_successFlow() throws Exception {
+    void createOrganization_successFlow() throws Exception {
         Mockito.when(organizationService.create(organizationDto)).thenReturn(organizationDto);
         // Instantiating object -> json mapper
 
@@ -64,7 +71,19 @@ class OrganizationControllerTest {
     }
 
     @Test
-    public void getOrganizationById_successFlow() throws Exception {
+    void getOrganizationById_failFlow() throws Exception {
+        Mockito.when(organizationService.get(fakeId))
+                .thenThrow(notFoundException);
+
+        mockMvc.perform(get("/organizations/" + fakeId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("url").value("/organizations/" + fakeId))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
+    }
+
+    @Test
+    void getOrganizationById_successFlow() throws Exception {
         Mockito.when(organizationService.get(organizationDto.getId())).thenReturn(organizationDto);
 
         mockMvc.perform(get("/organizations/" + organizationDto.getId())
@@ -75,7 +94,7 @@ class OrganizationControllerTest {
     }
 
     @Test
-    public void updateOrganization_successFlow() throws Exception {
+    void updateOrganization_successFlow() throws Exception {
         OrganizationDto updatedOrganizationDto = new OrganizationDto();
         updatedOrganizationDto.setId(organizationDto.getId());
         updatedOrganizationDto.setName("komunalna");
@@ -95,7 +114,19 @@ class OrganizationControllerTest {
     }
 
     @Test
-    public void deleteOrganization_successFlow() throws Exception {
+    void deleteOrganization_failFlow() throws Exception {
+        Mockito.when(organizationService.delete(fakeId))
+                .thenThrow(notFoundException);
+
+        mockMvc.perform(delete("/organizations/" + fakeId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("url").value("/organizations/" + fakeId))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
+    }
+
+    @Test
+    void deleteOrganization_successFlow() throws Exception {
         Mockito.when(organizationService.delete(organizationDto.getId())).thenReturn(true);
 
         mockMvc.perform(delete("/organizations/" + organizationDto.getId())
@@ -103,7 +134,7 @@ class OrganizationControllerTest {
     }
 
     @Test
-    public void getAllOrganizations_successFlow() throws Exception {
+    void getAllOrganizations_successFlow() throws Exception {
         List<OrganizationDto> organizations = new ArrayList();
         organizations.add(organizationDto);
 

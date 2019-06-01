@@ -6,12 +6,12 @@ public class InvalidJwtAuthenticationException extends AuthenticationException {
 
     private String name;
 
-    public InvalidJwtAuthenticationException(String msg) {
-        super(msg);
+    public InvalidJwtAuthenticationException(String message) {
+        super(message);
     }
 
-    public InvalidJwtAuthenticationException(String msg, String name) {
-        super(msg);
+    public InvalidJwtAuthenticationException(String message, String name) {
+        super(message);
         this.name = name;
     }
 
