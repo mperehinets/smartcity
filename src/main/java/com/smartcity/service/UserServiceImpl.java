@@ -1,6 +1,8 @@
 package com.smartcity.service;
 
+import com.smartcity.dao.RoleDao;
 import com.smartcity.dao.UserDao;
+import com.smartcity.domain.Role;
 import com.smartcity.domain.User;
 import com.smartcity.dto.UserDto;
 import com.smartcity.mapperDto.UserDtoMapper;
@@ -9,16 +11,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private UserDtoMapper userDtoMapper;
     private UserDao userDao;
+    private RoleDao roleDao;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, UserDtoMapper userDtoMapper) {
+    public UserServiceImpl(UserDao userDao, UserDtoMapper userDtoMapper, RoleDao roleDao) {
         this.userDao = userDao;
         this.userDtoMapper = userDtoMapper;
+        this.roleDao = roleDao;
     }
 
     @Override
@@ -50,7 +56,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userDao.findByEmail(username);
+        User user = userDao.findByEmail(username);
+        List<Role> rolesByUserId = roleDao.getRolesByUserId(user.getId());
+        user.setAuthorities(rolesByUserId);
+        return user;
     }
 
     @Override

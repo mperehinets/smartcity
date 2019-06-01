@@ -1,8 +1,6 @@
 package com.smartcity.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.smartcity.dao.RoleDaoImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,9 +10,6 @@ import java.util.Objects;
 
 
 public class User implements UserDetails {
-
-    private static RoleDaoImpl roleDao;
-
     private Long id;
     private String password;
     private String name;
@@ -26,6 +21,7 @@ public class User implements UserDetails {
     private LocalDateTime createdDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updatedDate;
+    private Collection<? extends GrantedAuthority> authorities;
 
     public User() {
     }
@@ -111,7 +107,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roleDao.getRolesByUserId(getId());
+        return authorities;
     }
 
     @Override
@@ -179,8 +175,7 @@ public class User implements UserDetails {
                 '}';
     }
 
-    @Autowired(required = false)
-    public static void setRoleDao(RoleDaoImpl roleDao) {
-        User.roleDao = roleDao;
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        this.authorities = authorities;
     }
 }
