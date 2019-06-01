@@ -2,6 +2,7 @@ package com.smartcity.exceptions.interceptor;
 
 import com.google.common.base.Preconditions;
 import com.smartcity.exceptions.DbOperationException;
+import com.smartcity.exceptions.InvalidJwtAuthenticationException;
 import com.smartcity.exceptions.NotFoundException;
 import com.smartcity.exceptions.RecordExistsException;
 import com.smartcity.exceptions.json.ExceptionResponse;
@@ -89,7 +90,21 @@ public class ExceptionInterceptor {
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseBody
     ExceptionResponse badCredentialsException(@NonNull HttpServletRequest request,
-                                                      @NonNull BadCredentialsException ex) {
+                                              @NonNull BadCredentialsException ex) {
+        Preconditions.checkNotNull(request.getRequestURI());
+        Preconditions.checkNotNull(ex.getLocalizedMessage());
+
+        return ExceptionResponse.builder()
+                .url(request.getRequestURI())
+                .message(ex.getLocalizedMessage())
+                .build();
+    }
+
+    @ResponseStatus(code = HttpStatus.FORBIDDEN)
+    @ExceptionHandler(InvalidJwtAuthenticationException.class)
+    @ResponseBody
+    ExceptionResponse invalidJwtAuthenticationException(@NonNull HttpServletRequest request,
+                                              @NonNull InvalidJwtAuthenticationException ex) {
         Preconditions.checkNotNull(request.getRequestURI());
         Preconditions.checkNotNull(ex.getLocalizedMessage());
 

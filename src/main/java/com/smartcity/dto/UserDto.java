@@ -37,12 +37,10 @@ public class UserDto {
     @NotBlank(groups = {NewRecord.class, ExistingRecord.class},
             message = "Please provide a phone number")
     @Pattern(groups = {NewRecord.class, ExistingRecord.class},
-            regexp = "/\\(?([0-9]{3})\\)?([ .-]?)([0-9]{3})\\2([0-9]{4})/",
+            regexp = "/^((\\+3||8)+([0-9]){10})$/",
             message = "Please provide a valid phone number")
     private String phoneNumber;
 
-    @NotNull(groups = {NewRecord.class, ExistingRecord.class},
-            message = "This field can't be empty")
     private boolean active;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
