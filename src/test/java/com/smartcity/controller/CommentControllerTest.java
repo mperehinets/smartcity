@@ -3,6 +3,9 @@ package com.smartcity.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.smartcity.dto.CommentDto;
+import com.smartcity.exceptions.DbOperationException;
+import com.smartcity.exceptions.NotFoundException;
+import com.smartcity.exceptions.interceptor.ExceptionInterceptor;
 import com.smartcity.service.CommentService;
 import name.falgout.jeffrey.testing.junit.mockito.MockitoExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +21,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,12 +32,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class CommentControllerTest {
+class CommentControllerTest {
 
     private final ObjectMapper objMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private CommentDto commentDto;
 
     private MockMvc mockMvc;
+
+    private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    private final LocalDateTime dateTest = LocalDateTime.parse(LocalDateTime.now().format(FORMATTER));
+
+    private final Long fakeId = 5L;
+    private final DbOperationException dbOperationException = new DbOperationException("Can't create task");
+    private final NotFoundException notFoundException = new NotFoundException("Task with id: " + fakeId + " not found");
+
 
     @Mock
     private CommentService commentService;
@@ -47,15 +59,31 @@ public class CommentControllerTest {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(commentController)
+                .setControllerAdvice(ExceptionInterceptor.class)
                 .build();
         commentDto = new CommentDto(2L, "Comment for Santa",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
+                dateTest,
+                dateTest,
                 1L, 1L);
     }
 
     @Test
-    public void testCreateComment() throws Exception {
+    void testCreateComment_failFlow() throws Exception {
+        commentDto.setTaskId(fakeId);
+        Mockito.when(commentService.create(commentDto))
+                .thenThrow(dbOperationException);
+
+        String json = objMapper.writeValueAsString(commentDto);
+        mockMvc.perform(post("/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().is5xxServerError())
+                .andExpect(jsonPath("url").value("/comments"))
+                .andExpect(jsonPath("message").value(dbOperationException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testCreateComment_successFlow() throws Exception {
 
         Mockito.when(commentService.create(commentDto)).thenReturn(commentDto);
 
@@ -71,7 +99,21 @@ public class CommentControllerTest {
     }
 
     @Test
-    public void testUpdateComment() throws Exception {
+    void testUpdateComment_failFlow() throws Exception {
+        CommentDto updatedComments = new CommentDto(1L, "Description for Task $2", null, null, fakeId, 1L);
+        Mockito.when(commentService.update(updatedComments))
+                .thenThrow(dbOperationException);
+        String json = objMapper.writeValueAsString(updatedComments);
+        mockMvc.perform(put("/comments/" + updatedComments.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().is5xxServerError())
+                .andExpect(jsonPath("url").value("/comments/" + updatedComments.getId()))
+                .andExpect(jsonPath("message").value(dbOperationException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testUpdateComment_successFlow() throws Exception {
         CommentDto updatedComments = new CommentDto(1L, "Description for Task $2", null, null, 1L, 1L);
         Mockito.when(commentService.update(updatedComments)).thenReturn(updatedComments);
         String json = objMapper.writeValueAsString(updatedComments);
@@ -86,7 +128,17 @@ public class CommentControllerTest {
     }
 
     @Test
-    public void testDeleteComment() throws Exception {
+    void testDeleteComment_failFlow() throws Exception {
+        Mockito.when(commentService.delete(fakeId))
+                .thenThrow(notFoundException);
+        mockMvc.perform(delete("/comments/" + fakeId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound()).andExpect(jsonPath("url").value("/comments/" + fakeId))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testDeleteComment_successFlow() throws Exception {
         Mockito.when(commentService.delete(commentDto.getId())).thenReturn(true);
         mockMvc.perform(delete("/comments/" + commentDto.getId())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -94,7 +146,18 @@ public class CommentControllerTest {
     }
 
     @Test
-    public void testFindByIdComment() throws Exception {
+    void testFindByIdComment_failFlow() throws Exception {
+        Mockito.when(commentService.findById(fakeId))
+                .thenThrow(notFoundException);
+        mockMvc.perform(get("/comments/" + fakeId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(status().isNotFound()).andExpect(jsonPath("url").value("/comments/" + fakeId))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testFindByIdComment_successFlow() throws Exception {
         Mockito.when(commentService.findById(commentDto.getId())).thenReturn(commentDto);
         mockMvc.perform(get("/comments/" + commentDto.getId())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -106,7 +169,19 @@ public class CommentControllerTest {
     }
 
     @Test
-    public void testFindByTaskdIdComment() throws Exception {
+    void testFindByTaskdIdComment_failFlow() throws Exception {
+        Mockito.when(commentService.findByTaskId(fakeId))
+                .thenThrow(notFoundException);
+        mockMvc.perform(get("/comments/findByTask")
+                .param("findByTaskId", fakeId.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(status().isNotFound()).andExpect(jsonPath("url").value("/comments/findByTask"))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testFindByTaskdIdComment_successFlow() throws Exception {
         List<CommentDto> startList = Collections.singletonList(commentDto);
         Mockito.when(commentService.findByTaskId(commentDto.getTaskId())).thenReturn(startList);
         final MvcResult result = mockMvc.perform(get("/comments/findByTask")
@@ -120,7 +195,19 @@ public class CommentControllerTest {
     }
 
     @Test
-    public void testFindByUserIdComment() throws Exception {
+    void testFindByUserIdComment_failFlow() throws Exception {
+        Mockito.when(commentService.findByUserId(fakeId))
+                .thenThrow(notFoundException);
+        mockMvc.perform(get("/comments/findByUser")
+                .param("findByUserId", fakeId.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("url").value("/comments/findByUser"))
+                .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
+    }
+
+    @Test
+    void testFindByUserIdComment_successFlow() throws Exception {
         List<CommentDto> startList = Collections.singletonList(commentDto);
         Mockito.when(commentService.findByUserId(commentDto.getUserId())).thenReturn(startList);
         final MvcResult result = mockMvc.perform(get("/comments/findByUser")
