@@ -8,9 +8,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,6 +64,51 @@ public class RoleDaoImplTest extends BaseTest {
     }
 
     @Test
+    public void addRoleToUserTest() {
+        User user = new User();
+        user.setEmail("example@gmail.com");
+        user.setPassword("12345");
+        user.setSurname("Johnson");
+        user.setName("John");
+        user.setPhoneNumber("0626552521415");
+        new UserDaoImpl(dataSource).create(user);
+
+        assertTrue(roleDao.addRoleToUser(user.getId(), role.getId()));
+
+    }
+
+    @Test
+    public void removeRoleFromUserTest() {
+        clearTables("Users");
+        User user = new User();
+        user.setEmail("example@gmail.com");
+        user.setPassword("12345");
+        user.setSurname("Johnson");
+        user.setName("John");
+        user.setPhoneNumber("0626552521415");
+        new UserDaoImpl(dataSource).create(user);
+
+        roleDao.addRoleToUser(user.getId(), role.getId());
+        assertTrue(roleDao.removeRoleFromUser(user.getId(), role.getId()));
+
+    }
+
+    @Test
+    public void removeRoleFromUser_wrongId() {
+        clearTables("Users");
+        User user = new User();
+        user.setEmail("example@gmail.com");
+        user.setPassword("12345");
+        user.setSurname("Johnson");
+        user.setName("John");
+        user.setPhoneNumber("0626552521415");
+        new UserDaoImpl(dataSource).create(user);
+
+        roleDao.addRoleToUser(user.getId(), role.getId());
+        assertFalse(roleDao.removeRoleFromUser(user.getId() + 12L, role.getId()));
+    }
+
+    @Test
     public void getRolesByUserId() {
         clearTables("Users_roles");
         clearTables("Users");
@@ -85,7 +132,6 @@ public class RoleDaoImplTest extends BaseTest {
         roles.add(role);
         roles.add(role1);
         List<Role> rolesFromDB = roleDao.getRolesByUserId(user.getId());
-        //assertEquals(roles,roleDao.getRolesByUserId(1L));
 
         assertAll("equals roles",
                 () -> assertEquals(roles.get(0).getId(), rolesFromDB.get(0).getId()),

@@ -15,4 +15,8 @@ public interface RoleDao {
     boolean delete(Long id);
 
     List<Role> getRolesByUserId(Long userId);
+
+    boolean addRoleToUser(Long userId, Long roleId);
+
+    boolean removeRoleFromUser(Long userId, Long roleId);
 }
