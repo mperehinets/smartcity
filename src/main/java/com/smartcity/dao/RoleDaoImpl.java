@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -66,13 +67,12 @@ public class RoleDaoImpl implements RoleDao {
         }
     }
 
-    public List<Role> getRolesByUserId(Long id){
+    public List<Role> getRolesByUserId(Long id) {
         try {
             return this.jdbcTemplate.query(Queries.SQL_GET_ROLES_BY_USER_ID, RoleMapper.getInstance(), id);
-        }
-        catch (Exception e){
-            logger.error("Can't get Roles by User_id = {}. Error: ",id, e);
-            throw new DbOperationException("Can't get roles by Users_id = id "+id);
+        } catch (Exception e) {
+            logger.error("Can't get Roles by User_id = {}. Error: ", id, e);
+            throw new DbOperationException("Can't get roles by Users_id = id " + id);
         }
     }
 
@@ -111,6 +111,32 @@ public class RoleDaoImpl implements RoleDao {
     }
 
 
+    @Override
+    public boolean addRoleToUser(Long userId, Long roleId) {
+
+        LocalDateTime time = LocalDateTime.now();
+
+        try {
+            jdbcTemplate.update(Queries.SQL_ADD_ROLE_TO_USER, userId, roleId, time, time);
+            return true;
+        } catch (Exception e) {
+            logger.error("Can't insert values(userID, roleID): " + userId + " " + roleId + " into Users_roles." + e.getMessage());
+            throw new DbOperationException("Insert Users_roles error");
+        }
+    }
+
+    @Override
+    public boolean removeRoleFromUser(Long userId, Long roleId) {
+
+        try {
+            int rowsAffected = jdbcTemplate.update(Queries.SQL_REMOVE_ROLE_FROM_USER, userId, roleId);
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            logger.error("Can't delete from Users_roles  with values(userID, roleID): " + userId + " " + roleId + " " + e.getMessage());
+            throw new DbOperationException("Delete from Users_roles error");
+        }
+
+    }
 
     public boolean delete(Long id) {
 
@@ -136,7 +162,6 @@ public class RoleDaoImpl implements RoleDao {
     }
 
 
-
     class Queries {
 
         static final String SQL_ROLE_DELETE = "delete from    Roles where id = ?";
@@ -150,6 +175,10 @@ public class RoleDaoImpl implements RoleDao {
         static final String SQL_ROLE_GET_ALL = "select * from Roles";
 
         static final String SQL_GET_ROLES_BY_USER_ID = "SELECT Roles.id, name, Roles.created_date, Roles.updated_date FROM Roles JOIN Users_roles ON Roles.id = Users_roles.role_id WHERE Users_roles.user_id = ?";
+
+        static final String SQL_ADD_ROLE_TO_USER = "insert into Users_roles(user_id,role_id,created_date,updated_date) values (?,?,?,?)";
+
+        static final String SQL_REMOVE_ROLE_FROM_USER = "delete from Users_roles where user_id = ? and role_id = ?";
 
     }
 }
