@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +26,7 @@ public class UserDaoImplTest extends BaseTest {
     private User user;
 
     @BeforeEach
-    public void beforeEachSetUp() {
+    void beforeEachSetUp() {
         // Initializing test user
         user = new User();
         user.setEmail("example@gmail.com");
@@ -37,7 +40,7 @@ public class UserDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testCreate_successFlow() {
+    void testCreate_successFlow() {
         // Instantiating new user object
         User newUser = new User();
         newUser.setEmail("someAnotherEmail@gmail.com");
@@ -53,7 +56,7 @@ public class UserDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testCreate_duplicateUsername() {
+    void testCreate_duplicateUsername() {
         // A user with this name already exists
         // Should throw DbOperationException
         assertThrows(DbOperationException.class, () -> userDao.create(user));
@@ -61,14 +64,14 @@ public class UserDaoImplTest extends BaseTest {
 
 
     @Test
-    public void testCreate_omittedNotNullFields() {
+    void testCreate_omittedNotNullFields() {
         // Creating empty user item
         User emptyUserItem = new User();
         assertThrows(DbOperationException.class, () -> userDao.create(emptyUserItem));
     }
 
     @Test
-    public void testGet_successFlow() {
+    void testGet_successFlow() {
         // Getting user
         User resultUser = userDao.get(user.getId());
 
@@ -79,12 +82,67 @@ public class UserDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testGetUser_invalidId() {
+    void testGetUser_invalidId() {
         assertThrows(NotFoundException.class, () -> userDao.get(Long.MAX_VALUE));
     }
 
     @Test
-    public void testFindByEmail_successFlow() {
+    void getAll_successFlow() {
+        // Clearing table
+        clearTables("Users");
+
+        // Initializing users list
+        List<User> users = new ArrayList<>();
+
+        User user1 = new User();
+        user1.setEmail("some@email.com");
+        user1.setPassword("qwerty");
+        user1.setSurname("Test");
+        user1.setName("User");
+        user1.setPhoneNumber("06558818");
+
+        User user2 = new User();
+        user2.setEmail("another@email.com");
+        user2.setPassword("trewq");
+        user2.setSurname("tset");
+        user2.setName("Resu");
+        user2.setPhoneNumber("05811451");
+
+        users.add(user1);
+        users.add(user2);
+
+        // Adding more users to database
+        userDao.create(user1);
+        userDao.create(user2);
+
+        // Encoding passwords
+        for (User user : users) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        // Testing
+        List<User> resultUserList = userDao.getAll();
+
+        for (int i = 0; i < users.size(); i++) {
+            assertThat(users.get(i)).isEqualToIgnoringGivenFields(resultUserList.get(i),
+                    "id", "createdDate", "updatedDate");
+        }
+
+    }
+
+    @Test
+    void getAll_EmptyUsersTable() {
+        // Clearing table
+        clearTables("Users");
+
+        // Testing
+        List<User> resultUserList = userDao.getAll();
+
+        assertTrue(() -> resultUserList.size() == 0);
+    }
+
+    @Test
+    void testFindByEmail_successFlow() {
         User resultUser = userDao.findByEmail(user.getEmail());
 
         // Encrypting user password
@@ -94,12 +152,12 @@ public class UserDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindByEmail_incorrectEmail() {
+    void testFindByEmail_incorrectEmail() {
         assertThrows(NotFoundException.class, () -> userDao.findByEmail("not_existing_email@gmail.com"));
     }
 
     @Test
-    public void testUpdate_successFlow() {
+    void testUpdate_successFlow() {
         // Creating updated user
         User updatedUser = new User();
         updatedUser.setId(user.getId());
@@ -122,13 +180,13 @@ public class UserDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testUpdate_invalidId() {
+    void testUpdate_invalidId() {
         user.setId(Long.MAX_VALUE);
         assertThrows(NotFoundException.class, () -> userDao.update(user));
     }
 
     @Test
-    public void testUpdate_omittedNotNullFieldsExceptId() {
+    void testUpdate_omittedNotNullFieldsExceptId() {
         // Creating empty user item
         User someUser = new User();
 
@@ -139,19 +197,19 @@ public class UserDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testDelete_successFlow() {
+    void testDelete_successFlow() {
         // Deleting user from db
         assertTrue(userDao.delete(user.getId()));
     }
 
     @Test
-    public void testDelete_invalidId() {
+    void testDelete_invalidId() {
         // Deleting not existing user from db
         assertThrows(NotFoundException.class, () -> userDao.delete(Long.MAX_VALUE));
     }
 
     @AfterEach
-    public void AfterEachTearDown() {
+    void AfterEachTearDown() {
         clearTables("Users");
     }
 
