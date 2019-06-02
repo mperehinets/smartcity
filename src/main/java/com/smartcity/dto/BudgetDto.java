@@ -1,8 +1,8 @@
-package com.smartcity.domain;
+package com.smartcity.dto;
 
 import java.util.Objects;
 
-public class Budget {
+public class BudgetDto {
 
     private Long value;
 
@@ -14,30 +14,24 @@ public class Budget {
         this.value = value;
     }
 
-    public Budget(Long value) {
+    public BudgetDto(Long value) {
         this.value = value;
-    }
-
-    public Budget() {
-    }
-
-    @Override
-    public String toString() {
-        return "Budget{" +
-                "value=" + value +
-                '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Budget budget = (Budget) o;
-        return Objects.equals(value, budget.value);
+        BudgetDto budgetDto = (BudgetDto) o;
+        return value.equals(budgetDto.value);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    public BudgetDto() {
+
     }
 }
