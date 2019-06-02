@@ -18,6 +18,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -87,6 +88,17 @@ public class UserDaoImpl implements UserDao {
         catch (Exception e) {
             logger.error("Get user (id = {}) exception. Message: {}", id, e.getMessage());
             throw new DbOperationException("Get user exception");
+        }
+    }
+
+    @Override
+    public List<User> getAll() {
+        try {
+            return jdbcTemplate.query(Queries.SQL_GET_ALL_USERS, UserMapper.getInstance());
+        }
+        catch (Exception e) {
+            logger.error("Get user all users exception. Message: {}", e.getMessage());
+            throw new DbOperationException("Get all users exception");
         }
     }
 
@@ -184,6 +196,7 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+
     private NotFoundException getAndLogUserNotFoundException(Long id) {
         NotFoundException notFoundException = new NotFoundException("User not found");
         logger.error("Runtime exception. User not found (id = {}). Message: {}",
@@ -210,6 +223,7 @@ public class UserDaoImpl implements UserDao {
                 "INSERT INTO Users(email, password, surname," +
                 " name, phone_number, active, created_date, updated_date)" +
                 " VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+        static final String SQL_GET_ALL_USERS = "SELECT * FROM Users";
     }
 
 }

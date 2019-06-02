@@ -46,6 +46,7 @@ public class BaseTest {
     private void setup() {
         // Setting up db
         template = new JdbcTemplate(dataSource);
+        clearAllTables();
         setupQueries();
     }
 
@@ -62,6 +63,10 @@ public class BaseTest {
     }
 
     public static void tearDown() {
+       clearAllTables();
+    }
+
+    private static void clearAllTables(){
         template.batchUpdate("set foreign_key_checks=0",
                 "TRUNCATE TABLE Users",
                 "TRUNCATE TABLE Organizations",

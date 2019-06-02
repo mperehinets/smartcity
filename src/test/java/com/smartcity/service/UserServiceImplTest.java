@@ -17,6 +17,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -82,6 +85,40 @@ class UserServiceImplTest {
 
         // Checking if the correct user was returned
         assertThat(userDto).isEqualToIgnoringGivenFields(resultUserDto, "password");
+    }
+
+    @Test
+    void getAll_successFlow() {
+        // Initializing users list
+        List<User> users = new ArrayList<>();
+
+        User user1 = new User();
+        user1.setEmail("some@email.com");
+        user1.setPassword("qwerty");
+        user1.setSurname("Test");
+        user1.setName("User");
+        user1.setPhoneNumber("06558818");
+
+        User user2 = new User();
+        user2.setEmail("another@email.com");
+        user2.setPassword("trewq");
+        user2.setSurname("tset");
+        user2.setName("Resu");
+        user2.setPhoneNumber("05811451");
+
+        users.add(user1);
+        users.add(user2);
+
+        Mockito.when(userDao.getAll()).thenReturn(users);
+
+        List<UserDto> resultUserList = userService.getAll();
+
+        for (int i = 0; i < users.size(); i++) {
+            assertThat(users.get(i)).isEqualToIgnoringGivenFields(
+                    userDtoMapper.convertUserDtoIntoUser(resultUserList.get(i)),
+                    "id", "createdDate", "updatedDate", "password");
+        }
+
     }
 
     @Test

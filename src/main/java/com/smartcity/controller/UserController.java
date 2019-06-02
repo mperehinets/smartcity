@@ -2,18 +2,16 @@ package com.smartcity.controller;
 
 import com.smartcity.dto.UserDto;
 import com.smartcity.dto.transfer.ExistingRecord;
-import com.smartcity.service.UserServiceImpl;
 import com.smartcity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
-import org.springframework.validation.annotation.Validated;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
-
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -30,6 +28,12 @@ public class UserController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDto getById(@PathVariable("id") Long id) {
         return userService.get(id);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserDto> getAll() {
+        return userService.getAll();
     }
 
     @ResponseStatus(HttpStatus.OK)

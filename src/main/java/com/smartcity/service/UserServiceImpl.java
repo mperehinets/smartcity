@@ -11,7 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -36,6 +38,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDto get(Long id) {
         return userDtoMapper.convertUserIntoUserDto(userDao.get(id));
+    }
+
+    @Override
+    public List<UserDto> getAll() {
+        List<User> users = userDao.getAll();
+        return users.stream().
+                map(userDtoMapper::convertUserIntoUserDto)
+                .collect(Collectors.toList());
     }
 
     @Override

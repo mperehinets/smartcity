@@ -2,11 +2,15 @@ package com.smartcity.dao;
 
 import com.smartcity.domain.User;
 
+import java.util.List;
+
 public interface UserDao {
 
     User create(User user);
 
     User get(Long id);
+
+    List<User> getAll();
 
     User findByEmail(String email);
 

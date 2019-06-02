@@ -3,12 +3,16 @@ package com.smartcity.service;
 import com.smartcity.dto.UserDto;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
-public interface UserService  {
+public interface UserService {
 
     UserDto create(UserDto user);
 
     UserDto get(Long id);
+
+    List<UserDto> getAll();
 
     UserDto findByEmail(String email);
 
