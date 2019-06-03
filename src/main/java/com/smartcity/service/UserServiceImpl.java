@@ -76,4 +76,32 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public boolean updatePassword(Long userId, String newPassword) {
         return userDao.updatePassword(userId, newPassword);
     }
+
+    @Override
+    public List<Role> getRoles(Long id) {
+        return roleDao.getRolesByUserId(id);
+    }
+
+    @Override
+    public boolean setRoles(Long userId, List<Role> roles) {
+        List<Role> existingRoles = roleDao.findAll();
+
+        List<Role> currentRoles = roleDao.getRolesByUserId(userId);
+
+        // Adding new roles
+        for (Role role : roles) {
+            if (!currentRoles.contains(role) && existingRoles.contains(role)) {
+                roleDao.addRoleToUser(userId, role.getId());
+            }
+        }
+
+        // Removing non-actual roles
+        for (Role role : currentRoles) {
+            if (!roles.contains(role)) {
+                roleDao.removeRoleFromUser(userId, role.getId());
+            }
+        }
+
+        return true;
+    }
 }

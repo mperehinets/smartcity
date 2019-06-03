@@ -2,6 +2,7 @@ package com.smartcity.service;
 
 import com.smartcity.dao.RoleDao;
 import com.smartcity.dao.UserDao;
+import com.smartcity.domain.Role;
 import com.smartcity.domain.User;
 import com.smartcity.dto.UserDto;
 import com.smartcity.mapperDto.UserDtoMapper;
@@ -16,6 +17,8 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,6 +30,9 @@ class UserServiceImplTest {
     @Mock
     private UserDao userDao;
 
+    @Mock
+    private RoleDao roleDao;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -36,7 +42,6 @@ class UserServiceImplTest {
 
     private User user;
 
-    private RoleDao roleDao;
 
     @BeforeEach
     void setUp() {
@@ -146,4 +151,86 @@ class UserServiceImplTest {
                 .then(invocationOnMock -> true);
         assertTrue(userService.updatePassword(1L, "qwerty"));
     }
+
+    @Test
+    void getRoles_successFlow() {
+
+        // Initializing list of roles
+        List<Role> roles = new ArrayList<>();
+
+        Role role1 = new Role();
+        role1.setId(1L);
+        role1.setName("ADMIN");
+
+        Role role2 = new Role();
+        role2.setId(2L);
+        role2.setName("SUPERVISOR");
+
+        roles.add(role1);
+        roles.add(role2);
+
+        // Mocking method
+        Mockito.when(roleDao.getRolesByUserId(user.getId()))
+                .then(invocationOnMock -> roles);
+
+        // Testing
+        List<Role> result = userService.getRoles(user.getId());
+
+        for (int i = 0; i < roles.size(); i++) {
+            assertEquals(roles.get(i), result.get(i));
+        }
+    }
+
+    @Test
+    void setRoles_successFlow() {
+
+        // Initializing lists
+        List<Role> existingRoles;
+        List<Role> currentRoles;
+        List<Role> newRoles;
+
+        Role adminRole = new Role();
+        adminRole.setId(1L);
+        adminRole.setName("ADMIN");
+
+        Role userRole = new Role();
+        userRole.setId(2L);
+        userRole.setName("USER");
+
+        Role supervisorRole = new Role();
+        supervisorRole.setId(3L);
+        supervisorRole.setName("SUPERVISOR");
+
+        Role nonExistentRole = new Role();
+        nonExistentRole.setId(4L);
+        nonExistentRole.setName("NON-EXISTENT-ROLE");
+
+        existingRoles = Stream.of(adminRole, userRole, supervisorRole).collect(Collectors.toList());
+        currentRoles = Stream.of(adminRole, userRole).collect(Collectors.toList());
+        newRoles = Stream.of(adminRole, supervisorRole, nonExistentRole).collect(Collectors.toList());
+
+        // Expected methods call numbers
+        final int expectedAddRoleToUserCallsNumber = 1;
+        final int expectedRemoveRoleFromUserCallsNumber = 1;
+
+
+        // Setting up of methods mocks
+        Mockito.when(roleDao.findAll()).thenReturn(existingRoles);
+        Mockito.when(roleDao.getRolesByUserId(userDto.getId())).thenReturn(currentRoles);
+
+
+        // Testing
+        userService.setRoles(userDto.getId(), newRoles);
+
+
+        Mockito.verify((roleDao), Mockito.times(expectedAddRoleToUserCallsNumber))
+                .addRoleToUser(Mockito.any(), Mockito.any());
+
+
+        Mockito.verify((roleDao), Mockito.times(expectedRemoveRoleFromUserCallsNumber))
+                .removeRoleFromUser(Mockito.any(), Mockito.any());
+
+
+    }
+
 }

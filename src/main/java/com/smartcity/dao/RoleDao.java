@@ -10,6 +10,8 @@ public interface RoleDao {
 
     Role findById(Long id);
 
+    List<Role> findAll();
+
     Role update(Role role);
 
     boolean delete(Long id);

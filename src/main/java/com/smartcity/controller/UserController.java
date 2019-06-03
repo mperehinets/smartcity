@@ -1,5 +1,6 @@
 package com.smartcity.controller;
 
+import com.smartcity.domain.Role;
 import com.smartcity.dto.UserDto;
 import com.smartcity.dto.transfer.ExistingRecord;
 import com.smartcity.service.UserService;
@@ -65,4 +66,15 @@ public class UserController {
         return userService.updatePassword(userId, newPassword);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/{id}/get-roles", produces = MediaType.APPLICATION_JSON_VALUE)
+    List<Role> getRolesByUserId(@PathVariable("id") Long id) {
+        return userService.getRoles(id);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = "/{id}/set-roles", consumes = MediaType.APPLICATION_JSON_VALUE)
+    boolean setRolesUserId(@PathVariable("id") Long userId, @RequestBody List<Role> roles) {
+        return userService.setRoles(userId, roles);
+    }
 }

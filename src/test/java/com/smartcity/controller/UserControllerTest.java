@@ -1,6 +1,7 @@
 package com.smartcity.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smartcity.domain.Role;
 import com.smartcity.dto.UserDto;
 import com.smartcity.exceptions.DbOperationException;
 import com.smartcity.exceptions.NotFoundException;
@@ -184,6 +185,55 @@ class UserControllerTest {
     void deleteUser_successFlow() throws Exception {
         Mockito.when(userService.delete(userDto.getId())).thenReturn(true);
         mockMvc.perform(delete("/users/" + userDto.getId()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getRolesByUserId() throws Exception {
+        // Initializing list of roles
+        List<Role> roles = new ArrayList<>();
+
+        Role role1 = new Role();
+        role1.setId(1L);
+        role1.setName("ADMIN");
+
+        Role role2 = new Role();
+        role2.setId(2L);
+        role2.setName("SUPERVISOR");
+
+        roles.add(role1);
+        roles.add(role2);
+
+        Mockito.when(userService.getRoles(userDto.getId())).thenReturn(roles);
+
+        mockMvc.perform(get("/users/" + userDto.getId() + "/get-roles")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value(role1.getId()))
+                .andExpect(jsonPath("$[0].name").value(role1.getName()))
+                .andExpect(jsonPath("$[1].id").value(role2.getId()))
+                .andExpect(jsonPath("$[1].name").value(role2.getName()));
+
+    }
+
+    @Test
+    void setRolesUserId() throws Exception {
+        // Initializing list of roles
+        List<Role> roles = new ArrayList<>();
+
+        // Instantiating object -> json mapper
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Converting DTO object to json
+        String requestObjectJson = objectMapper.writeValueAsString(roles);
+
+
+        Mockito.when(userService.setRoles(userDto.getId(), roles)).thenReturn(true);
+
+        mockMvc.perform(put("/users/" + userDto.getId() + "/set-roles")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestObjectJson))
                 .andExpect(status().isOk());
     }
 

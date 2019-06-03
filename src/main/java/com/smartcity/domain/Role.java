@@ -9,7 +9,6 @@ import java.util.Objects;
 public class Role implements GrantedAuthority {
     private Long id;
     private String name;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -62,15 +61,12 @@ public class Role implements GrantedAuthority {
         if (this == o) return true;
         if (!(o instanceof Role)) return false;
         Role role = (Role) o;
-        return id.equals(role.id) &&
-                name.equals(role.name) &&
-                createdDate.equals(role.createdDate) &&
-                Objects.equals(updatedDate, role.updatedDate);
+        return id.equals(role.id) && name.equals(role.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, createdDate, updatedDate);
+        return Objects.hash(id, name);
     }
 
     @Override
