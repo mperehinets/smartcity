@@ -31,14 +31,14 @@ class BudgetServiceImplTest {
     private Budget budget;
 
     @BeforeEach
-    public void init() {
+    void init() {
         MockitoAnnotations.initMocks(this);
         budgetService = new BudgetServiceImpl(budgetDao, budgetDtoMapper);
         budget = budgetDtoMapper.unmapRow(budgetDto);
     }
 
     @Test
-    public void testSetBudget() {
+    void testSetBudget() {
         doReturn(budget).when(budgetDao).createOrUpdate(budget);
 
         BudgetDto result = budgetService.set(budgetDto);
@@ -47,7 +47,7 @@ class BudgetServiceImplTest {
     }
 
     @Test
-    public void testGetBudget() {
+    void testGetBudget() {
         doReturn(budget).when(budgetDao).get();
 
         BudgetDto result = budgetService.get();

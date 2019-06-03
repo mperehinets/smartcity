@@ -10,12 +10,14 @@ import java.util.Objects;
 public class Comment {
     private Long id;
     private String description;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime createdDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime updatedDate;
     private Long userId;
     private Long taskId;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime createdDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime updatedDate;
 
     public Comment() {
     }
@@ -79,37 +81,32 @@ public class Comment {
 
     @Override
     public String toString() {
-        return "{" +
-                "\"id\":" + id +
-                ",\"description\":\"" + description + '\"' +
-                ",\"createdDate\":\"" + createdDate + '\"' +
-                ",\"updatedDate\":\"" + updatedDate + '\"' +
-                ",\"userId\":" + userId + '\"' +
-                ",\"taskId\":\"" + taskId + '\"' +
+        return "Comment{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", userId=" + userId +
+                ", taskId=" + taskId +
+                ", createdDate=" + createdDate +
+                ", updatedDate=" + updatedDate +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) return true;
-
         if (o == null || getClass() != o.getClass()) return false;
-
         Comment comment = (Comment) o;
-
         return Objects.equals(id, comment.id) &&
                 Objects.equals(description, comment.description) &&
-                Objects.equals(createdDate, comment.createdDate) &&
-                Objects.equals(updatedDate, comment.updatedDate) &&
                 Objects.equals(userId, comment.userId) &&
-                Objects.equals(taskId, comment.taskId);
-
+                Objects.equals(taskId, comment.taskId) &&
+                Objects.equals(createdDate, comment.createdDate) &&
+                Objects.equals(updatedDate, comment.updatedDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, createdDate, updatedDate, userId, taskId);
+        return Objects.hash(id, description, userId, taskId, createdDate, updatedDate);
     }
 }
 

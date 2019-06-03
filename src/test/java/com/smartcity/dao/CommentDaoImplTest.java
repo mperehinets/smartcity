@@ -14,7 +14,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CommentDaoImplTest extends BaseTest {
+class CommentDaoImplTest extends BaseTest {
 
     private Comment comment = new Comment(
             1L, "Comment for comment",
@@ -26,45 +26,45 @@ public class CommentDaoImplTest extends BaseTest {
     private CommentDao commentDao;
 
     @Test
-    public void testCreateComment() {
+    void testCreateComment() {
 
         assertEquals(comment, commentDao.create(comment));
 
     }
 
     @Test
-    public void testCreateComment_omittedNotNullFields() {
+    void testCreateComment_omittedNotNullFields() {
         Comment emptyComment = new Comment();
         assertThrows(DbOperationException.class, () -> commentDao.create(emptyComment));
 
     }
 
     @Test
-    public void testCreateComment_invalidTaskId() {
+    void testCreateComment_invalidTaskId() {
         comment.setTaskId(Long.MAX_VALUE);
         assertThrows(DbOperationException.class, () -> commentDao.create(comment));
     }
 
     @Test
-    public void testCreateComment_missingTaskId() {
+    void testCreateComment_missingTaskId() {
         comment.setTaskId(null);
         assertThrows(DbOperationException.class, () -> commentDao.create(comment));
     }
 
     @Test
-    public void testCreateComment_invalidUserId() {
+    void testCreateComment_invalidUserId() {
         comment.setUserId(Long.MAX_VALUE);
         assertThrows(DbOperationException.class, () -> commentDao.create(comment));
     }
 
     @Test
-    public void testCreateComment_missingUserId() {
+    void testCreateComment_missingUserId() {
         comment.setUserId(null);
         assertThrows(DbOperationException.class, () -> commentDao.create(comment));
     }
 
     @Test
-    public void testFindComment() {
+    void testFindComment() {
         commentDao.create(comment);
         Comment result = commentDao.findById(comment.getId());
         assertThat(comment).
@@ -73,13 +73,13 @@ public class CommentDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindComment_invalidId() {
+    void testFindComment_invalidId() {
         assertThrows(NotFoundException.class, () -> commentDao.findById(Long.MAX_VALUE));
 
     }
 
     @Test
-    public void testUpdateComment() {
+    void testUpdateComment() {
         commentDao.create(comment);
 
         Comment updatedComment = new Comment(comment.getId(), "Comment for Test$2",
@@ -94,7 +94,7 @@ public class CommentDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testUpdateComment_invalidId() {
+    void testUpdateComment_invalidId() {
         Comment updatedComment = new Comment(Long.MAX_VALUE, "Comment for Test",
                 LocalDateTime.now(),
                 LocalDateTime.now(),
@@ -105,43 +105,43 @@ public class CommentDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testDeleteComment() {
+    void testDeleteComment() {
         commentDao.create(comment);
         assertTrue(commentDao.delete(comment.getId()));
     }
 
     @Test
-    public void testDeleteComment_invalidId() {
+    void testDeleteComment_invalidId() {
         assertThrows(NotFoundException.class, () -> commentDao.delete(Long.MAX_VALUE));
 
     }
 
     @Test
-    public void testFindCommentByTaskId() {
+    void testFindCommentByTaskId() {
         commentDao.create(comment);
         assertThat(comment).isEqualToIgnoringGivenFields(commentDao.findByTaskId(1L).get(0),
                 "createdDate", "updatedDate");
     }
 
     @Test
-    public void testFindCommentByUserId() {
+    void testFindCommentByUserId() {
         commentDao.create(comment);
         assertThat(comment).isEqualToIgnoringGivenFields(commentDao.findByTaskId(1L).get(0),
                 "createdDate", "updatedDate");
     }
 
     @Test
-    public void testFindCommentByTaskId_nullList() {
-        assertThrows(NotFoundException.class, () -> commentDao.findByTaskId(1L));
+    void testFindCommentByTaskId_nullList() {
+        assertThat(commentDao.findByTaskId(Long.MAX_VALUE)).isEmpty();
     }
 
     @Test
-    public void testFindCommentByUserId_nullList() {
-        assertThrows(NotFoundException.class, () -> commentDao.findByUserId(1L));
+    void testFindCommentByUserId_nullList() {
+        assertThat(commentDao.findByUserId(Long.MAX_VALUE)).isEmpty();
     }
 
     @Test
-    public void testFindCommentByTaskId_amountOfComment() {
+    void testFindCommentByTaskId_amountOfComment() {
         List<Comment> list = new ArrayList<>();
         for (int i = 1; i < 4; i++) {
             comment.setId((long) i);
@@ -153,7 +153,7 @@ public class CommentDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindCommentByUserId_amountOfComment() {
+    void testFindCommentByUserId_amountOfComment() {
         List<Comment> list = new ArrayList<>();
         for (int i = 1; i < 4; i++) {
             comment.setId((long) i);
@@ -165,7 +165,7 @@ public class CommentDaoImplTest extends BaseTest {
     }
 
     @AfterEach
-    public void afterEach() {
+    void afterEach() {
         clearTables("Comments");
     }
 }

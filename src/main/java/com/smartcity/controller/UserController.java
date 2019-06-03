@@ -26,13 +26,13 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserDto getById(@PathVariable("id") Long id) {
-        return userService.get(id);
+    public UserDto findById(@PathVariable("id") Long id) {
+        return userService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserDto> getAll() {
+    public List<UserDto> findAll() {
         return userService.getAll();
     }
 

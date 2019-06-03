@@ -38,8 +38,6 @@ public class UserDto {
             message = "Please provide a phone number")
     @Pattern(groups = {NewRecord.class, ExistingRecord.class},
             regexp = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}",
-//            regexp = "/\\(?([0-9]{3})\\)?([-.]?)([0-9]{3})([-.]?)([0-9]{4})/",
-//            regexp = "/^((\\+3||8)+([0-9]){10})$/",
             message = "Please provide a valid phone number")
     private String phoneNumber;
 

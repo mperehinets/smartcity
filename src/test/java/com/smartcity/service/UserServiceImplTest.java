@@ -1,6 +1,5 @@
 package com.smartcity.service;
 
-import com.smartcity.config.ProfileConfig;
 import com.smartcity.dao.RoleDao;
 import com.smartcity.dao.UserDao;
 import com.smartcity.domain.User;
@@ -14,8 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@ContextConfiguration(classes = {ProfileConfig.class})
 @ExtendWith(MockitoExtension.class)
-@WebAppConfiguration
 class UserServiceImplTest {
 
     @Mock
@@ -46,16 +41,12 @@ class UserServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-
         userDtoMapper = new UserDtoMapper();
-
         userService = new UserServiceImpl(userDao, userDtoMapper, roleDao);
-
         userDto = new UserDto();
         userDto.setName("User");
         userDto.setSurname("Test");
         userDto.setEmail("example@gmail.com");
-
         user = userDtoMapper.convertUserDtoIntoUser(userDto);
     }
 
@@ -69,20 +60,16 @@ class UserServiceImplTest {
         });
 
         UserDto resultUserDto = userService.create(userDto);
-
         // Checking if the id was generated
         assertNotNull(resultUserDto.getId());
-
         // Checking if the user is active
         assertTrue(resultUserDto.isActive());
     }
 
     @Test
-    void get_successFlow() {
-        Mockito.when(userDao.get(1L)).thenReturn(user);
-
-        UserDto resultUserDto = userService.get(1L);
-
+    void find_successFlow() {
+        Mockito.when(userDao.findById(1L)).thenReturn(user);
+        UserDto resultUserDto = userService.findById(1L);
         // Checking if the correct user was returned
         assertThat(userDto).isEqualToIgnoringGivenFields(resultUserDto, "password");
     }
@@ -109,7 +96,7 @@ class UserServiceImplTest {
         users.add(user1);
         users.add(user2);
 
-        Mockito.when(userDao.getAll()).thenReturn(users);
+        Mockito.when(userDao.findAll()).thenReturn(users);
 
         List<UserDto> resultUserList = userService.getAll();
 
@@ -124,25 +111,18 @@ class UserServiceImplTest {
     @Test
     void findByEmail_successFlow() {
         Mockito.when(userDao.findByEmail(userDto.getEmail())).thenReturn(user);
-
         UserDto resultUserDto = userService.findByEmail(userDto.getEmail());
-
         // Checking if the correct user was returned
         assertThat(userDto).isEqualToIgnoringGivenFields(resultUserDto, "password");
     }
 
     @Test
     void update_successFlow() {
-
         userDto.setName("AnotherUser");
-
         User updatedUser = userDtoMapper.convertUserDtoIntoUser(userDto);
-
         Mockito.when(userDao.update(updatedUser)).then(
-                invocationOnMock -> (User) invocationOnMock.getArgument(0));
-
+                invocationOnMock -> invocationOnMock.getArgument(0));
         UserDto resultUserDto = userService.update(userDto);
-
         // Checking if the correct user was returned
         assertThat(userDto).isEqualToIgnoringGivenFields(resultUserDto, "password");
     }
@@ -153,12 +133,9 @@ class UserServiceImplTest {
             userDto.setActive(false);
             return true;
         });
-
         boolean result = userService.delete(1L);
-
         // Checking if true was returned
         assertTrue(result);
-
         // Checking if the user is not active
         assertFalse(userDto.isActive());
     }
@@ -167,7 +144,6 @@ class UserServiceImplTest {
     void updatePassword_successFlow() {
         Mockito.when(userDao.updatePassword(1L, "qwerty"))
                 .then(invocationOnMock -> true);
-
         assertTrue(userService.updatePassword(1L, "qwerty"));
     }
 }

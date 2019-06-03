@@ -23,38 +23,38 @@ class OrganizationDaoImplTest extends BaseTest {
             LocalDateTime.now(), LocalDateTime.now());
 
     @Test
-    public void testCreateOrganization() {
+    void testCreateOrganization() {
         assertThat(organizationDao.create(organization)).isEqualToIgnoringGivenFields(organization,
                 "createdDate", "updatedDate");
     }
 
     @Test
-    public void testCreateOrganization_missingCreatedDate() {
+    void testCreateOrganization_missingCreatedDate() {
         organization.setCreatedDate(null);
         organizationDao.create(organization);
-        assertNotEquals(organizationDao.get(organization.getId()).getCreatedDate(), null);
+        assertNotEquals(organizationDao.findById(organization.getId()).getCreatedDate(), null);
     }
 
     @Test
-    public void testCreateOrganization_emptyOrganization() {
+    void testCreateOrganization_emptyOrganization() {
         Organization emptyOrganiation = new Organization();
         assertThrows(DbOperationException.class, () -> organizationDao.create(emptyOrganiation));
     }
 
     @Test
-    public void testGetOrganization() {
+    void testFindOrganization() {
         organizationDao.create(organization);
-        assertThat(organizationDao.get(organization.getId())).isEqualToIgnoringGivenFields(organization,
+        assertThat(organizationDao.findById(organization.getId())).isEqualToIgnoringGivenFields(organization,
                 "createdDate", "updatedDate");
     }
 
     @Test
-    public void testGetOrganization_invalidId() {
-        assertThrows(NotFoundException.class, () -> organizationDao.get(Long.MAX_VALUE));
+    void testFindOrganization_invalidId() {
+        assertThrows(NotFoundException.class, () -> organizationDao.findById(Long.MAX_VALUE));
     }
 
     @Test
-    public void testUpdateOrganization() {
+    void testUpdateOrganization() {
         // Creating updateOrganization
         organizationDao.create(organization);
         Organization updatedOrganization = new Organization();
@@ -67,12 +67,12 @@ class OrganizationDaoImplTest extends BaseTest {
         organizationDao.update(updatedOrganization);
 
         // Checking if both organization are equal
-        assertThat(organizationDao.get(updatedOrganization.getId())).isEqualToIgnoringGivenFields(updatedOrganization,
+        assertThat(organizationDao.findById(updatedOrganization.getId())).isEqualToIgnoringGivenFields(updatedOrganization,
                 "createdDate", "updatedDate");
     }
 
     @Test
-    public void testUpdateOrganization_invalidId() {
+    void testUpdateOrganization_invalidId() {
         // Creating updateOrganization
         Organization updatedOrganization = new Organization();
         updatedOrganization.setId(Long.MAX_VALUE);
@@ -85,28 +85,27 @@ class OrganizationDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testDeleteOrganization() {
+    void testDeleteOrganization() {
         organizationDao.create(organization);
         // Deleting organization from db
         assertTrue(organizationDao.delete(organization.getId()));
     }
 
     @Test
-    public void testDeleteOrganization_invalidId() {
+    void testDeleteOrganization_invalidId() {
         assertThrows(NotFoundException.class, () -> organizationDao.delete(Long.MAX_VALUE));
     }
 
     @Test
-    public void testGetAll() {
+    void testFindAll() {
         organizationDao.create(organization);
-
-        assertThat(organizationDao.getAll().get(0)).isEqualToIgnoringGivenFields(organization,
+        assertThat(organizationDao.findAll().get(0)).isEqualToIgnoringGivenFields(organization,
                 "createdDate", "updatedDate");
 
     }
 
     @AfterEach
-    public void cleanOrganization() {
+    void cleanOrganization() {
         clearTables("Organizations");
     }
 

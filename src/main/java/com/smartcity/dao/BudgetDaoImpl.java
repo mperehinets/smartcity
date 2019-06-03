@@ -19,10 +19,12 @@ public class BudgetDaoImpl implements BudgetDao {
 
     private static final Logger logger = LoggerFactory.getLogger(BudgetDaoImpl.class);
     private JdbcTemplate template;
+    private BudgetMapper mapper;
 
     @Autowired
-    public BudgetDaoImpl(DataSource source) {
+    public BudgetDaoImpl(DataSource source, BudgetMapper mapper) {
         template = new JdbcTemplate(source);
+        this.mapper = mapper;
     }
 
     public Budget createOrUpdate(Budget budget) {
@@ -80,7 +82,7 @@ public class BudgetDaoImpl implements BudgetDao {
 
     public Budget get() {
         try {
-            return template.queryForObject(Queries.SQL_BUDGET_GET, BudgetMapper.getInstance());
+            return template.queryForObject(Queries.SQL_BUDGET_GET, mapper);
         } catch (EmptyResultDataAccessException e) {
             String err = "Budget not found in DB: " + e.getMessage();
             logger.error(err);

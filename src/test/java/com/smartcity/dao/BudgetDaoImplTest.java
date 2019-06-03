@@ -9,19 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BudgetDaoImplTest extends BaseTest {
+class BudgetDaoImplTest extends BaseTest {
 
     @Autowired
     private BudgetDaoImpl budgetDao;
     private Budget budget = new Budget(10000L);
 
     @Test
-    public void testCreateBudget() {
+    void testCreateBudget() {
         assertEquals(budgetDao.createOrUpdate(budget), budget);
     }
 
     @Test
-    public void testGetBudget() {
+    void testGetBudget() {
         budgetDao.createOrUpdate(budget);
 
         Budget created = budgetDao.get();
@@ -30,24 +30,21 @@ public class BudgetDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testGetBudget_noRowsFound() {
+    void testGetBudget_noRowsFound() {
         assertThrows(NotFoundException.class, () -> budgetDao.get());
     }
 
     @Test
-    public void testUpdateBudget() {
+    void testUpdateBudget() {
         budgetDao.createOrUpdate(budget);
-
         budget.setValue(20000L);
         budgetDao.createOrUpdate(budget);
-
         Budget updated = budgetDao.get();
-
         assertEquals(updated, budget);
     }
 
     @AfterEach
-    public void afterEach() {
+    void afterEach() {
         clearTables("Budget");
     }
 }

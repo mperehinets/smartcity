@@ -8,9 +8,9 @@ public interface UserDao {
 
     User create(User user);
 
-    User get(Long id);
+    User findById(Long id);
 
-    List<User> getAll();
+    List<User> findAll();
 
     User findByEmail(String email);
 

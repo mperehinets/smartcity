@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 @ActiveProfiles("test")
 @WebAppConfiguration
 @ContextConfiguration(classes = {ProfileConfig.class})
-public class BaseTest {
+class BaseTest {
 
     @Autowired
     protected DataSource dataSource;
@@ -26,7 +26,7 @@ public class BaseTest {
     private static boolean isInitialized = false;
 
     @BeforeEach
-    public void setupBudgetTests() {
+    void setupBudgetTests() {
         if (!isInitialized) {
             setup();
             isInitialized = true;
@@ -34,11 +34,10 @@ public class BaseTest {
     }
 
     @AfterAll
-    public static void afterAll() {
+    static void afterAll() {
         try {
             tearDown();
-        }
-        finally {
+        } finally {
             isInitialized = false;
         }
     }
@@ -62,11 +61,11 @@ public class BaseTest {
         template.update("Insert into Comments() values (1,'Comment desc','2019-05-05','2019-05-05',1,1);");
     }
 
-    public static void tearDown() {
-       clearAllTables();
+    static void tearDown() {
+        clearAllTables();
     }
 
-    private static void clearAllTables(){
+    private static void clearAllTables() {
         template.batchUpdate("set foreign_key_checks=0",
                 "TRUNCATE TABLE Users",
                 "TRUNCATE TABLE Organizations",
@@ -80,7 +79,7 @@ public class BaseTest {
                 "set foreign_key_checks=1");
     }
 
-    public void clearTables(String... tableNames) {
+    void clearTables(String... tableNames) {
         final String[] cleanupQueries = new String[tableNames.length + 2];
         cleanupQueries[0] = "SET foreign_key_checks=0";
         cleanupQueries[cleanupQueries.length - 1] = "SET foreign_key_checks=1";

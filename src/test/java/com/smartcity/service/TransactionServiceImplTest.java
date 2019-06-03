@@ -38,14 +38,14 @@ class TransactionServiceImplTest {
     private Transaction transaction;
 
     @BeforeEach
-    public void init() {
+     void init() {
         MockitoAnnotations.initMocks(this);
         transService = new TransactionServiceImpl(transDao, transDtoMapper);
         transaction = transDtoMapper.transactionDtoToTransaction(transactionDto);
     }
 
     @Test
-    public void testCreateTransactionDto() {
+     void testCreateTransactionDto() {
         doReturn(transaction).when(transDao).create(transaction);
         assertThat(transService.create(transactionDto))
                 .isEqualToIgnoringGivenFields(transDtoMapper.transactionToTransactionDto(transaction), "id",
@@ -53,7 +53,7 @@ class TransactionServiceImplTest {
     }
 
     @Test
-    public void testFindTransactionDto() {
+     void testFindTransactionDto() {
         doReturn(transaction).when(transDao).findById(transaction.getId());
         assertThat(transService.findById(transactionDto.getId()))
                 .isEqualToIgnoringGivenFields(transDtoMapper.transactionToTransactionDto(transaction), "id",
@@ -61,7 +61,7 @@ class TransactionServiceImplTest {
     }
 
     @Test
-    public void testFindTransactionsDtoByTaskId() {
+     void testFindTransactionsDtoByTaskId() {
         List<Transaction> transList = Collections.singletonList(transaction);
         List<TransactionDto> transDtoList = Collections.singletonList(
                 transDtoMapper.transactionToTransactionDto(transaction));
@@ -70,12 +70,12 @@ class TransactionServiceImplTest {
     }
 
     @Test
-    public void testFindTransactionsDtoByTaskId_emptyList() {
+     void testFindTransactionsDtoByTaskId_emptyList() {
         assertThat(Collections.emptyList()).isEqualTo(transService.findByTaskId(Long.MAX_VALUE));
     }
 
     @Test
-    public void testUpdateTransactionDto() {
+     void testUpdateTransactionDto() {
         doReturn(transaction).when(transDao).update(transaction);
         assertThat(transService.update(transactionDto)).isEqualToIgnoringGivenFields(
                 transDtoMapper.transactionToTransactionDto(transaction),
@@ -83,7 +83,7 @@ class TransactionServiceImplTest {
     }
 
     @Test
-    public void testDeleteTransactionDto() {
+     void testDeleteTransactionDto() {
         doReturn(true).when(transDao).delete(transaction.getId());
         assertTrue(transService.delete(transactionDto.getId()));
     }

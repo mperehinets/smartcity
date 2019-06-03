@@ -25,9 +25,11 @@ import java.util.Optional;
 public class TransactionDaoImpl implements TransactionDao {
     private static final Logger logger = LoggerFactory.getLogger(TransactionDaoImpl.class);
     private JdbcTemplate template;
+    private TransactionMapper mapper;
 
     @Autowired
-    public TransactionDaoImpl(DataSource source) {
+    public TransactionDaoImpl(DataSource source, TransactionMapper mapper) {
+        this.mapper = mapper;
         template = new JdbcTemplate(source);
     }
 
@@ -51,13 +53,12 @@ public class TransactionDaoImpl implements TransactionDao {
 
     public Transaction findById(Long id) {
         try {
-            return template.queryForObject(Queries.SQL_TRANSACTION_GET,
-                    TransactionMapper.getInstance(), id);
+            return template.queryForObject(Queries.SQL_TRANSACTION_GET, mapper, id);
         } catch (EmptyResultDataAccessException erd) {
             throw loggedNotFoundException(id);
         } catch (Exception e) {
             logger.error("Can't get transaction by id={}. Error: ", id, e);
-            throw new DbOperationException("Can't get transaction with id." + id);
+            throw new DbOperationException("Can't get transaction with id=" + id);
         }
     }
 
@@ -74,7 +75,7 @@ public class TransactionDaoImpl implements TransactionDao {
                     transaction.getId());
         } catch (Exception e) {
             logger.error("Update transaction error:" + transaction + " " + e.getMessage());
-            throw new DbOperationException("Update transaction error");
+            throw new DbOperationException("Update transaction error.Transaction" + transaction);
         }
         if (rowsAffected < 1) {
             throw loggedNotFoundException(transaction.getId());
@@ -99,8 +100,7 @@ public class TransactionDaoImpl implements TransactionDao {
     public List<Transaction> findByTaskId(Long id) {
         List<Transaction> list;
         try {
-            list = template.query(Queries.SQL_TRANSACTION_GET_BY_TASK_ID,
-                    TransactionMapper.getInstance(), id);
+            list = template.query(Queries.SQL_TRANSACTION_GET_BY_TASK_ID, mapper, id);
         } catch (Exception e) {
             logger.error("Get transaction (task id = {}) exception. Message: {}",
                     id, e.getMessage());

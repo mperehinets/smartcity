@@ -22,7 +22,7 @@ public class TaskDtoMapper {
         return taskDto;
     }
 
-    public Task mapDto(TaskDto taskDto){
+    public Task mapDto(TaskDto taskDto) {
         Task task = new Task();
         task.setId(taskDto.getId());
         task.setTitle(taskDto.getTitle());

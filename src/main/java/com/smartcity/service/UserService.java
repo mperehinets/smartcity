@@ -10,7 +10,7 @@ public interface UserService {
 
     UserDto create(UserDto user);
 
-    UserDto get(Long id);
+    UserDto findById(Long id);
 
     List<UserDto> getAll();
 

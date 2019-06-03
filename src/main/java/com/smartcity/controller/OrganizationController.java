@@ -30,8 +30,8 @@ public class OrganizationController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public OrganizationDto get(@PathVariable("id") Long id) {
-        return organizationService.get(id);
+    public OrganizationDto findById(@PathVariable("id") Long id) {
+        return organizationService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -52,8 +52,8 @@ public class OrganizationController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<OrganizationDto> getAll() {
-        return organizationService.getAll();
+    public List<OrganizationDto> findAll() {
+        return organizationService.findAll();
     }
 
 }

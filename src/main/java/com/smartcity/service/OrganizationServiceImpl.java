@@ -29,8 +29,8 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public OrganizationDto get(Long id) {
-        return organizationDtoMapper.organizationToOrganizationDto(organizationDao.get(id));
+    public OrganizationDto findById(Long id) {
+        return organizationDtoMapper.organizationToOrganizationDto(organizationDao.findById(id));
     }
 
     @Override
@@ -45,8 +45,8 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public List<OrganizationDto> getAll() {
-        return mapListDto(organizationDao.getAll());
+    public List<OrganizationDto> findAll() {
+        return mapListDto(organizationDao.findAll());
     }
 
     private List<OrganizationDto> mapListDto(List<Organization> organizations) {

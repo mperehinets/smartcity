@@ -16,12 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TransactionDaoImplTest extends BaseTest {
+class TransactionDaoImplTest extends BaseTest {
 
     private Transaction transaction;
 
     @BeforeEach
-    public void init() {
+    void init() {
         transaction = new Transaction(2L, 1L,
                 5000L, 3000L,
                 LocalDateTime.now(), LocalDateTime.now());
@@ -31,25 +31,25 @@ public class TransactionDaoImplTest extends BaseTest {
     private TransactionDao transDao;
 
     @Test
-    public void testCreateTransaction() {
+    void testCreateTransaction() {
         assertThat(transDao.create(transaction)).isEqualToIgnoringGivenFields(transaction,
                 "createdDate", "updatedDate");
     }
 
     @Test
-    public void testCreateTransaction_invalidTaskId() {
+    void testCreateTransaction_invalidTaskId() {
         transaction.setTaskId(Long.MAX_VALUE);
         assertThrows(DbOperationException.class, () -> transDao.create(transaction));
     }
 
     @Test
-    public void testCreateTransaction_missingTaskId() {
+    void testCreateTransaction_missingTaskId() {
         transaction.setTaskId(null);
         assertThrows(DbOperationException.class, () -> transDao.create(transaction));
     }
 
     @Test
-    public void testFindTransaction() {
+    void testFindTransaction() {
         transDao.create(transaction);
         assertThat(transaction).
                 isEqualToIgnoringGivenFields(transDao.findById(transaction.getId()),
@@ -57,13 +57,13 @@ public class TransactionDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindTransaction_invalidId() {
+    void testFindTransaction_invalidId() {
         assertThrows(NotFoundException.class, () -> transDao.findById(null));
         assertThrows(NotFoundException.class, () -> transDao.findById(Long.MAX_VALUE));
     }
 
     @Test
-    public void testFindTransactionsByTaskId() {
+    void testFindTransactionsByTaskId() {
         transDao.create(transaction);
         assertThat(transaction).isEqualToIgnoringGivenFields(
                 transDao.findByTaskId(transaction.getTaskId()).get(0),
@@ -71,7 +71,7 @@ public class TransactionDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindTransactionsByTaskId_amountOfTransactions() {
+    void testFindTransactionsByTaskId_amountOfTransactions() {
         List<Transaction> list = new ArrayList<>();
         for (int i = 1; i < 4; i++) {
             transaction.setId((long) i);
@@ -84,12 +84,12 @@ public class TransactionDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindTransactionsByTaskId_emptyList() {
+    void testFindTransactionsByTaskId_emptyList() {
         assertThat(transDao.findByTaskId(Long.MAX_VALUE)).isEmpty();
     }
 
     @Test
-    public void testUpdateTransaction() {
+    void testUpdateTransaction() {
         transDao.create(transaction);
         Transaction updatedTransaction = new Transaction(1L, 1L,
                 800000L, 44000L,
@@ -100,7 +100,7 @@ public class TransactionDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testUpdateTransaction_invalidId() {
+    void testUpdateTransaction_invalidId() {
         Transaction newTransaction = new Transaction(500L, 1L,
                 800000L, 44000L,
                 LocalDateTime.now(), LocalDateTime.now());
@@ -108,18 +108,18 @@ public class TransactionDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testDeleteTransaction() {
+    void testDeleteTransaction() {
         transDao.create(transaction);
         assertTrue(transDao.delete(1L));
     }
 
     @Test
-    public void testDeleteTransaction_invalidId() {
+    void testDeleteTransaction_invalidId() {
         assertThrows(NotFoundException.class, () -> transDao.delete(Long.MAX_VALUE));
     }
 
     @AfterEach
-    public void cleanTransactions() {
+    void cleanTransactions() {
         clearTables("Transactions");
     }
 }

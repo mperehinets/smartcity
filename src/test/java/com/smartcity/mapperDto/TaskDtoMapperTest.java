@@ -26,12 +26,12 @@ class TaskDtoMapperTest {
     private TaskDtoMapper taskDtoMapper = new TaskDtoMapper();
 
     @Test
-    public void testConvertDaoToDto() {
+    void testConvertDaoToDto() {
         assertEquals(taskDto, taskDtoMapper.mapRow(task));
     }
 
     @Test
-    public void testConvertDtoToDao() {
+    void testConvertDtoToDao() {
         assertEquals(task, taskDtoMapper.mapDto(taskDto));
     }
 }

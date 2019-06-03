@@ -35,7 +35,7 @@ class BudgetControllerTest {
     private BudgetController budgetController;
 
     @BeforeEach
-    public void init() {
+     void init() {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(budgetController)
@@ -44,7 +44,7 @@ class BudgetControllerTest {
     }
 
     @Test
-    public void testPut() throws Exception {
+     void testPut() throws Exception {
         doReturn(budgetDto).when(budgetService).set(budgetDto);
         String resultJson = objectMapper.writeValueAsString(budgetDto);
         mockMvc.perform(put("/budget")
@@ -56,7 +56,7 @@ class BudgetControllerTest {
     }
 
     @Test
-    public void testGet_successFlow() throws Exception {
+     void testGet_successFlow() throws Exception {
         doReturn(budgetDto).when(budgetService).get();
         mockMvc.perform(get("/budget")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -65,7 +65,7 @@ class BudgetControllerTest {
     }
 
     @Test
-    public void testGet_failureFlow() throws Exception {
+     void testGet_failureFlow() throws Exception {
         doReturn(budgetDto).when(budgetService).get();
         mockMvc.perform(get("/budget")
                 .contentType(MediaType.APPLICATION_JSON))

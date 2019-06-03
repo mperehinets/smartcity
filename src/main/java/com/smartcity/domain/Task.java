@@ -9,16 +9,19 @@ public class Task {
     private Long id;
     private String title;
     private String description;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime deadlineDate;
     private String taskStatus;
     private Long budget;
     private Long approvedBudget;
+    private Long usersOrganizationsId;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdAt;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updatedAt;
-    private Long usersOrganizationsId;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime deadlineDate;
 
     public Task(Long id, String title, String description, LocalDateTime deadlineDate, String taskStatus,
                 Long budget, Long approvedBudget, LocalDateTime createdAt, LocalDateTime updatedAt,
@@ -36,7 +39,6 @@ public class Task {
     }
 
     public Task() {
-
     }
 
     public Long getId() {

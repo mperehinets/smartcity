@@ -43,7 +43,7 @@ class OrganizationControllerTest {
     private final NotFoundException notFoundException = new NotFoundException("Organization with id: " + fakeId + " not found");
 
     @BeforeEach
-    void setUp() {
+     void setUp() {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(organizationController)
@@ -57,7 +57,7 @@ class OrganizationControllerTest {
     }
 
     @Test
-    void createOrganization_successFlow() throws Exception {
+     void createOrganization_successFlow() throws Exception {
         Mockito.when(organizationService.create(organizationDto)).thenReturn(organizationDto);
         // Instantiating object -> json mapper
 
@@ -71,8 +71,8 @@ class OrganizationControllerTest {
     }
 
     @Test
-    void getOrganizationById_failFlow() throws Exception {
-        Mockito.when(organizationService.get(fakeId))
+     void findOrganizationById_failFlow() throws Exception {
+        Mockito.when(organizationService.findById(fakeId))
                 .thenThrow(notFoundException);
 
         mockMvc.perform(get("/organizations/" + fakeId)
@@ -83,8 +83,8 @@ class OrganizationControllerTest {
     }
 
     @Test
-    void getOrganizationById_successFlow() throws Exception {
-        Mockito.when(organizationService.get(organizationDto.getId())).thenReturn(organizationDto);
+     void getOrganizationById_successFlow() throws Exception {
+        Mockito.when(organizationService.findById(organizationDto.getId())).thenReturn(organizationDto);
 
         mockMvc.perform(get("/organizations/" + organizationDto.getId())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -94,7 +94,7 @@ class OrganizationControllerTest {
     }
 
     @Test
-    void updateOrganization_successFlow() throws Exception {
+     void updateOrganization_successFlow() throws Exception {
         OrganizationDto updatedOrganizationDto = new OrganizationDto();
         updatedOrganizationDto.setId(organizationDto.getId());
         updatedOrganizationDto.setName("komunalna");
@@ -114,7 +114,7 @@ class OrganizationControllerTest {
     }
 
     @Test
-    void deleteOrganization_failFlow() throws Exception {
+     void deleteOrganization_failFlow() throws Exception {
         Mockito.when(organizationService.delete(fakeId))
                 .thenThrow(notFoundException);
 
@@ -126,7 +126,7 @@ class OrganizationControllerTest {
     }
 
     @Test
-    void deleteOrganization_successFlow() throws Exception {
+     void deleteOrganization_successFlow() throws Exception {
         Mockito.when(organizationService.delete(organizationDto.getId())).thenReturn(true);
 
         mockMvc.perform(delete("/organizations/" + organizationDto.getId())
@@ -134,12 +134,10 @@ class OrganizationControllerTest {
     }
 
     @Test
-    void getAllOrganizations_successFlow() throws Exception {
-        List<OrganizationDto> organizations = new ArrayList();
+     void findAllOrganizations_successFlow() throws Exception {
+        List<OrganizationDto> organizations = new ArrayList<>();
         organizations.add(organizationDto);
-
-        Mockito.when(organizationService.getAll()).thenReturn(organizations);
-
+        Mockito.when(organizationService.findAll()).thenReturn(organizations);
         mockMvc.perform(get("/organizations")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

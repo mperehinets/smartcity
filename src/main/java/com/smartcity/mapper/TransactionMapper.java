@@ -2,20 +2,13 @@ package com.smartcity.mapper;
 
 import com.smartcity.domain.Transaction;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class TransactionMapper implements RowMapper<Transaction> {
-
-    private static final TransactionMapper instance = new TransactionMapper();
-
-    private TransactionMapper() {
-    }
-
-    public static TransactionMapper getInstance() {
-        return instance;
-    }
 
     public Transaction mapRow(ResultSet resultSet, int i) throws SQLException {
         Transaction transaction = new Transaction();

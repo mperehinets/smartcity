@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrganizationDtoMapper {
+
     public OrganizationDto organizationToOrganizationDto(Organization organization) {
         OrganizationDto organizationDto = new OrganizationDto();
         organizationDto.setId(organization.getId());

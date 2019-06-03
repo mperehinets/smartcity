@@ -8,7 +8,7 @@ public interface RoleDao {
 
     Role create(Role role);
 
-    Role get(Long id);
+    Role findById(Long id);
 
     Role update(Role role);
 

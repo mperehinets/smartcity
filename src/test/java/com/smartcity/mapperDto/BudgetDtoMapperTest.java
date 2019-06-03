@@ -18,18 +18,18 @@ class BudgetDtoMapperTest {
     private final BudgetDtoMapper mapper = new BudgetDtoMapper();
 
     @BeforeEach
-    public void init() {
+    void init() {
         budget = new Budget(10L);
         budgetDto = new BudgetDto(10L);
     }
 
     @Test
-    public void testConvertDaoToDto() {
+    void testConvertDaoToDto() {
         assertEquals(budgetDto, mapper.mapRow(budget));
     }
 
     @Test
-    public void testConvertDtoToDao() {
+    void testConvertDtoToDao() {
         assertEquals(budget, mapper.unmapRow(budgetDto));
     }
 

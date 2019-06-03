@@ -17,11 +17,13 @@ public class User implements UserDetails {
     private String email;
     private String phoneNumber;
     private boolean active;
+    private Collection<? extends GrantedAuthority> authorities;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdDate;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updatedDate;
-    private Collection<? extends GrantedAuthority> authorities;
 
     public User() {
     }

@@ -41,14 +41,14 @@ class TaskServiceImplTest {
     private Task task;
 
     @BeforeEach
-    public void init() {
+    void init() {
         MockitoAnnotations.initMocks(this);
         taskService = new TaskServiceImpl(taskDao, taskDtoMapper);
         task = taskDtoMapper.mapDto(taskDto);
     }
 
     @Test
-    public void testCreateTask() {
+    void testCreateTask() {
         doReturn(task).when(taskDao).create(task);
         TaskDto result = taskService.create(taskDto);
         assertThat(result).isEqualToIgnoringGivenFields(taskDtoMapper.mapRow(task),
@@ -57,7 +57,7 @@ class TaskServiceImplTest {
     }
 
     @Test
-    public void testFindTaskById() {
+    void testFindTaskById() {
         doReturn(task).when(taskDao).findById(task.getId());
         TaskDto result = taskService.findById(taskDto.getId());
         assertThat(result).isEqualToIgnoringGivenFields(taskDtoMapper.mapRow(task),
@@ -66,7 +66,7 @@ class TaskServiceImplTest {
     }
 
     @Test
-    public void testFindTaskByOrganizationId() {
+    void testFindTaskByOrganizationId() {
         List<Task> taskList = Arrays.asList(task);
         List<TaskDto> taskDtoList = Arrays.asList(taskDtoMapper.mapRow(task));
         doReturn(taskList).when(taskDao).findByOrganizationId(task.getUsersOrganizationsId());
@@ -75,7 +75,7 @@ class TaskServiceImplTest {
     }
 
     @Test
-    public void testFingTaskByUserId() {
+    void testFingTaskByUserId() {
         List<Task> taskList = Arrays.asList(task);
         List<TaskDto> taskDtoList = Arrays.asList(taskDtoMapper.mapRow(task));
         doReturn(taskList).when(taskDao).findByUserId(task.getUsersOrganizationsId());
@@ -84,7 +84,7 @@ class TaskServiceImplTest {
     }
 
     @Test
-    public void testUpdateTask() {
+    void testUpdateTask() {
         doReturn(task).when(taskDao).update(task);
         TaskDto result = taskService.update(taskDto);
         assertThat(result).isEqualToIgnoringGivenFields(taskDtoMapper.mapRow(task),
@@ -93,7 +93,7 @@ class TaskServiceImplTest {
     }
 
     @Test
-    public void testDeleteTask() {
+    void testDeleteTask() {
         doReturn(true).when(taskDao).delete(task.getId());
         boolean result = taskService.delete(taskDto.getId());
         assertTrue(result);

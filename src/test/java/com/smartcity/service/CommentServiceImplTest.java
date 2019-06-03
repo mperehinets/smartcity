@@ -1,7 +1,6 @@
 package com.smartcity.service;
 
 
-import com.smartcity.config.ProfileConfig;
 import com.smartcity.dao.CommentDao;
 import com.smartcity.domain.Comment;
 import com.smartcity.dto.CommentDto;
@@ -13,13 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,14 +41,14 @@ class CommentServiceImplTest {
     private Comment comment;
 
     @BeforeEach
-    public void init() {
+    void init() {
         MockitoAnnotations.initMocks(this);
         commentService = new CommentServiceImpl(commentDao, commentDtoMapper);
         comment = commentDtoMapper.commentDtoToComment(commentDto);
     }
 
     @Test
-    public void testCreateComment() {
+    void testCreateComment() {
         doReturn(comment).when(commentDao).create(comment);
         CommentDto result = commentService.create(commentDto);
         assertThat(result).isEqualToIgnoringGivenFields(commentDtoMapper.commentToCommentDto(comment),
@@ -61,7 +56,7 @@ class CommentServiceImplTest {
     }
 
     @Test
-    public void testFindCommentById() {
+    void testFindCommentById() {
         doReturn(comment).when(commentDao).findById(comment.getId());
         CommentDto result = commentService.findById(commentDto.getId());
         assertThat(result).isEqualToIgnoringGivenFields(commentDtoMapper.commentToCommentDto(comment),
@@ -69,18 +64,18 @@ class CommentServiceImplTest {
     }
 
     @Test
-    public void testFindCommentByUserId() {
-        List<Comment> commentList = Arrays.asList(comment);
-        List<CommentDto> commentDtoList = Arrays.asList(commentDtoMapper.commentToCommentDto(comment));
+    void testFindCommentByUserId() {
+        List<Comment> commentList = Collections.singletonList(comment);
+        List<CommentDto> commentDtoList = Collections.singletonList(commentDtoMapper.commentToCommentDto(comment));
         doReturn(commentList).when(commentDao).findByUserId(comment.getUserId());
         List<CommentDto> result = commentService.findByUserId(commentDto.getUserId());
         assertEquals(result, commentDtoList);
     }
 
     @Test
-    public void testFindCommentByTaskId() {
-        List<Comment> commentList = Arrays.asList(comment);
-        List<CommentDto> commentDtoList = Arrays.asList(commentDtoMapper.commentToCommentDto(comment));
+    void testFindCommentByTaskId() {
+        List<Comment> commentList = Collections.singletonList(comment);
+        List<CommentDto> commentDtoList = Collections.singletonList(commentDtoMapper.commentToCommentDto(comment));
         doReturn(commentList).when(commentDao).findByTaskId(comment.getTaskId());
         List<CommentDto> result = commentService.findByTaskId(commentDto.getTaskId());
         assertEquals(result, commentDtoList);
@@ -88,7 +83,7 @@ class CommentServiceImplTest {
 
 
     @Test
-    public void testUpdateComment() {
+    void testUpdateComment() {
         doReturn(comment).when(commentDao).update(comment);
         CommentDto result = commentService.update(commentDto);
         assertThat(result).isEqualToIgnoringGivenFields(commentDtoMapper.commentToCommentDto(comment),
@@ -96,7 +91,7 @@ class CommentServiceImplTest {
     }
 
     @Test
-    public void testDeleteComment() {
+    void testDeleteComment() {
         doReturn(true).when(commentDao).delete(comment.getId());
         boolean result = commentService.delete(commentDto.getId());
         assertTrue(result);

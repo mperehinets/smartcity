@@ -14,7 +14,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TaskDaoImplTest extends BaseTest {
+class TaskDaoImplTest extends BaseTest {
 
     private Task task = new Task(2L, "Santa", "Task for Santa",
             LocalDateTime.now(), "TODO",
@@ -25,31 +25,25 @@ public class TaskDaoImplTest extends BaseTest {
     @Autowired
     private TaskDao taskDao;
 
-//    @BeforeAll
-//    public static void setUpDataSource() {
-//        setup();
-//        taskDao = new TaskDaoImpl(dataSource);
-//    }
-
     @Test
-    public void testCreateTask() {
+    void testCreateTask() {
         assertEquals(task, taskDao.create(task));
     }
 
     @Test
-    public void testCreateTask_InvalidUsersOrganizationsId() {
+    void testCreateTask_InvalidUsersOrganizationsId() {
         task.setUsersOrganizationsId(Long.MAX_VALUE);
         assertThrows(DbOperationException.class, () -> taskDao.create(task));
     }
 
     @Test
-    public void testCreateTask_MissedUsersOrganizationsId() {
+    void testCreateTask_MissedUsersOrganizationsId() {
         task.setUsersOrganizationsId(null);
         assertThrows(DbOperationException.class, () -> taskDao.create(task));
     }
 
     @Test
-    public void testFindTaskById() {
+    void testFindTaskById() {
         taskDao.create(task);
         Task resultTask = taskDao.findById(task.getId());
         assertThat(task).isEqualToIgnoringGivenFields(resultTask,
@@ -58,17 +52,17 @@ public class TaskDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindTask_InvalidId() {
+    void testFindTask_InvalidId() {
         assertThrows(NotFoundException.class, () -> taskDao.findById(Long.MAX_VALUE));
     }
 
     @Test
-    public void testFindTask_NullId() {
+    void testFindTask_NullId() {
         assertThrows(NotFoundException.class, () -> taskDao.findById(null));
     }
 
     @Test
-    public void testFindTaskByOrganizationId() {
+    void testFindTaskByOrganizationId() {
         taskDao.create(task);
         List<Task> resultTaskList = taskDao.findByOrganizationId(1L);
         List<Task> expTaskList = new ArrayList<>();
@@ -83,7 +77,7 @@ public class TaskDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindTaskByUserId() {
+    void testFindTaskByUserId() {
         taskDao.create(task);
         List<Task> resultTaskList = taskDao.findByUserId(1L);
         List<Task> exTaskList = new ArrayList<>(taskDao.findAll());
@@ -96,9 +90,8 @@ public class TaskDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testUpdateTask() {
+    void testUpdateTask() {
         taskDao.create(task);
-
         Task updatedTask = new Task(2L, "Santasss", "Task for Santasss",
                 LocalDateTime.now(), "TODOs",
                 1000L, 1000L,
@@ -106,16 +99,14 @@ public class TaskDaoImplTest extends BaseTest {
                 1L);
 
         taskDao.update(updatedTask);
-
         Task resultTask = taskDao.findById(updatedTask.getId());
-
         assertThat(updatedTask).isEqualToIgnoringGivenFields(resultTask,
                 "deadlineDate", "createdAt",
                 "updatedAt", "transactionList");
     }
 
     @Test
-    public void testUpdateTask_InvalidId() {
+    void testUpdateTask_InvalidId() {
         Task updatedTask = new Task(Long.MAX_VALUE, "Santasss", "Task for Santasss",
                 LocalDateTime.now(), "TODOs",
                 1000L, 1000L,
@@ -125,7 +116,7 @@ public class TaskDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void testUpdateTask_NullId() {
+    void testUpdateTask_NullId() {
         Task updatedTask = new Task(null, "Santasss", "Task for Santasss",
                 LocalDateTime.now(), "TODOs",
                 1000L, 1000L,
@@ -136,24 +127,24 @@ public class TaskDaoImplTest extends BaseTest {
 
 
     @Test
-    public void testDeleteTask_InvalidId() {
+    void testDeleteTask_InvalidId() {
         assertThrows(NotFoundException.class, () -> taskDao.delete(Long.MAX_VALUE));
     }
 
 
     @Test
-    public void testDeleteTask_NullId() {
+    void testDeleteTask_NullId() {
         assertThrows(NotFoundException.class, () -> taskDao.delete(null));
     }
 
     @Test
-    public void testDeleteTask() {
+    void testDeleteTask() {
         taskDao.create(task);
         assertTrue(taskDao.delete(task.getId()));
     }
 
     @AfterEach
-    public void close() {
+    void close() {
         clearTables("Transactions");
     }
 

@@ -15,7 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserDaoImplTest extends BaseTest {
+ class UserDaoImplTest extends BaseTest {
 
     @Autowired
     private UserDao userDao;
@@ -71,9 +71,9 @@ public class UserDaoImplTest extends BaseTest {
     }
 
     @Test
-    void testGet_successFlow() {
+    void testFind_successFlow() {
         // Getting user
-        User resultUser = userDao.get(user.getId());
+        User resultUser = userDao.findById(user.getId());
 
         // Encrypting user password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -82,12 +82,12 @@ public class UserDaoImplTest extends BaseTest {
     }
 
     @Test
-    void testGetUser_invalidId() {
-        assertThrows(NotFoundException.class, () -> userDao.get(Long.MAX_VALUE));
+    void testFindUser_invalidId() {
+        assertThrows(NotFoundException.class, () -> userDao.findById(Long.MAX_VALUE));
     }
 
     @Test
-    void getAll_successFlow() {
+    void findAll_successFlow() {
         // Clearing table
         clearTables("Users");
 
@@ -100,29 +100,22 @@ public class UserDaoImplTest extends BaseTest {
         user1.setSurname("Test");
         user1.setName("User");
         user1.setPhoneNumber("06558818");
-
         User user2 = new User();
         user2.setEmail("another@email.com");
         user2.setPassword("trewq");
         user2.setSurname("tset");
         user2.setName("Resu");
         user2.setPhoneNumber("05811451");
-
         users.add(user1);
         users.add(user2);
-
         // Adding more users to database
         userDao.create(user1);
         userDao.create(user2);
 
-        // Encoding passwords
         for (User user : users) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-
-        // Testing
-        List<User> resultUserList = userDao.getAll();
-
+        List<User> resultUserList = userDao.findAll();
         for (int i = 0; i < users.size(); i++) {
             assertThat(users.get(i)).isEqualToIgnoringGivenFields(resultUserList.get(i),
                     "id", "createdDate", "updatedDate");
@@ -131,12 +124,9 @@ public class UserDaoImplTest extends BaseTest {
     }
 
     @Test
-    void getAll_EmptyUsersTable() {
-        // Clearing table
+    void findAll_EmptyUsersTable() {
         clearTables("Users");
-
-        // Testing
-        List<User> resultUserList = userDao.getAll();
+        List<User> resultUserList = userDao.findAll();
 
         assertTrue(() -> resultUserList.size() == 0);
     }
@@ -166,15 +156,8 @@ public class UserDaoImplTest extends BaseTest {
         updatedUser.setName("Den");
         updatedUser.setPhoneNumber("0333333333");
         updatedUser.setCreatedDate(user.getCreatedDate());
-
-        // Updating
         userDao.update(updatedUser);
-
-
-        // Getting user from db
-        User resultUser = userDao.get(user.getId());
-
-        // Checking if both are equal
+        User resultUser = userDao.findById(user.getId());
         assertThat(updatedUser).isEqualToIgnoringGivenFields(resultUser,
                 "createdDate", "updatedDate", "password");
     }

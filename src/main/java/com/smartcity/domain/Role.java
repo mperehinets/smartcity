@@ -1,16 +1,21 @@
 package com.smartcity.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.security.core.GrantedAuthority;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
-import org.springframework.security.core.GrantedAuthority;
 
 public class Role implements GrantedAuthority {
     private Long id;
     private String name;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime updatedDate;
 
-    public Role(){
+    public Role() {
     }
 
     public Role(Long id, String name, LocalDateTime updatedDate, LocalDateTime createdDate) {

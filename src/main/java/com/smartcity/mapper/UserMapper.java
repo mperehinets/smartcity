@@ -2,21 +2,14 @@ package com.smartcity.mapper;
 
 import com.smartcity.domain.User;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
+@Component
 public class UserMapper implements RowMapper<User> {
-    private static UserMapper instance = new UserMapper();
-
-    public static UserMapper getInstance() {
-        return instance;
-    }
-
-    private UserMapper() {
-
-    }
 
     @Override
     public User mapRow(ResultSet resultSet, int i) throws SQLException {

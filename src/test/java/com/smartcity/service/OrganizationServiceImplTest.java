@@ -40,14 +40,14 @@ class OrganizationServiceImplTest {
     private Organization organization;
 
     @BeforeEach
-    public void init() {
+    void init() {
         MockitoAnnotations.initMocks(this);
         organizationService = new OrganizationServiceImpl(organizationDao, organizationDtoMapper);
         organization = organizationDtoMapper.organizationDtoToOrganization(organizationDto);
     }
 
     @Test
-    public void testCreateOrganizationDto() {
+    void testCreateOrganizationDto() {
         doReturn(organization).when(organizationDao).create(organization);
         assertThat(organizationService.create(organizationDto))
                 .isEqualToIgnoringGivenFields(organizationDto,
@@ -55,15 +55,15 @@ class OrganizationServiceImplTest {
     }
 
     @Test
-    public void testGetOrganizationDto() {
-        doReturn(organization).when(organizationDao).get(organization.getId());
-        assertThat(organizationService.get(organizationDto.getId()))
+    void testFindOrganizationDto() {
+        doReturn(organization).when(organizationDao).findById(organization.getId());
+        assertThat(organizationService.findById(organizationDto.getId()))
                 .isEqualToIgnoringGivenFields(organizationDto,
                         "createdDate", "updatedDate");
     }
 
     @Test
-    public void testUpdateTransactionDto() {
+    void testUpdateTransactionDto() {
         doReturn(organization).when(organizationDao).update(organization);
         assertThat(organizationService.update(organizationDto)).isEqualToIgnoringGivenFields(
                 organizationDto,
@@ -71,16 +71,16 @@ class OrganizationServiceImplTest {
     }
 
     @Test
-    public void testDeleteTransactionDto() {
+    void testDeleteTransactionDto() {
         doReturn(true).when(organizationDao).delete(organization.getId());
         assertTrue(organizationService.delete(organizationDto.getId()));
     }
 
     @Test
-    public void testGetAllOrganizationDto() {
+    void testFindAllOrganizationDto() {
         List<Organization> organizationList = Collections.singletonList(organization);
         List<OrganizationDto> organizationDtoList = Collections.singletonList(organizationDto);
-        doReturn(organizationList).when(organizationDao).getAll();
-        assertEquals(organizationDtoList, organizationService.getAll());
+        doReturn(organizationList).when(organizationDao).findAll();
+        assertEquals(organizationDtoList, organizationService.findAll());
     }
 }

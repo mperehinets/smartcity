@@ -12,13 +12,13 @@ import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
-public class EmailServiceImplTest {
+class EmailServiceImplTest {
 
     @Mock
     private EmailService emailSender;
 
     @Test
-    public void testSendEmailWithAttachment() {
+    void testSendEmailWithAttachment() {
         File[] attachments = new File[]{new File("README.md")};
         emailSender.sendMessageWithAttachment("Subject",
                 "Hello Dear, Please open the attachments.",
@@ -32,7 +32,7 @@ public class EmailServiceImplTest {
     }
 
     @Test
-    public void testSendEmail() {
+    void testSendEmail() {
         emailSender.sendSimpleMessage("Subject",
                 "Hello Dear, How are you ?",
                 "test.mail.client008@gmail.com"

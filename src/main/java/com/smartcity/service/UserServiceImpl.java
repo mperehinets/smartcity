@@ -36,13 +36,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserDto get(Long id) {
-        return userDtoMapper.convertUserIntoUserDto(userDao.get(id));
+    public UserDto findById(Long id) {
+        return userDtoMapper.convertUserIntoUserDto(userDao.findById(id));
     }
 
     @Override
     public List<UserDto> getAll() {
-        List<User> users = userDao.getAll();
+        List<User> users = userDao.findAll();
         return users.stream().
                 map(userDtoMapper::convertUserIntoUserDto)
                 .collect(Collectors.toList());

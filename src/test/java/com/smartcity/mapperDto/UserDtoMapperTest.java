@@ -34,7 +34,6 @@ class UserDtoMapperTest {
 
     @BeforeEach
     void setUp() {
-
         // Initializing user object
         user = new User();
         user.setId(1L);

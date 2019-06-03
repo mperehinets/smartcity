@@ -4,6 +4,7 @@ import com.smartcity.domain.Role;
 import com.smartcity.domain.User;
 import com.smartcity.exceptions.DbOperationException;
 import com.smartcity.exceptions.NotFoundException;
+import com.smartcity.mapper.UserMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,38 +17,39 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RoleDaoImplTest extends BaseTest {
+class RoleDaoImplTest extends BaseTest {
 
     @Autowired
     private RoleDaoImpl roleDao;
+    @Autowired
+    private UserMapper mapper;
 
     private Role role = new Role(Long.MAX_VALUE, "User", LocalDateTime.now(), LocalDateTime.now());
 
     @Test
-    public void createRole() {
-
+    void createRole() {
         assertEquals(role, roleDao.create(role));
     }
 
     @Test
-    public void createRole_NameIsNull() {
+    void createRole_NameIsNull() {
         role.setName(null);
         assertThrows(DbOperationException.class, () -> roleDao.create(role));
     }
 
     @Test
-    public void getRole() {
-        assertThat(role).isEqualToIgnoringGivenFields(roleDao.get(role.getId()),
+    void findRole() {
+        assertThat(role).isEqualToIgnoringGivenFields(roleDao.findById(role.getId()),
                 "createdDate", "updatedDate");
     }
 
     @Test
-    public void getAllRoles() {
+    void findAllRoles() {
         clearTables("Roles");
         roleDao.create(role);
         Role role1 = new Role(3L, "Supervisor", LocalDateTime.now(), LocalDateTime.now());
         roleDao.create(role1);
-        List<Role> roles = roleDao.getAll();
+        List<Role> roles = roleDao.findAll();
 
         assertAll("are fields of element equals",
                 () -> assertEquals(roles.get(0).getId(), role.getId()),
@@ -58,27 +60,27 @@ public class RoleDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void getRole_unexistingRole() {
+    void findRole_invalidId() {
         role.setId(Long.MAX_VALUE - 2);
-        assertThrows(NotFoundException.class, () -> roleDao.get(role.getId()));
+        assertThrows(NotFoundException.class, () -> roleDao.findById(role.getId()));
     }
 
     @Test
-    public void addRoleToUserTest() {
+    void addRoleToUserTest() {
         User user = new User();
         user.setEmail("example@gmail.com");
         user.setPassword("12345");
         user.setSurname("Johnson");
         user.setName("John");
         user.setPhoneNumber("0626552521415");
-        new UserDaoImpl(dataSource).create(user);
+        new UserDaoImpl(dataSource, mapper).create(user);
 
         assertTrue(roleDao.addRoleToUser(user.getId(), role.getId()));
 
     }
 
     @Test
-    public void removeRoleFromUserTest() {
+    void removeRoleFromUserTest() {
         clearTables("Users");
         User user = new User();
         user.setEmail("example@gmail.com");
@@ -86,7 +88,7 @@ public class RoleDaoImplTest extends BaseTest {
         user.setSurname("Johnson");
         user.setName("John");
         user.setPhoneNumber("0626552521415");
-        new UserDaoImpl(dataSource).create(user);
+        new UserDaoImpl(dataSource, mapper).create(user);
 
         roleDao.addRoleToUser(user.getId(), role.getId());
         assertTrue(roleDao.removeRoleFromUser(user.getId(), role.getId()));
@@ -94,7 +96,7 @@ public class RoleDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void removeRoleFromUser_wrongId() {
+    void removeRoleFromUser_invalidId() {
         clearTables("Users");
         User user = new User();
         user.setEmail("example@gmail.com");
@@ -102,14 +104,14 @@ public class RoleDaoImplTest extends BaseTest {
         user.setSurname("Johnson");
         user.setName("John");
         user.setPhoneNumber("0626552521415");
-        new UserDaoImpl(dataSource).create(user);
+        new UserDaoImpl(dataSource, mapper).create(user);
 
         roleDao.addRoleToUser(user.getId(), role.getId());
         assertFalse(roleDao.removeRoleFromUser(user.getId() + 12L, role.getId()));
     }
 
     @Test
-    public void getRolesByUserId() {
+    void findRolesByUserId() {
         clearTables("Users_roles");
         clearTables("Users");
         clearTables("Roles");
@@ -124,7 +126,7 @@ public class RoleDaoImplTest extends BaseTest {
         user.setSurname("Johnson");
         user.setName("John");
         user.setPhoneNumber("0626552521415");
-        new UserDaoImpl(dataSource).create(user);
+        new UserDaoImpl(dataSource, mapper).create(user);
 
         template.update("insert into Users_roles(role_id,user_id) values (1," + user.getId() + ");");
         template.update("insert into Users_roles(role_id,user_id) values (2," + user.getId() + ");");
@@ -142,43 +144,41 @@ public class RoleDaoImplTest extends BaseTest {
     }
 
     @Test
-    public void deleteRole() {
+    void deleteRole() {
         assertTrue(roleDao.delete(role.getId()));
     }
 
     @Test
-    public void deleteRole_unexistingRole() {
+    void deleteRole_invalidId() {
         role.setId(Long.MAX_VALUE - 2);
         assertThrows(NotFoundException.class, () -> roleDao.delete(role.getId()));
     }
 
     @Test
-    public void updateRole() {
+    void updateRole() {
         role.setName("Supervisor");
         assertThat(role).isEqualToIgnoringGivenFields(roleDao.update(role), "updatedDate");
     }
 
     @Test
-    public void updateRole_unexistingRole() {
-
+    void updateRole_invalidId() {
         Role updatedRole = new Role(Long.MAX_VALUE - 2, "Supervisor", LocalDateTime.now(), LocalDateTime.now());
         assertThrows(NotFoundException.class, () -> roleDao.update(updatedRole));
     }
 
     @Test
-    public void updateRole_NameIsNull() {
-
+    void updateRole_invalidName() {
         role.setName(null);
         assertThrows(DbOperationException.class, () -> roleDao.update(role));
     }
 
     @BeforeEach
-    public void createTestRole() {
+    void createTestRole() {
         roleDao.create(role);
     }
 
     @AfterEach
-    public void cleanRoles() {
+    void cleanRoles() {
         clearTables("Roles");
     }
 

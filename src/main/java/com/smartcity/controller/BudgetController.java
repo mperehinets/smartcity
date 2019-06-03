@@ -4,6 +4,7 @@ import com.smartcity.dto.BudgetDto;
 import com.smartcity.service.BudgetService;
 import com.smartcity.service.BudgetServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,11 +19,13 @@ public class BudgetController {
         this.service = service;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public BudgetDto get() {
         return service.get();
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

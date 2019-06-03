@@ -37,13 +37,13 @@ class OrganizationDtoMapperTest {
     }
 
     @Test
-    public void testConvertDaoToDto() {
+    void testConvertDaoToDto() {
         assertThat(organizationDto).isEqualToIgnoringGivenFields(organizationDtoMapper
                 .organizationToOrganizationDto(organization));
     }
 
     @Test
-    public void testConvertDtoToDao() {
+    void testConvertDtoToDao() {
         assertThat(organizationDtoMapper.organizationDtoToOrganization(organizationDto))
                 .isEqualToIgnoringGivenFields(organization);
     }

@@ -2,21 +2,13 @@ package com.smartcity.mapper;
 
 import com.smartcity.domain.Comment;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class CommentMapper implements RowMapper<Comment> {
-
-    private static CommentMapper instance = new CommentMapper();
-
-    private CommentMapper() {
-
-    }
-
-    public static CommentMapper getInstance() {
-        return instance;
-    }
 
     public Comment mapRow(ResultSet resultSet, int i) throws SQLException {
         Comment comment = new Comment();

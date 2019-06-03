@@ -24,22 +24,17 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto create(CommentDto commentDto) {
-        return mapper.
-                commentToCommentDto(commentDao.
-                        create(mapper.commentDtoToComment(commentDto)));
+        return mapper.commentToCommentDto(commentDao.create(mapper.commentDtoToComment(commentDto)));
     }
 
     @Override
     public CommentDto findById(Long id) {
-        return mapper.
-                commentToCommentDto(commentDao.findById(id));
+        return mapper.commentToCommentDto(commentDao.findById(id));
     }
 
     @Override
     public CommentDto update(CommentDto commentDto) {
-        return mapper.
-                commentToCommentDto(
-                        commentDao.update(mapper.commentDtoToComment(commentDto)));
+        return mapper.commentToCommentDto(commentDao.update(mapper.commentDtoToComment(commentDto)));
     }
 
     @Override

@@ -17,7 +17,6 @@ public class UserDtoMapper {
         userDto.setActive(user.isActive());
         userDto.setCreatedDate(user.getCreatedDate());
         userDto.setUpdatedDate(user.getUpdatedDate());
-
         return userDto;
     }
 
@@ -32,7 +31,6 @@ public class UserDtoMapper {
         user.setActive(userDto.isActive());
         user.setCreatedDate(userDto.getCreatedDate());
         user.setUpdatedDate(userDto.getUpdatedDate());
-
         return user;
     }
 }

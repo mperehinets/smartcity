@@ -30,8 +30,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionDto findById(Long id) {
-        return mapper.
-                transactionToTransactionDto(transDao.findById(id));
+        return mapper.transactionToTransactionDto(transDao.findById(id));
     }
 
     @Override
