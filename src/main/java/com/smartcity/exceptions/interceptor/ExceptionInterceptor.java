@@ -11,20 +11,16 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class ExceptionInterceptor {
 
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
-    @ResponseBody
     ExceptionResponse notFoundException(@NonNull HttpServletRequest request,
                                         @NonNull NotFoundException ex) {
         Preconditions.checkNotNull(request.getRequestURI());
@@ -38,7 +34,6 @@ public class ExceptionInterceptor {
 
     @ResponseStatus(code = HttpStatus.CONFLICT)
     @ExceptionHandler(RecordExistsException.class)
-    @ResponseBody
     ExceptionResponse recordExistsException(@NonNull HttpServletRequest request,
                                             @NonNull RecordExistsException ex) {
         Preconditions.checkNotNull(request.getRequestURI());
@@ -52,7 +47,6 @@ public class ExceptionInterceptor {
 
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DbOperationException.class)
-    @ResponseBody
     ExceptionResponse databaseOperationException(@NonNull HttpServletRequest request,
                                                  @NonNull DbOperationException ex) {
         Preconditions.checkNotNull(request.getRequestURI());
@@ -66,7 +60,6 @@ public class ExceptionInterceptor {
 
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseBody
     ExceptionResponse methodArgumentNotValidException(@NonNull HttpServletRequest request,
                                                       @NonNull MethodArgumentNotValidException ex) {
         Preconditions.checkNotNull(request.getRequestURI());
@@ -88,7 +81,6 @@ public class ExceptionInterceptor {
 
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     @ExceptionHandler(BadCredentialsException.class)
-    @ResponseBody
     ExceptionResponse badCredentialsException(@NonNull HttpServletRequest request,
                                               @NonNull BadCredentialsException ex) {
         Preconditions.checkNotNull(request.getRequestURI());
@@ -102,7 +94,6 @@ public class ExceptionInterceptor {
 
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     @ExceptionHandler(InvalidJwtAuthenticationException.class)
-    @ResponseBody
     ExceptionResponse invalidJwtAuthenticationException(@NonNull HttpServletRequest request,
                                               @NonNull InvalidJwtAuthenticationException ex) {
         Preconditions.checkNotNull(request.getRequestURI());
