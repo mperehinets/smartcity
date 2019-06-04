@@ -11,9 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -83,22 +83,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public boolean setRoles(Long userId, List<Role> roles) {
-        List<Role> existingRoles = roleDao.findAll();
+    public boolean setRoles(Long userId, List<Long> newRolesIds) {
+        List<Long> existingRolesIds = roleDao.findAll()
+                .stream().flatMap(r -> Stream.of(r.getId())).collect(Collectors.toList());
 
-        List<Role> currentRoles = roleDao.getRolesByUserId(userId);
+        List<Long> currentRolesIds = roleDao.getRolesByUserId(userId)
+                .stream().flatMap(r -> Stream.of(r.getId())).collect(Collectors.toList());
 
         // Adding new roles
-        for (Role role : roles) {
-            if (!currentRoles.contains(role) && existingRoles.contains(role)) {
-                roleDao.addRoleToUser(userId, role.getId());
+        for (Long roleId : newRolesIds) {
+            if (!currentRolesIds.contains(roleId) && existingRolesIds.contains(roleId)) {
+                roleDao.addRoleToUser(userId, roleId);
             }
         }
 
         // Removing non-actual roles
-        for (Role role : currentRoles) {
-            if (!roles.contains(role)) {
-                roleDao.removeRoleFromUser(userId, role.getId());
+        for (Long roleId : currentRolesIds) {
+            if (!newRolesIds.contains(roleId)) {
+                roleDao.removeRoleFromUser(userId, roleId);
             }
         }
 

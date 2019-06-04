@@ -187,27 +187,24 @@ class UserServiceImplTest {
         // Initializing lists
         List<Role> existingRoles;
         List<Role> currentRoles;
-        List<Role> newRoles;
+        List<Long> newRolesIds;
 
         Role adminRole = new Role();
         adminRole.setId(1L);
-        adminRole.setName("ADMIN");
 
         Role userRole = new Role();
         userRole.setId(2L);
-        userRole.setName("USER");
 
         Role supervisorRole = new Role();
         supervisorRole.setId(3L);
-        supervisorRole.setName("SUPERVISOR");
 
         Role nonExistentRole = new Role();
         nonExistentRole.setId(4L);
-        nonExistentRole.setName("NON-EXISTENT-ROLE");
 
         existingRoles = Stream.of(adminRole, userRole, supervisorRole).collect(Collectors.toList());
         currentRoles = Stream.of(adminRole, userRole).collect(Collectors.toList());
-        newRoles = Stream.of(adminRole, supervisorRole, nonExistentRole).collect(Collectors.toList());
+        newRolesIds = Stream.of(adminRole, supervisorRole, nonExistentRole)
+                .flatMap(r -> Stream.of(r.getId())).collect(Collectors.toList());
 
         // Expected methods call numbers
         final int expectedAddRoleToUserCallsNumber = 1;
@@ -220,7 +217,7 @@ class UserServiceImplTest {
 
 
         // Testing
-        userService.setRoles(userDto.getId(), newRoles);
+        userService.setRoles(userDto.getId(), newRolesIds);
 
 
         Mockito.verify((roleDao), Mockito.times(expectedAddRoleToUserCallsNumber))
