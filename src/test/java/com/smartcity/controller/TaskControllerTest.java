@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -188,22 +189,20 @@ class TaskControllerTest {
     void testFindTaskByOrganizationId_failFlow() throws Exception {
         doThrow(notFoundException).when(taskService).findByOrganizationId(fakeId);
 
-        mockMvc.perform(get("/tasks/findByOrg")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("findByOrganizationId", fakeId.toString()))
+        mockMvc.perform(get("/tasks/organizationId/" + fakeId)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("url").value("/tasks/findByOrg"))
+                .andExpect(jsonPath("url").value("/tasks/organizationId/" + fakeId))
                 .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
     }
 
     @Test
     void testFindTaskByOrganizationId_successFlow() throws Exception {
-        List<TaskDto> expectedTaskDtoList = Arrays.asList(task);
+        List<TaskDto> expectedTaskDtoList = Collections.singletonList(task);
         doReturn(expectedTaskDtoList).when(taskService).findByOrganizationId(task.getUsersOrganizationsId());
 
-        MvcResult mvcResult = mockMvc.perform(get("/tasks/findByOrg")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("findByOrganizationId", task.getUsersOrganizationsId().toString()))
+        MvcResult mvcResult = mockMvc.perform(get("/tasks/organizationId/" + task.getUsersOrganizationsId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andReturn();
 
         assertEquals(expectedTaskDtoList.toString(), mvcResult.getResponse().getContentAsString());
@@ -213,22 +212,20 @@ class TaskControllerTest {
     void testFindTaskByUserId_failFlow() throws Exception {
         doThrow(notFoundException).when(taskService).findByUserId(fakeId);
 
-        mockMvc.perform(get("/tasks/findByUser")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("findByUserId", fakeId.toString()))
+        mockMvc.perform(get("/tasks/userId/" + fakeId)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("url").value("/tasks/findByUser"))
+                .andExpect(jsonPath("url").value("/tasks/userId/" + fakeId))
                 .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
     }
 
     @Test
     void testFindTaskByUserId_successFlow() throws Exception {
-        List<TaskDto> expectedTaskDtoList = Arrays.asList(task);
+        List<TaskDto> expectedTaskDtoList = Collections.singletonList(task);
         doReturn(expectedTaskDtoList).when(taskService).findByUserId(task.getUsersOrganizationsId());
 
-        MvcResult mvcResult = mockMvc.perform(get("/tasks/findByUser")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("findByUserId", task.getUsersOrganizationsId().toString()))
+        MvcResult mvcResult = mockMvc.perform(get("/tasks/userId/" + task.getUsersOrganizationsId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andReturn();
 
         assertEquals(expectedTaskDtoList.toString(), mvcResult.getResponse().getContentAsString());

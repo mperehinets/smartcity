@@ -46,8 +46,8 @@ public class TransactionController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/findByTask", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TransactionDto> findByTaskId(@RequestParam("id") Long taskId) {
+    @GetMapping(value = "/taskId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TransactionDto> findByTaskId(@PathVariable("id") Long taskId) {
         return transService.findByTaskId(taskId);
     }
 

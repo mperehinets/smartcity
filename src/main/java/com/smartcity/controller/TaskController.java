@@ -52,14 +52,14 @@ public class TaskController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/findByOrg", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TaskDto> findByOrganizationId(@RequestParam("findByOrganizationId") Long id) {
+    @GetMapping(value = "/organizationId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TaskDto> findByOrganizationId(@PathVariable("id") Long id) {
         return taskService.findByOrganizationId(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/findByUser", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TaskDto> findByUserId(@RequestParam("findByUserId") Long id) {
+    @GetMapping(value = "/userId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TaskDto> findByUserId(@PathVariable("id") Long id) {
         return taskService.findByUserId(id);
     }
 }

@@ -29,7 +29,7 @@ public class BudgetDaoImpl implements BudgetDao {
 
     public Budget createOrUpdate(Budget budget) {
         int rowsCount = getBudgetRowsCount();
-        if (rowsCount == 1) return updatedRow(budget);
+        if (rowsCount >= 1) return updatedRow(budget);
         else {
             return createdNewBudget(budget);
         }
