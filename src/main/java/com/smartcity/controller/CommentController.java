@@ -52,14 +52,14 @@ public class CommentController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/findByTask", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CommentDto> findByTaskId(@RequestParam("findByTaskId") Long id) {
+    @GetMapping(value = "/taskId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CommentDto> findByTaskId(@PathVariable("id") Long id) {
         return commentService.findByTaskId(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/findByUser", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CommentDto> findByUserId(@RequestParam("findByUserId") Long id) {
+    @GetMapping(value = "/userId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CommentDto> findByUserId(@PathVariable("id") Long id) {
         return commentService.findByUserId(id);
     }
 

@@ -172,11 +172,10 @@ class CommentControllerTest {
     void testFindByTaskdIdComment_failFlow() throws Exception {
         Mockito.when(commentService.findByTaskId(fakeId))
                 .thenThrow(notFoundException);
-        mockMvc.perform(get("/comments/findByTask")
-                .param("findByTaskId", fakeId.toString())
+        mockMvc.perform(get("/comments/taskId/" + fakeId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(status().isNotFound()).andExpect(jsonPath("url").value("/comments/findByTask"))
+                .andExpect(status().isNotFound()).andExpect(jsonPath("url").value("/comments/taskId/" + fakeId))
                 .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
     }
 
@@ -184,8 +183,7 @@ class CommentControllerTest {
     void testFindByTaskdIdComment_successFlow() throws Exception {
         List<CommentDto> startList = Collections.singletonList(commentDto);
         Mockito.when(commentService.findByTaskId(commentDto.getTaskId())).thenReturn(startList);
-        final MvcResult result = mockMvc.perform(get("/comments/findByTask")
-                .param("findByTaskId", commentDto.getTaskId().toString())
+        final MvcResult result = mockMvc.perform(get("/comments/taskId/" + commentDto.getTaskId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
         CommentDto[] arrCommentDto = objMapper
@@ -198,11 +196,10 @@ class CommentControllerTest {
     void testFindByUserIdComment_failFlow() throws Exception {
         Mockito.when(commentService.findByUserId(fakeId))
                 .thenThrow(notFoundException);
-        mockMvc.perform(get("/comments/findByUser")
-                .param("findByUserId", fakeId.toString())
+        mockMvc.perform(get("/comments/userId/" + fakeId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("url").value("/comments/findByUser"))
+                .andExpect(jsonPath("url").value("/comments/userId/" + fakeId))
                 .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
     }
 
@@ -210,8 +207,7 @@ class CommentControllerTest {
     void testFindByUserIdComment_successFlow() throws Exception {
         List<CommentDto> startList = Collections.singletonList(commentDto);
         Mockito.when(commentService.findByUserId(commentDto.getUserId())).thenReturn(startList);
-        final MvcResult result = mockMvc.perform(get("/comments/findByUser")
-                .param("findByUserId", commentDto.getUserId().toString())
+        final MvcResult result = mockMvc.perform(get("/comments/userId/" + commentDto.getUserId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
         CommentDto[] arrCommentDto = objMapper

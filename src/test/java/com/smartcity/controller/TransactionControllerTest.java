@@ -159,10 +159,10 @@ class TransactionControllerTest {
     @Test
     void testFindByTaskIdTransaction_failFlow() throws Exception {
         doThrow(notFoundException).when(transService).findByTaskId(fakeId);
-        mockMvc.perform(get("/transactions/findByTask?id=" + fakeId)
+        mockMvc.perform(get("/transactions/taskId/" + fakeId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("url").value("/transactions/findByTask"))
+                .andExpect(jsonPath("url").value("/transactions/taskId/" + fakeId))
                 .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
     }
 
@@ -170,7 +170,7 @@ class TransactionControllerTest {
     void testFindByTaskIdTransaction_successFlow() throws Exception {
         List<TransactionDto> startList = Collections.singletonList(transDto);
         doReturn(startList).when(transService).findByTaskId(transDto.getTaskId());
-        final MvcResult result = mockMvc.perform(get("/transactions/findByTask?id=" + transDto.getTaskId())
+        final MvcResult result = mockMvc.perform(get("/transactions/taskId/" + transDto.getTaskId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
         TransactionDto[] arrTransaction = objMapper
