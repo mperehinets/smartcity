@@ -20,7 +20,7 @@ public class BudgetController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public BudgetDto get() {
         return service.get();
     }
