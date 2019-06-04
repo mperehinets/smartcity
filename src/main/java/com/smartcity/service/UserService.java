@@ -1,7 +1,7 @@
 package com.smartcity.service;
 
-import com.smartcity.dto.UserDto;
 import com.smartcity.domain.Role;
+import com.smartcity.dto.UserDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,5 +25,5 @@ public interface UserService {
 
     List<Role> getRoles(Long id);
 
-    boolean setRoles(Long userId, List<Role> roles);
+    boolean setRoles(Long userId, List<Long> newRolesIds);
 }

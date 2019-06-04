@@ -74,7 +74,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}/set-roles", consumes = MediaType.APPLICATION_JSON_VALUE)
-    boolean setRolesUserId(@PathVariable("id") Long userId, @RequestBody List<Role> roles) {
-        return userService.setRoles(userId, roles);
+    boolean setRolesByUserId(@PathVariable("id") Long userId, @RequestBody List<Long> newRolesIds) {
+        return userService.setRoles(userId, newRolesIds);
     }
 }

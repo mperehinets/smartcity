@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -220,7 +221,7 @@ class UserControllerTest {
     @Test
     void setRolesUserId() throws Exception {
         // Initializing list of roles
-        List<Role> roles = new ArrayList<>();
+        List<Long> roles = Arrays.asList(1L, 2L);
 
         // Instantiating object -> json mapper
         ObjectMapper objectMapper = new ObjectMapper();
