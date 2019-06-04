@@ -1,9 +1,11 @@
 package com.smartcity.controller;
 
 import com.smartcity.dto.OrganizationDto;
+import com.smartcity.dto.UserDto;
 import com.smartcity.dto.transfer.ExistingRecord;
 import com.smartcity.dto.transfer.NewRecord;
 import com.smartcity.service.OrganizationService;
+import com.smartcity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,10 +18,12 @@ import java.util.List;
 @RequestMapping("/organizations")
 public class OrganizationController {
     private OrganizationService organizationService;
+    private UserService userService;
 
     @Autowired
-    public OrganizationController(OrganizationService organizationService) {
+    public OrganizationController(OrganizationService organizationService, UserService userService) {
         this.organizationService = organizationService;
+        this.userService = userService;
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -54,6 +58,24 @@ public class OrganizationController {
     @GetMapping
     public List<OrganizationDto> findAll() {
         return organizationService.findAll();
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{organizationId}/addUser/{userId}")
+    public boolean addUserToOrganization(@PathVariable("organizationId") Long organizationId,
+                                         @PathVariable("userId") Long userId) {
+        UserDto userDto = userService.findById(userId);
+        OrganizationDto organizationDto = organizationService.findById(organizationId);
+        return organizationService.addUserToOrganization(organizationDto, userDto);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = "/{organizationId}/removeUser/{userId}")
+    public boolean removeUserFromOrganization(@PathVariable("organizationId") Long organizationId,
+                                            @PathVariable("userId") Long userId) {
+        UserDto userDto = userService.findById(userId);
+        OrganizationDto organizationDto = organizationService.findById(organizationId);
+        return organizationService.removeUserFromOrganization(organizationDto, userDto);
     }
 
 }
