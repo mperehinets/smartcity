@@ -116,12 +116,9 @@ public class OrganizationDaoImpl implements OrganizationDao {
     public boolean addUserToOrganization(Organization organization, User user) {
         try {
             LocalDateTime currDate = LocalDateTime.now();
-            jdbcTemplate.update(Queries.SQL_ORGANIZATION_ADD_USER_TO_ORGANIZATION, preparedStatement -> {
-                preparedStatement.setLong(1, user.getId());
-                preparedStatement.setLong(2, organization.getId());
-                preparedStatement.setObject(3, currDate);
-                preparedStatement.setObject(4, currDate);
-            });
+            jdbcTemplate.update(Queries.SQL_ORGANIZATION_ADD_USER_TO_ORGANIZATION, user.getId(), organization.getId(),
+                    currDate,
+                    currDate);
             return true;
         } catch (Exception e) {
             logger.error("Can't add user:{} to organization:{}. Error:{}", user, organization, e.getMessage());
