@@ -7,8 +7,7 @@ import com.smartcity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,9 +58,9 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/reset-password")
     public boolean updatePassword(@RequestBody String newPassword,
-                                  @AuthenticationPrincipal User user) {
+                                  Authentication authentication) {
 
-        Long userId = userService.findByEmail(user.getUsername()).getId();
+        Long userId = userService.findByEmail(authentication.getName()).getId();
 
         return userService.updatePassword(userId, newPassword);
     }
@@ -77,4 +76,10 @@ public class UserController {
     boolean setRolesByUserId(@PathVariable("id") Long userId, @RequestBody List<Long> newRolesIds) {
         return userService.setRoles(userId, newRolesIds);
     }
+
+    @GetMapping(value = "get-current", produces = MediaType.APPLICATION_JSON_VALUE)
+    UserDto getCurrentUser(Authentication authentication) {
+        return userService.findByEmail(authentication.getName());
+    }
+
 }
