@@ -1,6 +1,7 @@
 package com.smartcity.dao;
 
 import com.smartcity.domain.Organization;
+import com.smartcity.domain.User;
 import com.smartcity.exceptions.DbOperationException;
 import com.smartcity.exceptions.NotFoundException;
 import org.junit.jupiter.api.AfterEach;
@@ -16,6 +17,8 @@ class OrganizationDaoImplTest extends BaseTest {
 
     @Autowired
     private OrganizationDao organizationDao;
+    @Autowired
+    private UserDao userDao;
 
     private Organization organization = new Organization(1L,
             "komunalna",
@@ -102,6 +105,39 @@ class OrganizationDaoImplTest extends BaseTest {
         assertThat(organizationDao.findAll().get(0)).isEqualToIgnoringGivenFields(organization,
                 "createdDate", "updatedDate");
 
+    }
+
+    @Test
+    public void testAddUserToOrganization() {
+        assertTrue(organizationDao.addUserToOrganization(organizationDao.create(organization), userDao.findById(1L)));
+    }
+
+    @Test
+    public void testRemoveUserFromOrganization() {
+        organizationDao.create(organization);
+        organizationDao.addUserToOrganization(organization, userDao.findById(1L));
+
+        assertTrue(organizationDao.removeUserFromOrganization(organization, userDao.findById(1L)));
+    }
+
+    @Test
+    public void testRemoveUserFromOrganization_invalidUserId() {
+        organizationDao.create(organization);
+        User user = userDao.findById(1L);
+        organizationDao.addUserToOrganization(organization, userDao.findById(1L));
+        user.setId(Long.MAX_VALUE);
+
+        assertThrows(NotFoundException.class, () -> organizationDao.removeUserFromOrganization(organization, user));
+    }
+
+    @Test
+    public void testRemoveUserFromOrganization_invalidOrganizationId() {
+        organizationDao.create(organization);
+        User user = userDao.findById(1L);
+        organizationDao.addUserToOrganization(organization, userDao.findById(1L));
+        organization.setId(Long.MAX_VALUE);
+
+        assertThrows(NotFoundException.class, () -> organizationDao.removeUserFromOrganization(organization, user));
     }
 
     @AfterEach

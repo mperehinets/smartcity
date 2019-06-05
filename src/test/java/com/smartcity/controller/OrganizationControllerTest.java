@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartcity.dto.OrganizationDto;
 import com.smartcity.exceptions.NotFoundException;
 import com.smartcity.exceptions.interceptor.ExceptionInterceptor;
+
+import com.smartcity.dto.UserDto;
 import com.smartcity.service.OrganizationServiceImpl;
+import com.smartcity.service.UserServiceImpl;
 import name.falgout.jeffrey.testing.junit.mockito.MockitoExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,12 +34,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OrganizationControllerTest {
     @Mock
     private OrganizationServiceImpl organizationService;
+    @Mock
+    private UserServiceImpl userService;
 
     @InjectMocks
     private OrganizationController organizationController;
 
     private MockMvc mockMvc;
     private OrganizationDto organizationDto;
+    private UserDto userDto;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final Long fakeId = 2L;
@@ -140,11 +146,41 @@ class OrganizationControllerTest {
         Mockito.when(organizationService.findAll()).thenReturn(organizations);
         mockMvc.perform(get("/organizations")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].name", is(organizationDto.getName())))
                 .andExpect(jsonPath("$[0].address", is(organizationDto.getAddress())));
 
     }
+
+    @Test
+    public void addUserToOrganization_successFlow() throws Exception {
+        userDto = new UserDto();
+        userDto.setId(1L);
+        userDto.setName("User");
+        userDto.setSurname("Test");
+        userDto.setEmail("example@gmail.com");
+
+        Mockito.when(organizationService.addUserToOrganization(organizationDto, userDto)).thenReturn(true);
+
+        mockMvc.perform(post("/organizations/" + organizationDto.getId() + "/addUser/" + userDto.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void removeUserFromOrganization_successFlow() throws Exception {
+        userDto = new UserDto();
+        userDto.setId(1L);
+        userDto.setName("User");
+        userDto.setSurname("Test");
+        userDto.setEmail("example@gmail.com");
+
+        Mockito.when(organizationService.removeUserFromOrganization(organizationDto, userDto)).thenReturn(true);
+
+        mockMvc.perform(delete("/organizations/" + organizationDto.getId() + "/removeUser/" + userDto.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
 }

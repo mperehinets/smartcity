@@ -100,4 +100,16 @@ public class OrganizationDto {
     public int hashCode() {
         return Objects.hash(id, name, address, createdDate, updatedDate);
     }
+
+    @Override
+    public String toString() {
+        return "OrganizationDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", createdDate=" + createdDate +
+                ", updatedDate=" + updatedDate +
+                '}';
+    }
 }
+
