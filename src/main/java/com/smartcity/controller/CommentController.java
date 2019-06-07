@@ -36,7 +36,7 @@ public class CommentController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public CommentDto updateComment(
             @Validated(ExistingRecord.class)
             @PathVariable("id") Long id,
