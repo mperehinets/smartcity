@@ -39,15 +39,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationEntryPoint authenticationEntryPoint;
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
-    }
-
-    @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint() {
-        return new CustomAuthenticationEntryPoint();
     }
 
     @Override
@@ -56,10 +54,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and()
                 .httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
                 .and()
                 .authorizeRequests()
-               .antMatchers("/", "/csrf",
+                .antMatchers("/", "/csrf",
                    "/v2/api-docs",
                    "/swagger-resources/configuration/ui",
                    "/configuration/ui",
@@ -75,9 +78,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.antMatchers(HttpMethod.DELETE, "**/users/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .apply(new JwtConfigurer(jwtTokenProvider))
-                .and()
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
+                .apply(new JwtConfigurer(jwtTokenProvider));
         //@formatter:on
     }
 
