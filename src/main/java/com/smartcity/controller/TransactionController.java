@@ -24,14 +24,14 @@ public class TransactionController {
         this.transService = transService;
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerFindById())")
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerFindByIdAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TransactionDto findById(@PathVariable("id") Long id) {
         return transService.findById(id);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerUpdateTransaction())")
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerUpdateTransactionAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public TransactionDto updateTransaction(
@@ -42,21 +42,21 @@ public class TransactionController {
         return transService.update(transactionDto);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerDeleteTransaction())")
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerDeleteTransactionAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public boolean deleteTransaction(@PathVariable("id") Long id) {
         return transService.delete(id);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerFindByTaskId())")
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerFindByTaskIdAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/taskId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TransactionDto> findByTaskId(@PathVariable("id") Long taskId) {
         return transService.findByTaskId(taskId);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerCreateTransaction())")
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerCreateTransactionAllowedRoles())")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public TransactionDto createTransaction(@Validated(NewRecord.class) @RequestBody TransactionDto transactionDto) {

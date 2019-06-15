@@ -12,129 +12,136 @@ import java.util.List;
 public class MethodSecurityConfig {
 
     // UserController
-    @Value("#{'${userController.setRolesByUserId}'.split(',')}")
-    private List<String> userControllerSetRolesByUserIdRoles;
-
     @Value("#{'${userController.deleteUser}'.split(',')}")
-    private List<String> userControllerDeleteUserRoles;
+    private List<String> userControllerDeleteUserAllowedRoles;
+
+    @Value("#{'${userController.activateUser}'.split(',')}")
+    private List<String> userControllerActivateUserAllowedRoles;
+
+    @Value("#{'${userController.setRolesByUserId}'.split(',')}")
+    private List<String> userControllerSetRolesByUserIdAllowedRoles;
 
     // BudgetController
     @Value("#{'${budgetController.put}'.split(',')}")
-    private List<String> budgetControllerPut;
+    private List<String> budgetControllerPutAllowedRoles;
 
     // OrganizationController
     @Value("#{'${organizationController.create}'.split(',')}")
-    private List<String> organizationControllerCreate;
+    private List<String> organizationControllerCreateAllowedRoles;
 
     @Value("#{'${organizationController.update}'.split(',')}")
-    private List<String> organizationControllerUpdate;
+    private List<String> organizationControllerUpdateAllowedRoles;
 
     @Value("#{'${organizationController.delete}'.split(',')}")
-    private List<String> organizationControllerDelete;
+    private List<String> organizationControllerDeleteAllowedRoles;
 
     @Value("#{'${organizationController.addUserToOrganization}'.split(',')}")
-    private List<String> organizationControllerAddUserToOrganization;
+    private List<String> organizationControllerAddUserToOrganizationAllowedRoles;
 
     @Value("#{'${organizationController.removeUserFromOrganization}'.split(',')}")
-    private List<String> organizationControllerRemoveUserFromOrganization;
+    private List<String> organizationControllerRemoveUserFromOrganizationAllowedRoles;
 
     // RoleController
     @Value("#{'${roleController.createRole}'.split(',')}")
-    private List<String> roleControllerCreateRole;
+    private List<String> roleControllerCreateRoleAllowedRoles;
 
     // TaskController
     @Value("#{'${taskController.createTask}'.split(',')}")
-    private List<String> taskControllerCreateTask;
+    private List<String> taskControllerCreateTaskAllowedRoles;
 
     @Value("#{'${taskController.createTask}'.split(',')}")
-    private List<String> taskControllerUpdateTask;
+    private List<String> taskControllerUpdateTaskAllowedRoles;
 
     @Value("#{'${taskController.createTask}'.split(',')}")
-    private List<String> taskControllerDeleteTask;
+    private List<String> taskControllerDeleteTaskAllowedRoles;
 
 
     // TransactionController
     @Value("#{'${transactionController.findById}'.split(',')}")
-    private List<String> transactionControllerFindById;
+    private List<String> transactionControllerFindByIdAllowedRoles;
 
     @Value("#{'${transactionController.updateTransaction}'.split(',')}")
-    private List<String> transactionControllerUpdateTransaction;
+    private List<String> transactionControllerUpdateTransactionAllowedRoles;
 
     @Value("#{'${transactionController.deleteTransaction}'.split(',')}")
-    private List<String> transactionControllerDeleteTransaction;
+    private List<String> transactionControllerDeleteTransactionAllowedRoles;
 
     @Value("#{'${transactionController.findByTaskId}'.split(',')}")
-    private List<String> transactionControllerFindByTaskId;
+    private List<String> transactionControllerFindByTaskIdAllowedRoles;
 
     @Value("#{'${transactionController.createTransaction}'.split(',')}")
-    private List<String> transactionControllerCreateTransaction;
+    private List<String> transactionControllerCreateTransactionAllowedRoles;
 
 
-    public List<String> getUserControllerSetRolesByUserIdRoles() {
-        return userControllerSetRolesByUserIdRoles;
+    public List<String> getUserControllerDeleteUserAllowedRoles() {
+        return userControllerDeleteUserAllowedRoles;
     }
 
-    public List<String> getUserControllerDeleteUserRoles() {
-        return userControllerDeleteUserRoles;
+    public List<String> getUserControllerActivateUserAllowedRoles() {
+        return userControllerActivateUserAllowedRoles;
     }
 
-    public List<String> getBudgetControllerPut() {
-        return budgetControllerPut;
+    public List<String> getUserControllerSetRolesByUserIdAllowedRoles() {
+        return userControllerSetRolesByUserIdAllowedRoles;
     }
 
-    public List<String> getOrganizationControllerCreate() {
-        return organizationControllerCreate;
+    public List<String> getBudgetControllerPutAllowedRoles() {
+        return budgetControllerPutAllowedRoles;
     }
 
-    public List<String> getOrganizationControllerUpdate() {
-        return organizationControllerUpdate;
+    public List<String> getOrganizationControllerCreateAllowedRoles() {
+        return organizationControllerCreateAllowedRoles;
     }
 
-    public List<String> getOrganizationControllerDelete() {
-        return organizationControllerDelete;
+    public List<String> getOrganizationControllerUpdateAllowedRoles() {
+        return organizationControllerUpdateAllowedRoles;
     }
 
-    public List<String> getOrganizationControllerAddUserToOrganization() {
-        return organizationControllerAddUserToOrganization;
+    public List<String> getOrganizationControllerDeleteAllowedRoles() {
+        return organizationControllerDeleteAllowedRoles;
     }
 
-    public List<String> getOrganizationControllerRemoveUserFromOrganization() {
-        return organizationControllerRemoveUserFromOrganization;
+    public List<String> getOrganizationControllerAddUserToOrganizationAllowedRoles() {
+        return organizationControllerAddUserToOrganizationAllowedRoles;
     }
 
-    public List<String> getRoleControllerCreateRole() {
-        return roleControllerCreateRole;
+    public List<String> getOrganizationControllerRemoveUserFromOrganizationAllowedRoles() {
+        return organizationControllerRemoveUserFromOrganizationAllowedRoles;
     }
 
-    public List<String> getTaskControllerCreateTask() {
-        return taskControllerCreateTask;
+    public List<String> getRoleControllerCreateRoleAllowedRoles() {
+        return roleControllerCreateRoleAllowedRoles;
     }
 
-    public List<String> getTaskControllerUpdateTask() {
-        return taskControllerUpdateTask;
+    public List<String> getTaskControllerCreateTaskAllowedRoles() {
+        return taskControllerCreateTaskAllowedRoles;
     }
 
-    public List<String> getTaskControllerDeleteTask() {
-        return taskControllerDeleteTask;
+    public List<String> getTaskControllerUpdateTaskAllowedRoles() {
+        return taskControllerUpdateTaskAllowedRoles;
     }
 
-    public List<String> getTransactionControllerFindById() {
-        return transactionControllerFindById;
+    public List<String> getTaskControllerDeleteTaskAllowedRoles() {
+        return taskControllerDeleteTaskAllowedRoles;
     }
 
-    public List<String> getTransactionControllerUpdateTransaction() {
-        return transactionControllerUpdateTransaction;
+    public List<String> getTransactionControllerFindByIdAllowedRoles() {
+        return transactionControllerFindByIdAllowedRoles;
     }
 
-    public List<String> getTransactionControllerDeleteTransaction() {
-        return transactionControllerDeleteTransaction;
+    public List<String> getTransactionControllerUpdateTransactionAllowedRoles() {
+        return transactionControllerUpdateTransactionAllowedRoles;
     }
 
-    public List<String> getTransactionControllerFindByTaskId() {
-        return transactionControllerFindByTaskId;
+    public List<String> getTransactionControllerDeleteTransactionAllowedRoles() {
+        return transactionControllerDeleteTransactionAllowedRoles;
     }
 
-    public List<String> getTransactionControllerCreateTransaction() {
-        return transactionControllerCreateTransaction;
+    public List<String> getTransactionControllerFindByTaskIdAllowedRoles() {
+        return transactionControllerFindByTaskIdAllowedRoles;
+    }
+
+    public List<String> getTransactionControllerCreateTransactionAllowedRoles() {
+        return transactionControllerCreateTransactionAllowedRoles;
     }
 }

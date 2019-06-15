@@ -26,7 +26,7 @@ public class BudgetController {
         return service.get();
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getBudgetControllerPut())")
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getBudgetControllerPutAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,

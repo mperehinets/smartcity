@@ -71,7 +71,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void find_successFlow() {
+    void findById_successFlow() {
         Mockito.when(userDao.findById(1L)).thenReturn(user);
         UserDto resultUserDto = userService.findById(1L);
         // Checking if the correct user was returned
@@ -134,14 +134,33 @@ class UserServiceImplTest {
     @Test
     void delete_successFlow() {
         Mockito.when(userDao.delete(1L)).then(invocationOnMock -> {
-            userDto.setActive(false);
+            user.setActive(false);
             return true;
         });
         boolean result = userService.delete(1L);
         // Checking if true was returned
         assertTrue(result);
         // Checking if the user is not active
-        assertFalse(userDto.isActive());
+        assertFalse(user.isActive());
+    }
+
+    @Test
+    void activateUser_successFlow(){
+        Mockito.when(userDao.findById(1L)).then(invocationOnMock -> {
+           user.setActive(false);
+           return user;
+        });
+
+        boolean result = userService.activate(1L);
+
+        // Checking if true was returned
+        assertTrue(result);
+
+        // Checking if the user is active
+        assertTrue(user.isActive());
+
+        // Checking if userDao.update(User user) method was called
+        Mockito.verify(userDao, Mockito.times(1)).update(user);
     }
 
     @Test
