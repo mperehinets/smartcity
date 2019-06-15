@@ -190,6 +190,13 @@ class UserControllerTest {
     }
 
     @Test
+    void activateUser_successFlow() throws Exception {
+        Mockito.when(userService.activate(userDto.getId())).thenReturn(true);
+        mockMvc.perform(post("/users/activate/" + userDto.getId()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void getRolesByUserId() throws Exception {
         // Initializing list of roles
         List<Role> roles = new ArrayList<>();

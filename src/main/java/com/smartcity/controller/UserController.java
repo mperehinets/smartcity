@@ -51,11 +51,19 @@ public class UserController {
         return userService.update(userDto);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getUserControllerDeleteUserRoles())")
+    @PreAuthorize("hasAnyRole" +
+            "(@securityConfiguration.getUserControllerDeleteUserAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     public boolean deleteUser(@PathVariable("id") Long id) {
         return userService.delete(id);
+    }
+
+    @PreAuthorize("hasAnyRole" +
+            "(@securityConfiguration.getUserControllerActivateUserAllowedRoles())")
+    @PostMapping(value = "/activate/{id}")
+    public boolean activateUser(@PathVariable("id") Long id){
+        return userService.activate(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -74,7 +82,8 @@ public class UserController {
         return userService.getRoles(id);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getUserControllerSetRolesByUserIdRoles())")
+    @PreAuthorize("hasAnyRole" +
+            "(@securityConfiguration.getUserControllerSetRolesByUserIdAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}/set-roles", consumes = MediaType.APPLICATION_JSON_VALUE)
     boolean setRolesByUserId(@PathVariable("id") Long userId, @RequestBody List<Long> newRolesIds) {

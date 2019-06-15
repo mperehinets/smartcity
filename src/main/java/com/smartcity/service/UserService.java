@@ -21,6 +21,8 @@ public interface UserService {
 
     boolean delete(Long id);
 
+    boolean activate(Long id);
+
     boolean updatePassword(Long userId, String newPassword);
 
     List<Role> getRoles(Long id);

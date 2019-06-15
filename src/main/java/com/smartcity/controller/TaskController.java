@@ -24,7 +24,8 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getTaskControllerCreateTask())")
+    @PreAuthorize("hasAnyRole" +
+            "(@securityConfiguration.getTaskControllerCreateTaskAllowedRoles())")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public TaskDto createTask(@Validated(NewRecord.class) @RequestBody TaskDto taskDto) {
@@ -37,7 +38,8 @@ public class TaskController {
         return taskService.findById(id);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getTaskControllerUpdateTask())")
+    @PreAuthorize("hasAnyRole" +
+            "(@securityConfiguration.getTaskControllerUpdateTaskAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public TaskDto updateTask(
@@ -48,7 +50,8 @@ public class TaskController {
         return taskService.update(taskDto);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getTaskControllerDeleteTask())")
+    @PreAuthorize("hasAnyRole" +
+            "(@securityConfiguration.getTaskControllerDeleteTaskAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public boolean deleteTask(@PathVariable("id") Long id) {

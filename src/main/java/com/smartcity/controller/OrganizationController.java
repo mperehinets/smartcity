@@ -27,7 +27,7 @@ public class OrganizationController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerCreate())")
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerCreateAllowedRoles())")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public OrganizationDto create(@Validated(NewRecord.class) @RequestBody OrganizationDto organizationDto) {
@@ -40,7 +40,7 @@ public class OrganizationController {
         return organizationService.findById(id);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerUpdate())")
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerUpdateAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public OrganizationDto update(
@@ -51,7 +51,7 @@ public class OrganizationController {
         return organizationService.update(organizationDto);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerDelete())")
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerDeleteAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public boolean delete(@PathVariable("id") Long id) {
@@ -64,7 +64,8 @@ public class OrganizationController {
         return organizationService.findAll();
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerAddUserToOrganization())")
+    @PreAuthorize("hasAnyRole" +
+            "(@securityConfiguration.getOrganizationControllerAddUserToOrganizationAllowedRoles())")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{organizationId}/addUser/{userId}")
     public boolean addUserToOrganization(@PathVariable("organizationId") Long organizationId,
@@ -74,7 +75,8 @@ public class OrganizationController {
         return organizationService.addUserToOrganization(organizationDto, userDto);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getOrganizationControllerRemoveUserFromOrganization())")
+    @PreAuthorize("hasAnyRole" +
+            "(@securityConfiguration.getOrganizationControllerRemoveUserFromOrganizationAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{organizationId}/removeUser/{userId}")
     public boolean removeUserFromOrganization(@PathVariable("organizationId") Long organizationId,

@@ -69,6 +69,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public boolean activate(Long id) {
+        User user = userDao.findById(id);
+        user.setActive(true);
+        userDao.update(user);
+        return true;
+    }
+
+    @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDao.findByEmail(username);
         List<Role> rolesByUserId = roleDao.getRolesByUserId(user.getId());

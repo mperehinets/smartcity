@@ -22,7 +22,7 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getRoleControllerCreateRole())")
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getRoleControllerCreateRoleAllowedRoles())")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public RoleDto createRole(@Validated(NewRecord.class) @RequestBody RoleDto roleDto) {
