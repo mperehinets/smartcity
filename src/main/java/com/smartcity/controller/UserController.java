@@ -7,6 +7,7 @@ import com.smartcity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,6 +51,7 @@ public class UserController {
         return userService.update(userDto);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getUserControllerDeleteUserRoles())")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     public boolean deleteUser(@PathVariable("id") Long id) {
@@ -71,13 +74,14 @@ public class UserController {
         return userService.getRoles(id);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getUserControllerSetRolesByUserIdRoles())")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}/set-roles", consumes = MediaType.APPLICATION_JSON_VALUE)
     boolean setRolesByUserId(@PathVariable("id") Long userId, @RequestBody List<Long> newRolesIds) {
         return userService.setRoles(userId, newRolesIds);
     }
 
-    @GetMapping(value = "get-current", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/get-current", produces = MediaType.APPLICATION_JSON_VALUE)
     UserDto getCurrentUser(Authentication authentication) {
         return userService.findByEmail(authentication.getName());
     }

@@ -60,15 +60,14 @@ class UserServiceImplTest {
         Mockito.when(userDao.create(user)).then(invocationOnMock -> {
             User user = invocationOnMock.getArgument(0);
             user.setId(1L);
-            user.setActive(true);
             return user;
         });
 
         UserDto resultUserDto = userService.create(userDto);
         // Checking if the id was generated
         assertNotNull(resultUserDto.getId());
-        // Checking if the user is active
-        assertTrue(resultUserDto.isActive());
+        // Checking if the user is not active
+        assertFalse(resultUserDto.isActive());
     }
 
     @Test

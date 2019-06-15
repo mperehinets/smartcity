@@ -24,7 +24,6 @@ public class RegistrationController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDto registerUser(@Validated(NewRecord.class) @RequestBody UserDto user) {
-        user.setActive(true);
         return userService.create(user);
     }
 

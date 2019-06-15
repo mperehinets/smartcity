@@ -32,6 +32,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDto create(UserDto userDto) {
         User user = userDtoMapper.convertUserDtoIntoUser(userDto);
+
+        // Setting user activity status as "false"
+        user.setActive(false);
+
         return userDtoMapper.convertUserIntoUserDto(userDao.create(user));
     }
 

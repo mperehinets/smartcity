@@ -9,7 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 
-@Import({DBConfig.class,EmailConfig.class, WebSecurityConfig.class, SwaggerConfig.class})
+@Import({DBConfig.class, EmailConfig.class, WebSecurityConfig.class, SwaggerConfig.class,
+        MethodSecurityConfig.class})
 @Configuration
 @ComponentScan(basePackages = "com.smartcity")
 public class ApplicationConfig extends AbstractSecurityWebApplicationInitializer {

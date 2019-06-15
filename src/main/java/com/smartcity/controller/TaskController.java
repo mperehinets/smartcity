@@ -7,6 +7,7 @@ import com.smartcity.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTaskControllerCreateTask())")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public TaskDto createTask(@Validated(NewRecord.class) @RequestBody TaskDto taskDto) {
@@ -35,6 +37,7 @@ public class TaskController {
         return taskService.findById(id);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTaskControllerUpdateTask())")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public TaskDto updateTask(
@@ -45,6 +48,7 @@ public class TaskController {
         return taskService.update(taskDto);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTaskControllerDeleteTask())")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public boolean deleteTask(@PathVariable("id") Long id) {
