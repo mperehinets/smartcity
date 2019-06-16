@@ -86,28 +86,11 @@ class UserControllerTest {
     }
 
     @Test
-    void getAll_successFlow() throws Exception {
+    void findAll_successFlow() throws Exception {
         // Initializing list of UserDto
-        List<UserDto> users = new ArrayList<>();
+        List<UserDto> users = this.getListOfUserDto();
 
-        UserDto user1 = new UserDto();
-        user1.setEmail("some@email.com");
-        user1.setPassword("qwerty");
-        user1.setSurname("Test");
-        user1.setName("User");
-        user1.setPhoneNumber("06558818");
-
-        UserDto user2 = new UserDto();
-        user2.setEmail("another@email.com");
-        user2.setPassword("trewq");
-        user2.setSurname("tset");
-        user2.setName("Resu");
-        user2.setPhoneNumber("05811451");
-
-        users.add(user1);
-        users.add(user2);
-
-        Mockito.when(userService.getAll()).thenReturn(users);
+        Mockito.when(userService.findAll()).thenReturn(users);
 
         mockMvc.perform(get("/users/all")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -147,6 +130,29 @@ class UserControllerTest {
                 .andExpect(jsonPath("name").value(userDto.getName()))
                 .andExpect(jsonPath("surname").value(userDto.getSurname()))
                 .andExpect(jsonPath("email").value(userDto.getEmail()));
+    }
+
+    @Test
+    void  findUsersByOrganizationId_successFlow() throws Exception {
+        // Initializing list of UserDto
+        List<UserDto> users = this.getListOfUserDto();
+
+        Long organizationId = 1L;
+
+        Mockito.when(userService.findByOrganizationId(organizationId)).thenReturn(users);
+
+        mockMvc.perform(get("/users/organization/" + organizationId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value(users.get(0).getId()))
+                .andExpect(jsonPath("$[0].name").value(users.get(0).getName()))
+                .andExpect(jsonPath("$[0].surname").value(users.get(0).getSurname()))
+                .andExpect(jsonPath("$[0].email").value(users.get(0).getEmail()))
+                .andExpect(jsonPath("$[1].id").value(users.get(1).getId()))
+                .andExpect(jsonPath("$[1].name").value(users.get(1).getName()))
+                .andExpect(jsonPath("$[1].surname").value(users.get(1).getSurname()))
+                .andExpect(jsonPath("$[1].email").value(users.get(1).getEmail()));
     }
 
     @Test
@@ -243,6 +249,29 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestObjectJson))
                 .andExpect(status().isOk());
+    }
+
+    private List<UserDto> getListOfUserDto(){
+        List<UserDto> users = new ArrayList<>();
+
+        UserDto user1 = new UserDto();
+        user1.setEmail("some@email.com");
+        user1.setPassword("qwerty");
+        user1.setSurname("Test");
+        user1.setName("User");
+        user1.setPhoneNumber("06558818");
+
+        UserDto user2 = new UserDto();
+        user2.setEmail("another@email.com");
+        user2.setPassword("trewq");
+        user2.setSurname("tset");
+        user2.setName("Resu");
+        user2.setPhoneNumber("05811451");
+
+        users.add(user1);
+        users.add(user2);
+
+        return users;
     }
 
 }

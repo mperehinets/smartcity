@@ -79,30 +79,13 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getAll_successFlow() {
+    void findAll_successFlow() {
         // Initializing users list
-        List<User> users = new ArrayList<>();
-
-        User user1 = new User();
-        user1.setEmail("some@email.com");
-        user1.setPassword("qwerty");
-        user1.setSurname("Test");
-        user1.setName("User");
-        user1.setPhoneNumber("06558818");
-
-        User user2 = new User();
-        user2.setEmail("another@email.com");
-        user2.setPassword("trewq");
-        user2.setSurname("tset");
-        user2.setName("Resu");
-        user2.setPhoneNumber("05811451");
-
-        users.add(user1);
-        users.add(user2);
+        List<User> users = this.getListOfUsers();
 
         Mockito.when(userDao.findAll()).thenReturn(users);
 
-        List<UserDto> resultUserList = userService.getAll();
+        List<UserDto> resultUserList = userService.findAll();
 
         for (int i = 0; i < users.size(); i++) {
             assertThat(users.get(i)).isEqualToIgnoringGivenFields(
@@ -118,6 +101,24 @@ class UserServiceImplTest {
         UserDto resultUserDto = userService.findByEmail(userDto.getEmail());
         // Checking if the correct user was returned
         assertThat(userDto).isEqualToIgnoringGivenFields(resultUserDto, "password");
+    }
+
+    @Test
+    void findByOrganizationId(){
+        // Initializing users list
+        List<User> users = this.getListOfUsers();
+
+        Long organizationId = 1L;
+
+        Mockito.when(userDao.findByOrganizationId(organizationId)).thenReturn(users);
+
+        List<UserDto> resultUserList = userService.findByOrganizationId(organizationId);
+
+        for (int i = 0; i < users.size(); i++) {
+            assertThat(users.get(i)).isEqualToIgnoringGivenFields(
+                    userDtoMapper.convertUserDtoIntoUser(resultUserList.get(i)),
+                    "id", "createdDate", "updatedDate", "password");
+        }
     }
 
     @Test
@@ -261,4 +262,26 @@ class UserServiceImplTest {
 
     }
 
+    private List<User> getListOfUsers(){
+        List<User> users = new ArrayList<>();
+
+        User user1 = new User();
+        user1.setEmail("some@email.com");
+        user1.setPassword("qwerty");
+        user1.setSurname("Test");
+        user1.setName("User");
+        user1.setPhoneNumber("06558818");
+
+        User user2 = new User();
+        user2.setEmail("another@email.com");
+        user2.setPassword("trewq");
+        user2.setSurname("tset");
+        user2.setName("Resu");
+        user2.setPhoneNumber("05811451");
+
+        users.add(user1);
+        users.add(user2);
+
+        return users;
+    }
 }

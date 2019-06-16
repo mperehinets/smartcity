@@ -35,13 +35,19 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UserDto> findAll() {
-        return userService.getAll();
+        return userService.findAll();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDto findByEmail(@RequestParam("email") String email) {
         return userService.findByEmail(email);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/organization/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserDto> findUsersByOrganizationId(@PathVariable("id") Long organizationId){
+        return userService.findByOrganizationId(organizationId);
     }
 
     @ResponseStatus(HttpStatus.OK)

@@ -14,6 +14,8 @@ public interface UserDao {
 
     User findByEmail(String email);
 
+    List<User> findByOrganizationId(Long organizationId);
+
     User update(User user);
 
     boolean delete(Long id);
