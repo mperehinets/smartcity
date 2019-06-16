@@ -1,8 +1,10 @@
 package com.smartcity.dao;
 
+import com.smartcity.domain.Organization;
 import com.smartcity.domain.User;
 import com.smartcity.exceptions.DbOperationException;
 import com.smartcity.exceptions.NotFoundException;
+import com.smartcity.mapper.OrganizationMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
- class UserDaoImplTest extends BaseTest {
+class UserDaoImplTest extends BaseTest {
 
     @Autowired
     private UserDao userDao;
@@ -92,32 +94,16 @@ import static org.junit.jupiter.api.Assertions.*;
         clearTables("Users");
 
         // Initializing users list
-        List<User> users = new ArrayList<>();
-
-        User user1 = new User();
-        user1.setEmail("some@email.com");
-        user1.setPassword("qwerty");
-        user1.setSurname("Test");
-        user1.setName("User");
-        user1.setPhoneNumber("06558818");
-        user1.setActive(true);
-        User user2 = new User();
-        user2.setEmail("another@email.com");
-        user2.setPassword("trewq");
-        user2.setSurname("tset");
-        user2.setName("Resu");
-        user2.setPhoneNumber("05811451");
-        user2.setActive(false);
-
-        users.add(user1);
-        users.add(user2);
-        // Adding more users to database
-        userDao.create(user1);
-        userDao.create(user2);
+        List<User> users = this.getListOfUsers();
 
         for (User user : users) {
+            // Adding more users to database
+            userDao.create(user);
+
+            // Encode passwords
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
+
         List<User> resultUserList = userDao.findAll();
         for (int i = 0; i < users.size(); i++) {
             assertThat(users.get(i)).isEqualToIgnoringGivenFields(resultUserList.get(i),
@@ -131,7 +117,7 @@ import static org.junit.jupiter.api.Assertions.*;
         clearTables("Users");
         List<User> resultUserList = userDao.findAll();
 
-        assertTrue(() -> resultUserList.size() == 0);
+        assertTrue(resultUserList.isEmpty());
     }
 
     @Test
@@ -147,6 +133,53 @@ import static org.junit.jupiter.api.Assertions.*;
     @Test
     void testFindByEmail_incorrectEmail() {
         assertThrows(NotFoundException.class, () -> userDao.findByEmail("not_existing_email@gmail.com"));
+    }
+
+    @Test
+    void testFindByOrganizationId_successFlow() {
+        clearTables("Users_organizations", "Organizations");
+
+
+        OrganizationMapper organizationMapper = new OrganizationMapper();
+
+        // Inserting organization to DB
+        template.update(
+                "INSERT INTO Organizations (name, address, created_date, updated_date)" +
+                        "VALUES('org', 'somewhere', '2019-05-05', '2019-05-05')");
+
+        // Getting organizationsFromDb
+        List<Organization> organizations = template.query(
+                "SELECT * FROM Organizations", organizationMapper);
+
+        // Inserting row to Users_organizations table
+        template.update(
+                "INSERT INTO Users_organizations(user_id, organization_id, created_date, updated_date)" +
+                        " VALUES (? ,? ,'2019-05-05','2019-05-05');",
+                user.getId(), organizations.get(0).getId());
+
+
+        if (!organizations.isEmpty()) {
+            List<User> users = userDao.findByOrganizationId(organizations.get(0).getId());
+
+            // Checking if there are any users related to organization
+            assertFalse(users.isEmpty());
+        }
+        else {
+            fail();
+        }
+    }
+
+    @Test
+    void testFindByOrganizationId_emptyTable() {
+        clearTables("Users_organizations");
+        List<User> resultUser = userDao.findByOrganizationId(1L);
+        assertTrue(resultUser.isEmpty());
+    }
+
+    @Test
+    void testFindByOrganizationId_incorrectOrganizationId() {
+        List<User> resultUser = userDao.findByOrganizationId(Long.MAX_VALUE);
+        assertTrue(resultUser.isEmpty());
     }
 
     @Test
@@ -197,6 +230,30 @@ import static org.junit.jupiter.api.Assertions.*;
     @AfterEach
     void AfterEachTearDown() {
         clearTables("Users");
+    }
+
+    private List<User> getListOfUsers() {
+        List<User> users = new ArrayList<>();
+
+        User user1 = new User();
+        user1.setEmail("some@email.com");
+        user1.setPassword("qwerty");
+        user1.setSurname("Test");
+        user1.setName("User");
+        user1.setPhoneNumber("06558818");
+        user1.setActive(true);
+        User user2 = new User();
+        user2.setEmail("another@email.com");
+        user2.setPassword("trewq");
+        user2.setSurname("tset");
+        user2.setName("Resu");
+        user2.setPhoneNumber("05811451");
+        user2.setActive(false);
+
+        users.add(user1);
+        users.add(user2);
+
+        return users;
     }
 
 }

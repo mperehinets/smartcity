@@ -13,9 +13,11 @@ public interface UserService {
 
     UserDto findById(Long id);
 
-    List<UserDto> getAll();
+    List<UserDto> findAll();
 
     UserDto findByEmail(String email);
+
+    List<UserDto> findByOrganizationId(Long organizationId);
 
     UserDto update(UserDto user);
 

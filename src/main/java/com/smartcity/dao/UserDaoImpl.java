@@ -78,7 +78,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> findAll() {
         try {
-            return jdbcTemplate.query(Queries.SQL_GET_ALL_USERS, mapper);
+            return jdbcTemplate.query(Queries.SQL_SELECT_ALL_USERS, mapper);
         }
         catch (Exception e) {
             logger.error("Get user all users exception. Message: {}", e.getMessage());
@@ -102,6 +102,17 @@ public class UserDaoImpl implements UserDao {
         catch (Exception e) {
             logger.error("Get user (email = {}) exception. Message: {}", email, e.getMessage());
             throw new DbOperationException("Get user exception");
+        }
+    }
+
+    @Override
+    public List<User> findByOrganizationId(Long organizationId) {
+        try{
+            return jdbcTemplate.query(Queries.SQL_SELECT_USERS_BY_ORGANIZATION_ID, mapper, organizationId);
+        }
+        catch (Exception e){
+            logger.error("Find users by organization id exception. Message: {}", e.getMessage());
+            throw new DbOperationException("Find users by organization id exception");
         }
     }
 
@@ -208,13 +219,17 @@ public class UserDaoImpl implements UserDao {
 
         static final String SQL_SELECT_USER_BY_EMAIL = "SELECT * FROM Users WHERE email = ?";
 
+        static final String SQL_SELECT_USERS_BY_ORGANIZATION_ID = "" +
+                "SELECT * FROM Users WHERE id IN " +
+                "(SELECT user_id FROM Users_organizations WHERE organization_id = ?)";
+
         static final String SQL_UPDATE_USER_PASSWORD = "UPDATE Users SET password = ? WHERE id = ?";
 
         static final String SQL_CREATE_USER = "" +
                 "INSERT INTO Users(email, password, surname," +
                 " name, phone_number, active, created_date, updated_date)" +
                 " VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-        static final String SQL_GET_ALL_USERS = "SELECT * FROM Users";
+        static final String SQL_SELECT_ALL_USERS = "SELECT * FROM Users";
     }
 
 }

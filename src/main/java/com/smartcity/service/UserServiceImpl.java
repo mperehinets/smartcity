@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<UserDto> getAll() {
+    public List<UserDto> findAll() {
         List<User> users = userDao.findAll();
         return users.stream().
                 map(userDtoMapper::convertUserIntoUserDto)
@@ -66,6 +66,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         updatedUser.setActive(userFromDb.isActive());
 
         return userDtoMapper.convertUserIntoUserDto(userDao.update(updatedUser));
+    }
+
+    @Override
+    public List<UserDto> findByOrganizationId(Long organizationId) {
+        List<User> users = userDao.findByOrganizationId(organizationId);
+        return users.stream().
+                map(userDtoMapper::convertUserIntoUserDto).
+                collect(Collectors.toList());
     }
 
     @Override
