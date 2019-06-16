@@ -59,8 +59,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDto update(UserDto userDto) {
-        User user = userDtoMapper.convertUserDtoIntoUser(userDto);
-        return userDtoMapper.convertUserIntoUserDto(userDao.update(user));
+        User updatedUser = userDtoMapper.convertUserDtoIntoUser(userDto);
+
+        // Because, we don't allow to change activity state through this method
+        User userFromDb = userDao.findById(userDto.getId());
+        updatedUser.setActive(userFromDb.isActive());
+
+        return userDtoMapper.convertUserIntoUserDto(userDao.update(updatedUser));
     }
 
     @Override

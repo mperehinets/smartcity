@@ -123,12 +123,25 @@ class UserServiceImplTest {
     @Test
     void update_successFlow() {
         userDto.setName("AnotherUser");
+
         User updatedUser = userDtoMapper.convertUserDtoIntoUser(userDto);
+
+        // Setting user activity statuses to prove that we can't change user activity status
+        updatedUser.setActive(true);
+        userDto.setActive(false);
+
         Mockito.when(userDao.update(updatedUser)).then(
                 invocationOnMock -> invocationOnMock.getArgument(0));
+
+        Mockito.when(userDao.findById(user.getId())).thenReturn(updatedUser);
+
         UserDto resultUserDto = userService.update(userDto);
+
         // Checking if the correct user was returned
-        assertThat(userDto).isEqualToIgnoringGivenFields(resultUserDto, "password");
+        assertThat(userDto).isEqualToIgnoringGivenFields(resultUserDto, "password", "active");
+
+        // Checking if we didn't change user activity status
+        assertTrue(resultUserDto.isActive());
     }
 
     @Test
