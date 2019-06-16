@@ -1,13 +1,13 @@
 package com.smartcity.service;
 
 import com.smartcity.dao.TaskDao;
-import com.smartcity.dao.TaskDaoImpl;
 import com.smartcity.domain.Task;
 import com.smartcity.dto.TaskDto;
 import com.smartcity.mapperDto.TaskDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +42,12 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskDto> findByUserId(Long id) {
         List<Task> tasks = taskDao.findByUserId(id);
+        return mapListDto(tasks);
+    }
+
+    @Override
+    public List<TaskDto> findByDate(LocalDateTime from, LocalDateTime to) {
+        List<Task> tasks = taskDao.findByDate(from, to);
         return mapListDto(tasks);
     }
 

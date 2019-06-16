@@ -2,6 +2,7 @@ package com.smartcity.service;
 
 import com.smartcity.dto.TaskDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TaskService {
@@ -13,6 +14,8 @@ public interface TaskService {
     List<TaskDto> findByOrganizationId(Long id);
 
     List<TaskDto> findByUserId(Long id);
+
+    List<TaskDto> findByDate(LocalDateTime from, LocalDateTime to);
 
     TaskDto update(TaskDto task);
 

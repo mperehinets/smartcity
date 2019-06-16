@@ -13,7 +13,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,18 +68,18 @@ class TaskServiceImplTest {
     }
 
     @Test
-    void testFindTaskByOrganizationId() {
-        List<Task> taskList = Arrays.asList(task);
-        List<TaskDto> taskDtoList = Arrays.asList(taskDtoMapper.mapRow(task));
+    void testFindTasksByOrganizationId() {
+        List<Task> taskList = Collections.singletonList(task);
+        List<TaskDto> taskDtoList = Collections.singletonList(taskDtoMapper.mapRow(task));
         doReturn(taskList).when(taskDao).findByOrganizationId(task.getUsersOrganizationsId());
         List<TaskDto> result = taskService.findByOrganizationId(taskDto.getUsersOrganizationsId());
         assertEquals(result, taskDtoList);
     }
 
     @Test
-    void testFingTaskByUserId() {
-        List<Task> taskList = Arrays.asList(task);
-        List<TaskDto> taskDtoList = Arrays.asList(taskDtoMapper.mapRow(task));
+    void testFindTasksByUserId() {
+        List<Task> taskList = Collections.singletonList(task);
+        List<TaskDto> taskDtoList = Collections.singletonList(taskDtoMapper.mapRow(task));
         doReturn(taskList).when(taskDao).findByUserId(task.getUsersOrganizationsId());
         List<TaskDto> result = taskService.findByUserId(taskDto.getUsersOrganizationsId());
         assertEquals(result, taskDtoList);

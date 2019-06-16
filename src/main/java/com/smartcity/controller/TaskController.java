@@ -11,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -62,6 +64,15 @@ public class TaskController {
     @GetMapping(value = "/organizationId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TaskDto> findByOrganizationId(@PathVariable("id") Long id) {
         return taskService.findByOrganizationId(id);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/date", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TaskDto> findByDate(@RequestParam("from") String from, @RequestParam("to") String to) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        LocalDateTime dateFrom = LocalDateTime.parse(from, formatter);
+        LocalDateTime dateTo = LocalDateTime.parse(to, formatter);
+        return taskService.findByDate(dateFrom,dateTo);
     }
 
     @ResponseStatus(HttpStatus.OK)

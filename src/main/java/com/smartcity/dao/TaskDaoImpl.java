@@ -87,6 +87,16 @@ public class TaskDaoImpl implements TaskDao {
         }
     }
 
+    public List<Task> findByDate(LocalDateTime from, LocalDateTime to) {
+        try {
+            return this.jdbcTemplate.query(Queries.SQL_GET_BY_DATE, mapper, from, to);
+        } catch (Exception e) {
+            logger.error("Can't get Task by such dates = {}, {} Task Dao findByDate method error: ", from,to, e);
+            throw new DbOperationException("Can't get Task by dates from = " + from + ", " + to
+                    + " Task Dao findByDate method error: " + e);
+        }
+    }
+
     public Task update(Task task) {
         int rowsAffected;
         try {
@@ -162,6 +172,8 @@ public class TaskDaoImpl implements TaskDao {
                 "approved_budget = ?, updated_date = ?,  users_organizations_id = ? where id = ?;";
 
         static final String SQL_DELETE = "Delete from Tasks where id = ?;";
+
+        static final String SQL_GET_BY_DATE = "Select * from Tasks where created_date between ? and ? ;";
     }
 }
 
