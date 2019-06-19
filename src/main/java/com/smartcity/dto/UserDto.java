@@ -18,6 +18,7 @@ public class UserDto {
 
     @NotBlank(groups = {NewRecord.class, ExistingRecord.class},
             message = "Please, provide a password")
+    @Size(min = 6, max = 32)
     private String password;
 
     @NotBlank(groups = {NewRecord.class, ExistingRecord.class},
