@@ -25,7 +25,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -133,7 +132,7 @@ class UserControllerTest {
     }
 
     @Test
-    void  findUsersByOrganizationId_successFlow() throws Exception {
+    void findUsersByOrganizationId_successFlow() throws Exception {
         // Initializing list of UserDto
         List<UserDto> users = this.getListOfUserDto();
 
@@ -153,29 +152,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[1].name").value(users.get(1).getName()))
                 .andExpect(jsonPath("$[1].surname").value(users.get(1).getSurname()))
                 .andExpect(jsonPath("$[1].email").value(users.get(1).getEmail()));
-    }
-
-    @Test
-    void updateUser_successFlow() throws Exception {
-        UserDto updatedUserDto = new UserDto();
-        updatedUserDto.setId(userDto.getId());
-        updatedUserDto.setName("Updated user");
-        updatedUserDto.setSurname("Tested user");
-        updatedUserDto.setEmail("just_example@gmail.com");
-        Mockito.when(userService.update(updatedUserDto)).thenReturn(updatedUserDto);
-        // Instantiating object -> json mapper
-        ObjectMapper objectMapper = new ObjectMapper();
-        // Converting DTO object to json
-        String requestObjectJson = objectMapper.writeValueAsString(updatedUserDto);
-        mockMvc.perform(put("/users/" + userDto.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestObjectJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(updatedUserDto.getId()))
-                .andExpect(jsonPath("name").value(updatedUserDto.getName()))
-                .andExpect(jsonPath("surname").value(updatedUserDto.getSurname()))
-                .andExpect(jsonPath("email").value(updatedUserDto.getEmail()))
-                .andDo(print());
     }
 
     @Test
@@ -251,7 +227,7 @@ class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
-    private List<UserDto> getListOfUserDto(){
+    private List<UserDto> getListOfUserDto() {
         List<UserDto> users = new ArrayList<>();
 
         UserDto user1 = new UserDto();
