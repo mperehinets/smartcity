@@ -152,6 +152,34 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[1].name").value(users.get(1).getName()))
                 .andExpect(jsonPath("$[1].surname").value(users.get(1).getSurname()))
                 .andExpect(jsonPath("$[1].email").value(users.get(1).getEmail()));
+
+        Mockito.verify(userService, Mockito.times(1))
+                .findByOrganizationId(organizationId);
+    }
+
+    @Test
+    void findUsersByRoleId_successFlow() throws Exception {
+        // Initializing list of UserDto
+        List<UserDto> users = this.getListOfUserDto();
+
+        Long roleId = 1L;
+
+        Mockito.when(userService.findByRoleId(roleId)).thenReturn(users);
+
+        mockMvc.perform(get("/users/role/" + roleId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value(users.get(0).getId()))
+                .andExpect(jsonPath("$[0].name").value(users.get(0).getName()))
+                .andExpect(jsonPath("$[0].surname").value(users.get(0).getSurname()))
+                .andExpect(jsonPath("$[0].email").value(users.get(0).getEmail()))
+                .andExpect(jsonPath("$[1].id").value(users.get(1).getId()))
+                .andExpect(jsonPath("$[1].name").value(users.get(1).getName()))
+                .andExpect(jsonPath("$[1].surname").value(users.get(1).getSurname()))
+                .andExpect(jsonPath("$[1].email").value(users.get(1).getEmail()));
+
+        Mockito.verify(userService, Mockito.times(1)).findByRoleId(roleId);
     }
 
     @Test

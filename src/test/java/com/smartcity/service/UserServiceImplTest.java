@@ -57,6 +57,9 @@ class UserServiceImplTest {
 
     @Test
     void create_successFlow() {
+        // Making sure that user activity status is "true"
+        user.setActive(true);
+
         Mockito.when(userDao.create(user)).then(invocationOnMock -> {
             User user = invocationOnMock.getArgument(0);
             user.setId(1L);
@@ -66,8 +69,8 @@ class UserServiceImplTest {
         UserDto resultUserDto = userService.create(userDto);
         // Checking if the id was generated
         assertNotNull(resultUserDto.getId());
-        // Checking if the user is not active
-        assertFalse(resultUserDto.isActive());
+        // Checking if the user is active
+        assertTrue(resultUserDto.isActive());
     }
 
     @Test
@@ -113,6 +116,24 @@ class UserServiceImplTest {
         Mockito.when(userDao.findByOrganizationId(organizationId)).thenReturn(users);
 
         List<UserDto> resultUserList = userService.findByOrganizationId(organizationId);
+
+        for (int i = 0; i < users.size(); i++) {
+            assertThat(users.get(i)).isEqualToIgnoringGivenFields(
+                    userDtoMapper.convertUserDtoIntoUser(resultUserList.get(i)),
+                    "id", "createdDate", "updatedDate", "password");
+        }
+    }
+
+    @Test
+    void findByRoleId(){
+        // Initializing users list
+        List<User> users = this.getListOfUsers();
+
+        Long roleId = 1L;
+
+        Mockito.when(userDao.findByRoleId(roleId)).thenReturn(users);
+
+        List<UserDto> resultUserList = userService.findByRoleId(roleId);
 
         for (int i = 0; i < users.size(); i++) {
             assertThat(users.get(i)).isEqualToIgnoringGivenFields(

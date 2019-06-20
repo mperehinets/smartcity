@@ -1,10 +1,12 @@
 package com.smartcity.dao;
 
 import com.smartcity.domain.Organization;
+import com.smartcity.domain.Role;
 import com.smartcity.domain.User;
 import com.smartcity.exceptions.DbOperationException;
 import com.smartcity.exceptions.NotFoundException;
 import com.smartcity.mapper.OrganizationMapper;
+import com.smartcity.mapper.RoleMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -151,14 +153,13 @@ class UserDaoImplTest extends BaseTest {
         List<Organization> organizations = template.query(
                 "SELECT * FROM Organizations", organizationMapper);
 
-        // Inserting row to Users_organizations table
-        template.update(
-                "INSERT INTO Users_organizations(user_id, organization_id, created_date, updated_date)" +
-                        " VALUES (? ,? ,'2019-05-05','2019-05-05');",
-                user.getId(), organizations.get(0).getId());
-
-
         if (!organizations.isEmpty()) {
+            // Inserting row to Users_organizations table
+            template.update(
+                    "INSERT INTO Users_organizations(user_id, organization_id, created_date, updated_date)" +
+                            " VALUES (? ,? ,'2019-05-05','2019-05-05');",
+                    user.getId(), organizations.get(0).getId());
+
             List<User> users = userDao.findByOrganizationId(organizations.get(0).getId());
 
             // Checking if there are any users related to organization
@@ -179,6 +180,53 @@ class UserDaoImplTest extends BaseTest {
     @Test
     void testFindByOrganizationId_incorrectOrganizationId() {
         List<User> resultUser = userDao.findByOrganizationId(Long.MAX_VALUE);
+        assertTrue(resultUser.isEmpty());
+    }
+
+
+    @Test
+    void testFindByRoleId_successFlow() {
+        clearTables("Users_roles", "Roles");
+
+
+        RoleMapper roleMapper = new RoleMapper();
+
+        // Inserting role to DB
+        template.update(
+                "INSERT INTO Roles (name, created_date, updated_date) " +
+                        "VALUES ('ROLE_ADMIN', '2019-05-05','2019-05-05')");
+
+        // Getting roleFromDb
+        List<Role> roles = template.query(
+                "SELECT * FROM Roles", roleMapper);
+
+        if (!roles.isEmpty()) {
+            // Inserting row to Users_roles table
+            template.update(
+                    "INSERT INTO Users_roles (user_id, role_id, created_date, updated_date) " +
+                            "VALUES (? , ?, '2019-05-05','2019-05-05')",
+                    user.getId(), roles.get(0).getId());
+
+            List<User> users = userDao.findByOrganizationId(roles.get(0).getId());
+
+            // Checking if there are any users with particular role
+            assertFalse(users.isEmpty());
+        }
+        else {
+            fail();
+        }
+    }
+
+    @Test
+    void testFindByRoleId_emptyTable() {
+        clearTables("Users_roles");
+        List<User> resultUser = userDao.findByRoleId(1L);
+        assertTrue(resultUser.isEmpty());
+    }
+
+    @Test
+    void testFindByRoleId_incorrectOrganizationId() {
+        List<User> resultUser = userDao.findByRoleId(Long.MAX_VALUE);
         assertTrue(resultUser.isEmpty());
     }
 
