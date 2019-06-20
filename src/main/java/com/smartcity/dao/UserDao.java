@@ -16,6 +16,8 @@ public interface UserDao {
 
     List<User> findByOrganizationId(Long organizationId);
 
+    List<User> findByRoleId(Long rolesIds);
+
     User update(User user);
 
     boolean delete(Long id);

@@ -107,12 +107,23 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> findByOrganizationId(Long organizationId) {
-        try{
+        try {
             return jdbcTemplate.query(Queries.SQL_SELECT_USERS_BY_ORGANIZATION_ID, mapper, organizationId);
         }
-        catch (Exception e){
+        catch (Exception e) {
             logger.error("Find users by organization id exception. Message: {}", e.getMessage());
             throw new DbOperationException("Find users by organization id exception");
+        }
+    }
+
+    @Override
+    public List<User> findByRoleId(Long roleId) {
+        try {
+            return jdbcTemplate.query(Queries.SQL_SELECT_USERS_BY_ROLES_IDS, mapper, roleId);
+        }
+        catch (Exception e) {
+            logger.error("Find users by roles ids exception. Message: {}", e.getMessage());
+            throw new DbOperationException("Find users by roles ids exception");
         }
     }
 
@@ -222,6 +233,10 @@ public class UserDaoImpl implements UserDao {
         static final String SQL_SELECT_USERS_BY_ORGANIZATION_ID = "" +
                 "SELECT * FROM Users WHERE id IN " +
                 "(SELECT user_id FROM Users_organizations WHERE organization_id = ?)";
+
+        static final String SQL_SELECT_USERS_BY_ROLES_IDS = "" +
+                "SELECT * FROM Users WHERE id IN" +
+                "(SELECT user_id FROM Users_roles WHERE role_id = ? )";
 
         static final String SQL_UPDATE_USER_PASSWORD = "UPDATE Users SET password = ? WHERE id = ?";
 

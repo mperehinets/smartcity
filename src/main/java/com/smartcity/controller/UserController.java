@@ -49,6 +49,12 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/role/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserDto> findUsersByRoleId(@PathVariable("id") Long roleId) {
+        return userService.findByRoleId(roleId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/update-profile",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)

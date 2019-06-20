@@ -33,8 +33,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDto create(UserDto userDto) {
         User user = userDtoMapper.convertUserDtoIntoUser(userDto);
 
-        // Setting user activity status as "false"
-        user.setActive(false);
+        // Setting user activity status as "true"
+        user.setActive(true);
 
         return userDtoMapper.convertUserIntoUserDto(userDao.create(user));
     }
@@ -47,9 +47,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public List<UserDto> findAll() {
         List<User> users = userDao.findAll();
-        return users.stream().
-                map(userDtoMapper::convertUserIntoUserDto)
-                .collect(Collectors.toList());
+        return this.convertUsersListToUsersDtosList(users);
     }
 
     @Override
@@ -71,9 +69,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public List<UserDto> findByOrganizationId(Long organizationId) {
         List<User> users = userDao.findByOrganizationId(organizationId);
-        return users.stream().
-                map(userDtoMapper::convertUserIntoUserDto).
-                collect(Collectors.toList());
+        return this.convertUsersListToUsersDtosList(users);
+    }
+
+    @Override
+    public List<UserDto> findByRoleId(Long roleId) {
+        List<User> users = userDao.findByRoleId(roleId);
+        return this.convertUsersListToUsersDtosList(users);
     }
 
     @Override
@@ -130,5 +132,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         return true;
+    }
+
+    private List<UserDto> convertUsersListToUsersDtosList(List<User> users) {
+        return users.stream().
+                map(userDtoMapper::convertUserIntoUserDto)
+                .collect(Collectors.toList());
     }
 }
