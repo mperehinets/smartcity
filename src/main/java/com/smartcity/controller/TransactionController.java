@@ -11,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -54,6 +56,17 @@ public class TransactionController {
     @GetMapping(value = "/taskId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TransactionDto> findByTaskId(@PathVariable("id") Long taskId) {
         return transService.findByTaskId(taskId);
+    }
+
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerFindByTaskIdAllowedRoles())")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/taskId/{id}/date", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TransactionDto> findByDate(@PathVariable("id") Long id, @RequestParam("from") String from,
+                                           @RequestParam("to") String to) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        LocalDateTime dateFrom = LocalDateTime.parse(from, formatter);
+        LocalDateTime dateTo = LocalDateTime.parse(to, formatter);
+        return transService.findByDate(id, dateFrom, dateTo);
     }
 
     @PreAuthorize("hasAnyRole(@securityConfiguration.getTransactionControllerCreateTransactionAllowedRoles())")

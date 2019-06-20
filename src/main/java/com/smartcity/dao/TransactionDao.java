@@ -2,6 +2,7 @@ package com.smartcity.dao;
 
 import com.smartcity.domain.Transaction;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TransactionDao {
@@ -15,5 +16,7 @@ public interface TransactionDao {
     boolean delete(Long id);
 
     List<Transaction> findByTaskId(Long id);
+
+    List<Transaction> findByDate(Long id, LocalDateTime from, LocalDateTime to);
 
 }

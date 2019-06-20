@@ -109,6 +109,19 @@ public class TransactionDaoImpl implements TransactionDao {
         return list;
     }
 
+    @Override
+    public List<Transaction> findByDate(Long id, LocalDateTime from, LocalDateTime to) {
+        List<Transaction> list;
+        try {
+            list = template.query(Queries.SQL_TRANSACTION_GET_BY_DATE, mapper, from, to, id);
+        } catch (Exception e) {
+            logger.error("Get transaction (task id = {},date from = {},date to = {}) exception. Message: {}",
+                    id, from, to, e.getMessage());
+            throw new DbOperationException("Get transaction exception");
+        }
+        return list;
+    }
+
     private PreparedStatement createStatement(Transaction transaction, Connection con) throws SQLException {
         PreparedStatement ps = con.prepareStatement(
                 Queries.SQL_TRANSACTION_CREATE, Statement.RETURN_GENERATED_KEYS);
@@ -135,5 +148,7 @@ public class TransactionDaoImpl implements TransactionDao {
                 "transaction_budget = ? , updated_date = ? where id = ?";
         static final String SQL_TRANSACTION_DELETE = "DELETE FROM Transactions where id = ?";
         static final String SQL_TRANSACTION_GET_BY_TASK_ID = "SELECT * FROM Transactions where task_id = ?";
+        static final String SQL_TRANSACTION_GET_BY_DATE = "Select * from Transactions where created_date between ? and ? " +
+                "and task_id = ? order by created_date;";
     }
 }

@@ -6,6 +6,7 @@ import com.smartcity.mapperDto.TransactionDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,12 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<TransactionDto> findByTaskId(Long id) {
         return transDao.findByTaskId(id).stream()
+                .map(t -> mapper.transactionToTransactionDto(t)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TransactionDto> findByDate(Long id, LocalDateTime from, LocalDateTime to) {
+        return transDao.findByDate(id,from,to).stream()
                 .map(t -> mapper.transactionToTransactionDto(t)).collect(Collectors.toList());
     }
 

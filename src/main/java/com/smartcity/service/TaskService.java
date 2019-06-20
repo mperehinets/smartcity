@@ -15,7 +15,7 @@ public interface TaskService {
 
     List<TaskDto> findByUserId(Long id);
 
-    List<TaskDto> findByDate(LocalDateTime from, LocalDateTime to);
+    List<TaskDto> findByDate(Long id, LocalDateTime from, LocalDateTime to);
 
     TaskDto update(TaskDto task);
 

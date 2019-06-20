@@ -67,12 +67,13 @@ public class TaskController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/date", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TaskDto> findByDate(@RequestParam("from") String from, @RequestParam("to") String to) {
+    @GetMapping(value = "/organizationId/{id}/date", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TaskDto> findByDate(@PathVariable("id") Long id, @RequestParam("from") String from,
+                                    @RequestParam("to") String to) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
         LocalDateTime dateFrom = LocalDateTime.parse(from, formatter);
         LocalDateTime dateTo = LocalDateTime.parse(to, formatter);
-        return taskService.findByDate(dateFrom,dateTo);
+        return taskService.findByDate(id, dateFrom, dateTo);
     }
 
     @ResponseStatus(HttpStatus.OK)

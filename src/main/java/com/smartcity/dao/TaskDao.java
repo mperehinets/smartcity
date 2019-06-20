@@ -17,7 +17,7 @@ public interface TaskDao {
 
     List<Task> findAll();
 
-    List<Task> findByDate(LocalDateTime dateFrom,LocalDateTime to);
+    List<Task> findByDate(Long id, LocalDateTime dateFrom, LocalDateTime to);
 
     Task update(Task task);
 

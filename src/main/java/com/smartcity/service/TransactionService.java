@@ -2,6 +2,7 @@ package com.smartcity.service;
 
 import com.smartcity.dto.TransactionDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TransactionService {
@@ -15,5 +16,7 @@ public interface TransactionService {
     boolean delete(Long id);
 
     List<TransactionDto> findByTaskId(Long id);
+
+    List<TransactionDto> findByDate(Long id, LocalDateTime from, LocalDateTime to);
 
 }

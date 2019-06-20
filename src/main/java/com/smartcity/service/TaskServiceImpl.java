@@ -46,8 +46,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDto> findByDate(LocalDateTime from, LocalDateTime to) {
-        List<Task> tasks = taskDao.findByDate(from, to);
+    public List<TaskDto> findByDate(Long id,LocalDateTime from, LocalDateTime to) {
+        List<Task> tasks = taskDao.findByDate(id,from, to);
         return mapListDto(tasks);
     }
 
