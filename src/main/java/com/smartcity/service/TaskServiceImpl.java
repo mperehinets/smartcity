@@ -1,11 +1,16 @@
 package com.smartcity.service;
 
+import com.smartcity.dao.BudgetDao;
 import com.smartcity.dao.TaskDao;
+import com.smartcity.dao.TransactionDao;
+import com.smartcity.domain.Budget;
 import com.smartcity.domain.Task;
+import com.smartcity.domain.Transaction;
 import com.smartcity.dto.TaskDto;
 import com.smartcity.mapperDto.TaskDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,17 +20,27 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl implements TaskService {
 
     private TaskDao taskDao;
+    private TransactionDao transDao;
+    private BudgetDao budgetDao;
     private TaskDtoMapper taskDtoMapper;
 
     @Autowired
-    public TaskServiceImpl(TaskDao taskDao, TaskDtoMapper taskDtoMapper) {
+    public TaskServiceImpl(TaskDao taskDao, TaskDtoMapper taskDtoMapper, TransactionDao transDao, BudgetDao budgetDao) {
         this.taskDao = taskDao;
         this.taskDtoMapper = taskDtoMapper;
+        this.transDao = transDao;
+        this.budgetDao = budgetDao;
     }
 
     @Override
+    @Transactional
     public TaskDto create(TaskDto task) {
-        return taskDtoMapper.mapRow(taskDao.create(taskDtoMapper.mapDto(task)));
+        Task taskResult = taskDao.create(taskDtoMapper.mapDto(task));
+        transDao.create(new Transaction(null, taskResult.getId(), budgetDao.get().getValue(),
+                task.getApprovedBudget(), null, null));
+        Budget budget = new Budget(budgetDao.get().getValue() - taskResult.getApprovedBudget());
+        budgetDao.createOrUpdate(budget);
+        return taskDtoMapper.mapRow(taskResult);
     }
 
     @Override
@@ -46,14 +61,25 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDto> findByDate(Long id,LocalDateTime from, LocalDateTime to) {
-        List<Task> tasks = taskDao.findByDate(id,from, to);
+    public List<TaskDto> findByDate(Long id, LocalDateTime from, LocalDateTime to) {
+        List<Task> tasks = taskDao.findByDate(id, from, to);
         return mapListDto(tasks);
     }
 
     @Override
+    @Transactional
     public TaskDto update(TaskDto task) {
-        return taskDtoMapper.mapRow(taskDao.update(taskDtoMapper.mapDto(task)));
+        Task taskFromDb = taskDao.findById(task.getId());
+        if (task.getApprovedBudget() > 0) {
+            task.setTaskStatus("ToDo");
+        }
+        Task taskResult = taskDao.update(taskDtoMapper.mapDto(task));
+        Long approvedBudget = taskResult.getApprovedBudget() - taskFromDb.getApprovedBudget();
+        transDao.create(new Transaction(null, taskResult.getId(), budgetDao.get().getValue(),
+                approvedBudget, null, null));
+        Budget budget = new Budget(budgetDao.get().getValue() - approvedBudget);
+        budgetDao.createOrUpdate(budget);
+        return taskDtoMapper.mapRow(taskResult);
     }
 
     @Override
