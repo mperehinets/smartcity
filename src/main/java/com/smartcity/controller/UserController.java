@@ -59,8 +59,12 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDto updateUser(Authentication authentication, @RequestBody UserDto userDto) {
-        Long userId = this.getCurrentUser(authentication).getId();
-        userDto.setId(userId);
+        UserDto currentUser = this.getCurrentUser(authentication);
+        userDto.setId(currentUser.getId());
+
+        // We do not allow the users to change their email
+        userDto.setEmail(currentUser.getEmail());
+
         return userService.update(userDto);
     }
 
