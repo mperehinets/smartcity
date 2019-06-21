@@ -2,12 +2,15 @@ package com.smartcity.controller;
 
 import com.smartcity.domain.Role;
 import com.smartcity.dto.UserDto;
+import com.smartcity.dto.transfer.ExistingRecord;
+import com.smartcity.dto.transfer.NewRecord;
 import com.smartcity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,7 +61,7 @@ public class UserController {
     @PutMapping(value = "/update-profile",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserDto updateUser(Authentication authentication, @RequestBody UserDto userDto) {
+    public UserDto updateUser(Authentication authentication, @Validated(ExistingRecord.class) @RequestBody UserDto userDto) {
         UserDto currentUser = this.getCurrentUser(authentication);
         userDto.setId(currentUser.getId());
 
