@@ -1,7 +1,11 @@
 package com.smartcity.service;
 
+import com.smartcity.dao.BudgetDao;
 import com.smartcity.dao.TaskDao;
+import com.smartcity.dao.TransactionDao;
+import com.smartcity.domain.Budget;
 import com.smartcity.domain.Task;
+import com.smartcity.domain.Transaction;
 import com.smartcity.dto.TaskDto;
 import com.smartcity.mapperDto.TaskDtoMapper;
 import name.falgout.jeffrey.testing.junit.mockito.MockitoExtension;
@@ -21,19 +25,25 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TaskServiceImplTest {
 
     private TaskDto taskDto = new TaskDto(2L, "Santa", "Task for Santa",
-            LocalDateTime.now(), "TODO",
+            LocalDateTime.now(), "ToDo",
             1000L, 1000L,
             LocalDateTime.now(), LocalDateTime.now(),
             1L);
 
     @Mock
     private TaskDao taskDao;
+
+    @Mock
+    private TransactionDao transDao;
+
+    @Mock
+    private BudgetDao budgetDao;
 
     private TaskDtoMapper taskDtoMapper = new TaskDtoMapper();
 
@@ -45,14 +55,23 @@ class TaskServiceImplTest {
     @BeforeEach
     void init() {
         MockitoAnnotations.initMocks(this);
-        taskService = new TaskServiceImpl(taskDao, taskDtoMapper);
+        taskService = new TaskServiceImpl(taskDao, taskDtoMapper, transDao, budgetDao);
         task = taskDtoMapper.mapDto(taskDto);
     }
 
     @Test
     void testCreateTask() {
+        Budget budget = new Budget(2000L);
+        Transaction trans = new Transaction(null, task.getId(),budget.getValue(),
+                task.getApprovedBudget(), null, null);
         doReturn(task).when(taskDao).create(task);
+        doReturn(budget).when(budgetDao).get();
+        doReturn(trans).when(transDao).create(trans);
+        doReturn(budget).when(budgetDao).createOrUpdate(budget);
         TaskDto result = taskService.create(taskDto);
+        verify(taskDao, times(1)).create(task);
+        verify(budgetDao, times(2)).get();
+        verify(transDao, times(1)).create(trans);
         assertThat(result).isEqualToIgnoringGivenFields(taskDtoMapper.mapRow(task),
                 "transactionList", "deadlineDate",
                 "createdAt", "updatedAt");
@@ -87,8 +106,20 @@ class TaskServiceImplTest {
 
     @Test
     void testUpdateTask() {
+        Budget budget = new Budget(2000L);
+        Transaction trans = new Transaction(null, task.getId(),budget.getValue(),
+                0L,
+                null, null);
         doReturn(task).when(taskDao).update(task);
+        doReturn(budget).when(budgetDao).get();
+        doReturn(trans).when(transDao).create(trans);
+        doReturn(budget).when(budgetDao).createOrUpdate(budget);
+        doReturn(task).when(taskDao).findById(task.getId());
         TaskDto result = taskService.update(taskDto);
+        verify(taskDao, times(1)).update(task);
+        verify(budgetDao, times(2)).get();
+        verify(transDao, times(1)).create(trans);
+        verify(taskDao, times(1)).findById(task.getId());
         assertThat(result).isEqualToIgnoringGivenFields(taskDtoMapper.mapRow(task),
                 "transactionList", "deadlineDate",
                 "createdAt", "updatedAt");
