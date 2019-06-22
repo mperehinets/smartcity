@@ -87,6 +87,11 @@ public class TaskServiceImpl implements TaskService {
         return taskDao.delete(id);
     }
 
+    @Override
+    public Long findUsersOrgIdByUserIdAndOrgId(Long userId, Long orgId) {
+        return taskDao.findUsersOrgIdByUserIdAndOrgId(userId, orgId);
+    }
+
     private List<TaskDto> mapListDto(List<Task> tasks) {
         return tasks.stream().map(taskDtoMapper::mapRow).collect(Collectors.toList());
     }

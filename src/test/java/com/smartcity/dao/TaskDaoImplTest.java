@@ -143,6 +143,16 @@ class TaskDaoImplTest extends BaseTest {
         assertTrue(taskDao.delete(task.getId()));
     }
 
+    @Test
+    void testFindUsersOrgsId(){
+        assertEquals(taskDao.findUsersOrgIdByUserIdAndOrgId(1L,1L), 1L);
+    }
+
+    @Test
+    void testFindUsersOrgsId_InvalidId(){
+        assertThrows(NotFoundException.class, () -> taskDao.findUsersOrgIdByUserIdAndOrgId(Long.MAX_VALUE, Long.MAX_VALUE));
+    }
+
     @AfterEach
     void close() {
         clearTables("Transactions");

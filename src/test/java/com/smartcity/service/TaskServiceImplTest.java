@@ -131,4 +131,11 @@ class TaskServiceImplTest {
         boolean result = taskService.delete(taskDto.getId());
         assertTrue(result);
     }
+
+    @Test
+    void findUsersOrgsId(){
+        doReturn(1L).when(taskDao).findUsersOrgIdByUserIdAndOrgId(1L, 1L);
+        Long result = taskService.findUsersOrgIdByUserIdAndOrgId(1L, 1L);
+        assertEquals(1L, result);
+    }
 }

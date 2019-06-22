@@ -81,4 +81,10 @@ public class TaskController {
     public List<TaskDto> findByUserId(@PathVariable("id") Long id) {
         return taskService.findByUserId(id);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Long findUsersOrgIdByUserIdAndOrgId(@RequestParam("userId") Long userId, @RequestParam("orgId") Long orgId){
+        return taskService.findUsersOrgIdByUserIdAndOrgId(userId, orgId);
+    }
 }
