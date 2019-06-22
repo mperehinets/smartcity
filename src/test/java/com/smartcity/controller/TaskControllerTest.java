@@ -230,4 +230,16 @@ class TaskControllerTest {
 
         assertEquals(expectedTaskDtoList.toString(), mvcResult.getResponse().getContentAsString());
     }
+
+    @Test
+    void testFindUsersOrgsIdByUserIdAndOrgId() throws Exception{
+        doReturn(1L).when(taskService).findUsersOrgIdByUserIdAndOrgId(1L,1L);
+
+        MvcResult mvcResult = mockMvc.perform(get("/tasks?userId=1&orgId=1")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertEquals("1", mvcResult.getResponse().getContentAsString());
+    }
 }

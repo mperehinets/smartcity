@@ -20,4 +20,6 @@ public interface TaskService {
     TaskDto update(TaskDto task);
 
     boolean delete(Long id);
+
+    Long findUsersOrgIdByUserIdAndOrgId(Long userId, Long orgId);
 }

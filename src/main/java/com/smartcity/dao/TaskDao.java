@@ -22,4 +22,6 @@ public interface TaskDao {
     Task update(Task task);
 
     boolean delete(Long id);
+
+    Long findUsersOrgIdByUserIdAndOrgId(Long userId, Long orgId);
 }
