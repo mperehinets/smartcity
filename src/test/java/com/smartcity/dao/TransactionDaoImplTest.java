@@ -3,6 +3,7 @@ package com.smartcity.dao;
 import com.smartcity.domain.Transaction;
 import com.smartcity.exceptions.DbOperationException;
 import com.smartcity.exceptions.NotFoundException;
+import javafx.util.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,8 +35,7 @@ class TransactionDaoImplTest extends BaseTest {
 
     @Test
     void testCreateTransaction() {
-        assertThat(transDao.create(transaction)).isEqualToIgnoringGivenFields(transaction,
-                "createdDate", "updatedDate");
+        isTransactionEqualBesidesDate(transDao.create(transaction), transaction);
     }
 
     @Test
@@ -51,9 +53,7 @@ class TransactionDaoImplTest extends BaseTest {
     @Test
     void testFindTransaction() {
         transDao.create(transaction);
-        assertThat(transaction).
-                isEqualToIgnoringGivenFields(transDao.findById(transaction.getId()),
-                        "createdDate", "updatedDate");
+        isTransactionEqualBesidesDate(transaction, transDao.findById(transaction.getId()));
     }
 
     @Test
@@ -65,9 +65,7 @@ class TransactionDaoImplTest extends BaseTest {
     @Test
     void testFindTransactionsByTaskId() {
         transDao.create(transaction);
-        assertThat(transaction).isEqualToIgnoringGivenFields(
-                transDao.findByTaskId(transaction.getTaskId()).get(0),
-                "createdDate", "updatedDate");
+        isTransactionEqualBesidesDate(transaction, transDao.findByTaskId(transaction.getTaskId()).get(0));
     }
 
     @Test
@@ -77,9 +75,7 @@ class TransactionDaoImplTest extends BaseTest {
             transaction.setId((long) i);
             transDao.create(transaction);
             list.add(transaction);
-            assertThat(list.get(i - 1)).isEqualToIgnoringGivenFields(
-                    transDao.findByTaskId(transaction.getTaskId()).get(i - 1),
-                    "createdDate", "updatedDate");
+            isTransactionEqualBesidesDate(list.get(i - 1), transDao.findByTaskId(transaction.getTaskId()).get(i - 1));
         }
     }
 
@@ -95,8 +91,25 @@ class TransactionDaoImplTest extends BaseTest {
                 800000L, 44000L,
                 LocalDateTime.now(), LocalDateTime.now());
         transDao.update(updatedTransaction);
-        assertThat(transDao.findById(updatedTransaction.getId())).isEqualToIgnoringGivenFields(updatedTransaction,
-                "createdDate", "updatedDate");
+        isTransactionEqualBesidesDate(transDao.findById(updatedTransaction.getId()), updatedTransaction);
+    }
+
+    @Test
+    void testFindTransactionByDate() {
+        cleanTransactions();
+        LocalDateTime date = LocalDateTime.now().minusMonths(1L);
+        Transaction transaction = new Transaction(3L, 1L, 3000L, 500L, LocalDateTime.now(), LocalDateTime.now());
+        transDao.create(this.transaction);
+        transDao.create(transaction);
+        List<Transaction> initList = asList(this.transaction, transaction);
+        List<Transaction> resultList = transDao.findByDate(transaction.getTaskId(), date, LocalDateTime.now());
+        IntStream.range(0, resultList.size())
+                .mapToObj(i -> new Pair<>(initList.get(i), resultList.get(i)))
+                .forEach(t -> isTransactionEqualBesidesDate(t.getKey(), t.getValue()));
+    }
+
+    private void isTransactionEqualBesidesDate(Transaction t1, Transaction t2) {
+        assertThat(t1).isEqualToIgnoringGivenFields(t2, "createdDate", "updatedDate");
     }
 
     @Test
