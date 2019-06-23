@@ -4,7 +4,9 @@ import com.smartcity.dao.RoleDao;
 import com.smartcity.dao.UserDao;
 import com.smartcity.domain.Role;
 import com.smartcity.domain.User;
+import com.smartcity.dto.RoleDto;
 import com.smartcity.dto.UserDto;
+import com.smartcity.mapperDto.RoleDtoMapper;
 import com.smartcity.mapperDto.UserDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,14 +21,16 @@ import java.util.stream.Stream;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private UserDtoMapper userDtoMapper;
+    private RoleDtoMapper roleDtoMapper;
     private UserDao userDao;
     private RoleDao roleDao;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, UserDtoMapper userDtoMapper, RoleDao roleDao) {
+    public UserServiceImpl(UserDao userDao, UserDtoMapper userDtoMapper, RoleDao roleDao, RoleDtoMapper roleDtoMapper) {
         this.userDao = userDao;
         this.userDtoMapper = userDtoMapper;
         this.roleDao = roleDao;
+        this.roleDtoMapper = roleDtoMapper;
     }
 
     @Override
@@ -105,8 +109,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<Role> getRoles(Long id) {
-        return roleDao.getRolesByUserId(id);
+    public List<RoleDto> getRoles(Long id) {
+        return roleDao.getRolesByUserId(id)
+                .stream().map(roleDtoMapper::roleToRoleDto)
+                .collect(Collectors.toList());
     }
 
     @Override

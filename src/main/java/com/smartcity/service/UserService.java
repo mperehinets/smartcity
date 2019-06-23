@@ -1,6 +1,6 @@
 package com.smartcity.service;
 
-import com.smartcity.domain.Role;
+import com.smartcity.dto.RoleDto;
 import com.smartcity.dto.UserDto;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +29,7 @@ public interface UserService {
 
     boolean updatePassword(Long userId, String newPassword);
 
-    List<Role> getRoles(Long id);
+    List<RoleDto> getRoles(Long id);
 
     boolean setRoles(Long userId, List<Long> newRolesIds);
 }

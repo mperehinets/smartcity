@@ -1,9 +1,8 @@
 package com.smartcity.controller;
 
-import com.smartcity.domain.Role;
+import com.smartcity.dto.RoleDto;
 import com.smartcity.dto.UserDto;
 import com.smartcity.dto.transfer.ExistingRecord;
-import com.smartcity.dto.transfer.NewRecord;
 import com.smartcity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -97,7 +96,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}/get-roles", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Role> getRolesByUserId(@PathVariable("id") Long id) {
+    public List<RoleDto> getRolesByUserId(@PathVariable("id") Long id) {
         return userService.getRoles(id);
     }
 

@@ -4,7 +4,9 @@ import com.smartcity.dao.RoleDao;
 import com.smartcity.dao.UserDao;
 import com.smartcity.domain.Role;
 import com.smartcity.domain.User;
+import com.smartcity.dto.RoleDto;
 import com.smartcity.dto.UserDto;
+import com.smartcity.mapperDto.RoleDtoMapper;
 import com.smartcity.mapperDto.UserDtoMapper;
 import name.falgout.jeffrey.testing.junit.mockito.MockitoExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +40,8 @@ class UserServiceImplTest {
 
     private UserDtoMapper userDtoMapper;
 
+    private RoleDtoMapper roleDtoMapper;
+
     private UserDto userDto;
 
     private User user;
@@ -47,7 +51,8 @@ class UserServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         userDtoMapper = new UserDtoMapper();
-        userService = new UserServiceImpl(userDao, userDtoMapper, roleDao);
+        roleDtoMapper = new RoleDtoMapper();
+        userService = new UserServiceImpl(userDao, userDtoMapper, roleDao, roleDtoMapper);
         userDto = new UserDto();
         userDto.setName("User");
         userDto.setSurname("Test");
@@ -107,7 +112,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findByOrganizationId(){
+    void findByOrganizationId() {
         // Initializing users list
         List<User> users = this.getListOfUsers();
 
@@ -125,7 +130,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findByRoleId(){
+    void findByRoleId() {
         // Initializing users list
         List<User> users = this.getListOfUsers();
 
@@ -180,10 +185,10 @@ class UserServiceImplTest {
     }
 
     @Test
-    void activateUser_successFlow(){
+    void activateUser_successFlow() {
         Mockito.when(userDao.findById(1L)).then(invocationOnMock -> {
-           user.setActive(false);
-           return user;
+            user.setActive(false);
+            return user;
         });
 
         boolean result = userService.activate(1L);
@@ -227,10 +232,11 @@ class UserServiceImplTest {
                 .then(invocationOnMock -> roles);
 
         // Testing
-        List<Role> result = userService.getRoles(user.getId());
+        List<RoleDto> result = userService.getRoles(user.getId());
 
         for (int i = 0; i < roles.size(); i++) {
-            assertEquals(roles.get(i), result.get(i));
+            RoleDto roleDto = roleDtoMapper.roleToRoleDto(roles.get(0));
+            assertThat(result.get(0)).isEqualToIgnoringGivenFields(roleDto, "createdDate", "updatedDate");
         }
     }
 
@@ -283,7 +289,7 @@ class UserServiceImplTest {
 
     }
 
-    private List<User> getListOfUsers(){
+    private List<User> getListOfUsers() {
         List<User> users = new ArrayList<>();
 
         User user1 = new User();
