@@ -1,7 +1,7 @@
 package com.smartcity.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smartcity.domain.Role;
+import com.smartcity.dto.RoleDto;
 import com.smartcity.dto.UserDto;
 import com.smartcity.exceptions.DbOperationException;
 import com.smartcity.exceptions.NotFoundException;
@@ -209,13 +209,13 @@ class UserControllerTest {
     @Test
     void getRolesByUserId() throws Exception {
         // Initializing list of roles
-        List<Role> roles = new ArrayList<>();
+        List<RoleDto> roles = new ArrayList<>();
 
-        Role role1 = new Role();
+        RoleDto role1 = new RoleDto();
         role1.setId(1L);
         role1.setName("ADMIN");
 
-        Role role2 = new Role();
+        RoleDto role2 = new RoleDto();
         role2.setId(2L);
         role2.setName("SUPERVISOR");
 
