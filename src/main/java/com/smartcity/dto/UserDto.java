@@ -16,8 +16,6 @@ public class UserDto {
             message = "This field can't be empty")
     private Long id;
 
-    @NotBlank(groups = {NewRecord.class, ExistingRecord.class},
-            message = "Please, provide a password")
     @Size(min = 6, max = 32)
     private String password;
 
