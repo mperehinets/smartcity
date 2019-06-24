@@ -70,9 +70,9 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     public TaskDto update(TaskDto task) {
         Task taskFromDb = taskDao.findById(task.getId());
-        if (task.getApprovedBudget() > 0) {
-            task.setTaskStatus("ToDo");
-        }
+//        if (task.getApprovedBudget() > 0) {
+//            task.setTaskStatus("ToDo");
+//        }
         Task taskResult = taskDao.update(taskDtoMapper.mapDto(task));
         Long approvedBudget = taskResult.getApprovedBudget() - taskFromDb.getApprovedBudget();
         transDao.create(new Transaction(null, taskResult.getId(), budgetDao.get().getValue(),
