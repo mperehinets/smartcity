@@ -35,7 +35,7 @@ class TransactionDaoImplTest extends BaseTest {
 
     @Test
     void testCreateTransaction() {
-        isTransactionEqualBesidesDate(transDao.create(transaction), transaction);
+        assertTransactionsEqual(transDao.create(transaction), transaction);
     }
 
     @Test
@@ -53,7 +53,7 @@ class TransactionDaoImplTest extends BaseTest {
     @Test
     void testFindTransaction() {
         transDao.create(transaction);
-        isTransactionEqualBesidesDate(transaction, transDao.findById(transaction.getId()));
+        assertTransactionsEqual(transaction, transDao.findById(transaction.getId()));
     }
 
     @Test
@@ -65,7 +65,7 @@ class TransactionDaoImplTest extends BaseTest {
     @Test
     void testFindTransactionsByTaskId() {
         transDao.create(transaction);
-        isTransactionEqualBesidesDate(transaction, transDao.findByTaskId(transaction.getTaskId()).get(0));
+        assertTransactionsEqual(transaction, transDao.findByTaskId(transaction.getTaskId()).get(0));
     }
 
     @Test
@@ -75,7 +75,7 @@ class TransactionDaoImplTest extends BaseTest {
             transaction.setId((long) i);
             transDao.create(transaction);
             list.add(transaction);
-            isTransactionEqualBesidesDate(list.get(i - 1), transDao.findByTaskId(transaction.getTaskId()).get(i - 1));
+            assertTransactionsEqual(list.get(i - 1), transDao.findByTaskId(transaction.getTaskId()).get(i - 1));
         }
     }
 
@@ -91,7 +91,7 @@ class TransactionDaoImplTest extends BaseTest {
                 800000L, 44000L,
                 LocalDateTime.now(), LocalDateTime.now());
         transDao.update(updatedTransaction);
-        isTransactionEqualBesidesDate(transDao.findById(updatedTransaction.getId()), updatedTransaction);
+        assertTransactionsEqual(transDao.findById(updatedTransaction.getId()), updatedTransaction);
     }
 
     @Test
@@ -105,10 +105,10 @@ class TransactionDaoImplTest extends BaseTest {
         List<Transaction> resultList = transDao.findByDate(transaction.getTaskId(), date, LocalDateTime.now());
         IntStream.range(0, resultList.size())
                 .mapToObj(i -> new Pair<>(initList.get(i), resultList.get(i)))
-                .forEach(t -> isTransactionEqualBesidesDate(t.getKey(), t.getValue()));
+                .forEach(t -> assertTransactionsEqual(t.getKey(), t.getValue()));
     }
 
-    private void isTransactionEqualBesidesDate(Transaction t1, Transaction t2) {
+    private void assertTransactionsEqual(Transaction t1, Transaction t2) {
         assertThat(t1).isEqualToIgnoringGivenFields(t2, "createdDate", "updatedDate");
     }
 

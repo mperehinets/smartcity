@@ -3,6 +3,7 @@ package com.smartcity.dao;
 import com.smartcity.domain.Task;
 import com.smartcity.exceptions.DbOperationException;
 import com.smartcity.exceptions.NotFoundException;
+import javafx.util.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,9 +67,9 @@ class TaskDaoImplTest extends BaseTest {
     @Test
     void testFindTaskByOrganizationId() {
         taskDao.create(task);
-        List<Task> resultTaskList = taskDao.findByOrganizationId(1L);
+        List<Task> resultTaskList = taskDao.findByOrganizationId(2L);
         List<Task> expTaskList = new ArrayList<>();
-        expTaskList.add(taskDao.findById(1L));
+        expTaskList.add(taskDao.findById(2L));
         expTaskList.add(task);
         int i = 0;
         for (Task t1 : resultTaskList) {
@@ -151,6 +154,30 @@ class TaskDaoImplTest extends BaseTest {
     @Test
     void testFindUsersOrgsId_InvalidId(){
         assertThrows(NotFoundException.class, () -> taskDao.findUsersOrgIdByUserIdAndOrgId(Long.MAX_VALUE, Long.MAX_VALUE));
+    }
+
+    @Test
+    void testFindTaskByDate(){
+        clearTables("Tasks");
+        LocalDateTime date = LocalDateTime.now().minusMonths(1L);
+        Task task = new Task(3L, "NewTask", "Task for test",
+                LocalDateTime.now(), "TODO",
+                2000L, 2000L,
+                LocalDateTime.now(), LocalDateTime.now(),
+                1L);
+        taskDao.create(task);
+        taskDao.create(this.task);
+        List<Task> tasks = asList(task,this.task);
+        List<Task> taskFromDb = taskDao.findByDate(this.task.getUsersOrganizationsId(),date,LocalDateTime.now());
+        IntStream.range(0,taskFromDb.size())
+                .mapToObj(
+                i -> new Pair<>(tasks.get(i),taskFromDb.get(i)))
+                .forEach(t->assertTaskEquals(t.getKey(),t.getValue()));
+
+    }
+
+    private void assertTaskEquals(Task t1, Task t2){
+        assertThat(t1).isEqualToIgnoringGivenFields(t2,"deadlineDate","createdAt","updatedAt");
     }
 
     @AfterEach
