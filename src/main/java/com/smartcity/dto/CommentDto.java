@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 public class CommentDto {
@@ -37,16 +38,19 @@ public class CommentDto {
             message = "This field can't be empty")
     private Long taskId;
 
+    private List<Long> userSeen;
+
     public CommentDto() {
     }
 
-    public CommentDto(Long id, String description, LocalDateTime createdDate, LocalDateTime updatedDate, Long userId, Long taskId) {
+    public CommentDto(Long id, String description, LocalDateTime createdDate, LocalDateTime updatedDate, Long userId, Long taskId,List<Long> userSeen) {
         this.id = id;
         this.description = description;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
         this.userId = userId;
         this.taskId = taskId;
+        this.userSeen = userSeen;
     }
 
     public Long getId() {
@@ -97,6 +101,14 @@ public class CommentDto {
         this.taskId = taskId;
     }
 
+    public List<Long> getUserSeen() {
+        return userSeen;
+    }
+
+    public void setUserSeen(List<Long> userSeen) {
+        this.userSeen = userSeen;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -107,12 +119,13 @@ public class CommentDto {
                 Objects.equals(taskId, commentDto.taskId) &&
                 Objects.equals(createdDate, commentDto.createdDate) &&
                 Objects.equals(updatedDate, commentDto.updatedDate) &&
-                Objects.equals(userId, commentDto.userId);
+                Objects.equals(userId, commentDto.userId) &&
+                Objects.equals(userSeen,commentDto.userSeen);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, createdDate, updatedDate, userId, taskId);
+        return Objects.hash(id, description, createdDate, updatedDate, userId, taskId, userSeen);
     }
 
     @Override
@@ -124,6 +137,7 @@ public class CommentDto {
                 ",\"updatedDate\":\"" + updatedDate + '\"' +
                 ",\"userId\":" + userId + '\"' +
                 ",\"taskId\":\"" + taskId + '\"' +
+                ",\"userSeen\":\"" + userSeen + '\"' +
                 '}';
     }
 }

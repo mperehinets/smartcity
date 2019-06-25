@@ -178,9 +178,9 @@ public class CommentDaoImpl implements CommentDao {
                 "task_id = ? where id = ?";
         static final String SQL_COMMENT_DELETE = "Delete from Comments where id = ?";
 
-        static final String SQL_COMMENT_GET_BY_TASK_ID = "Select * from Comments where task_id = ?";
+        static final String SQL_COMMENT_GET_BY_TASK_ID = "Select * from Comments where task_id = ? order by created_date DESC";
 
-        static final String SQL_COMMENT_GET_BY_USER_ID = "Select * from Comments where user_id = ?";
+        static final String SQL_COMMENT_GET_BY_USER_ID = "Select * from Comments where user_id = ? order by created_date DESC";
 
     }
 }

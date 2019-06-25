@@ -2,6 +2,7 @@ package com.smartcity.service;
 
 
 import com.smartcity.dao.CommentDao;
+import com.smartcity.dao.UserDao;
 import com.smartcity.domain.Comment;
 import com.smartcity.dto.CommentDto;
 import com.smartcity.mapperDto.CommentDtoMapper;
@@ -29,10 +30,13 @@ class CommentServiceImplTest {
     private CommentDto commentDto = new CommentDto(2L, "Comment for Santa",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            1L, 1L);
+            1L, 1L,null);
 
     @Mock
     private CommentDao commentDao;
+
+    @Mock
+    private UserDao userDao;
 
     private CommentDtoMapper commentDtoMapper = new CommentDtoMapper();
     private UserDtoMapper userDtoMapper = new UserDtoMapper();
@@ -45,7 +49,7 @@ class CommentServiceImplTest {
     @BeforeEach
     void init() {
         MockitoAnnotations.initMocks(this);
-        commentService = new CommentServiceImpl(commentDao, commentDtoMapper,userDtoMapper);
+        commentService = new CommentServiceImpl(commentDao, commentDtoMapper,userDtoMapper,userDao);
         comment = commentDtoMapper.commentDtoToComment(commentDto);
     }
 
@@ -54,7 +58,7 @@ class CommentServiceImplTest {
         doReturn(comment).when(commentDao).create(comment);
         CommentDto result = commentService.create(commentDto);
         assertThat(result).isEqualToIgnoringGivenFields(commentDtoMapper.commentToCommentDto(comment),
-                "createdDate", "updatedDate");
+                "createdDate", "updatedDate","userSeen");
     }
 
     @Test
@@ -62,7 +66,7 @@ class CommentServiceImplTest {
         doReturn(comment).when(commentDao).findById(comment.getId());
         CommentDto result = commentService.findById(commentDto.getId());
         assertThat(result).isEqualToIgnoringGivenFields(commentDtoMapper.commentToCommentDto(comment),
-                "createdDate", "updatedDate");
+                "createdDate", "updatedDate","userSeen");
     }
 
     @Test
@@ -89,7 +93,7 @@ class CommentServiceImplTest {
         doReturn(comment).when(commentDao).update(comment);
         CommentDto result = commentService.update(commentDto);
         assertThat(result).isEqualToIgnoringGivenFields(commentDtoMapper.commentToCommentDto(comment),
-                "createdDate", "updatedDate");
+                "createdDate", "updatedDate","userSeen");
     }
 
     @Test
