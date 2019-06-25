@@ -1,6 +1,7 @@
 package com.smartcity.service;
 
 import com.smartcity.dto.CommentDto;
+import com.smartcity.dto.UserDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,5 +20,7 @@ public interface CommentService {
     List<CommentDto> findByTaskId(Long id);
 
     List<CommentDto> findByUserId(Long id);
+
+    boolean addUserToCommentSeen(CommentDto commentDto, UserDto userDto);
 
 }

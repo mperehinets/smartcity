@@ -5,6 +5,7 @@ import com.smartcity.dao.CommentDao;
 import com.smartcity.domain.Comment;
 import com.smartcity.dto.CommentDto;
 import com.smartcity.mapperDto.CommentDtoMapper;
+import com.smartcity.mapperDto.UserDtoMapper;
 import name.falgout.jeffrey.testing.junit.mockito.MockitoExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ class CommentServiceImplTest {
     private CommentDao commentDao;
 
     private CommentDtoMapper commentDtoMapper = new CommentDtoMapper();
+    private UserDtoMapper userDtoMapper = new UserDtoMapper();
 
     @InjectMocks
     private CommentServiceImpl commentService;
@@ -43,7 +45,7 @@ class CommentServiceImplTest {
     @BeforeEach
     void init() {
         MockitoAnnotations.initMocks(this);
-        commentService = new CommentServiceImpl(commentDao, commentDtoMapper);
+        commentService = new CommentServiceImpl(commentDao, commentDtoMapper,userDtoMapper);
         comment = commentDtoMapper.commentDtoToComment(commentDto);
     }
 

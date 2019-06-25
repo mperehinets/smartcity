@@ -24,4 +24,5 @@ public interface UserDao {
 
     boolean updatePassword(Long userId, String newPassword);
 
+    List<User> findUserByCommentId(Long commentId);
 }
