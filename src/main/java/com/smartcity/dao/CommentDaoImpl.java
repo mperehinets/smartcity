@@ -1,6 +1,7 @@
 package com.smartcity.dao;
 
 import com.smartcity.domain.Comment;
+import com.smartcity.domain.User;
 import com.smartcity.exceptions.DbOperationException;
 import com.smartcity.exceptions.NotFoundException;
 import com.smartcity.mapper.CommentMapper;
@@ -130,6 +131,20 @@ public class CommentDaoImpl implements CommentDao {
         return list;
     }
 
+    @Override
+    public boolean addUserToCommentSeen(Comment comment, User user) {
+        try {
+            jdbcTemplate.update(Queries.SQL_COMMENT_ADD_USER_TO_COMMENTSEEN, comment.getId(), user.getId()
+            );
+            return true;
+        } catch (Exception e) {
+            logger.error("Can't add user:{} to commentSeen:{}. Error:{}", user, comment, e.getMessage());
+            throw new DbOperationException("Can't add user to commentSeen." +
+                    " addUserToCommentSeen comment Dao method error:" + e);
+        }
+    }
+
+
     private NotFoundException loggedNotFoundException(Long id) {
         NotFoundException notFoundException = new NotFoundException("Comment not found by Id = " + id);
         logger.error("Runtime exception. Comment by id = {} not found. Message: {}",
@@ -154,6 +169,9 @@ public class CommentDaoImpl implements CommentDao {
         static final String SQL_COMMENT_CREATE = "INSERT INTO Comments(description, created_date, updated_date, user_id, task_id)" +
                 " VALUES (?,?,?,?,?)";
 
+        static final String SQL_COMMENT_ADD_USER_TO_COMMENTSEEN = "INSERT INTO SeenComments(commentId, userId)" +
+                " VALUES (?,?)";
+
         static final String SQL_COMMENT_GET_BY_ID = "Select * from Comments where id = ?";
 
         static final String SQL_COMMENT_UPDATE = "Update Comments set description = ? ,updated_date = ?, user_id = ?, " +
@@ -163,5 +181,6 @@ public class CommentDaoImpl implements CommentDao {
         static final String SQL_COMMENT_GET_BY_TASK_ID = "Select * from Comments where task_id = ?";
 
         static final String SQL_COMMENT_GET_BY_USER_ID = "Select * from Comments where user_id = ?";
+
     }
 }

@@ -140,6 +140,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return true;
     }
 
+    @Override
+    public List<UserDto> findUserByCommentId(Long commentId) {
+        List<User> users = userDao.findUserByCommentId(commentId);
+        return this.convertUsersListToUsersDtosList(users);
+    }
+
     private List<UserDto> convertUsersListToUsersDtosList(List<User> users) {
         return users.stream().
                 map(userDtoMapper::convertUserIntoUserDto)

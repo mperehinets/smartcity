@@ -113,4 +113,10 @@ public class UserController {
         return userService.findByEmail(authentication.getName());
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/comment/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserDto> findUserByCommentId(@PathVariable("commentId") Long commentId) {
+        return userService.findUserByCommentId(commentId);
+    }
+
 }

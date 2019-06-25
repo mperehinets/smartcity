@@ -2,7 +2,9 @@ package com.smartcity.service;
 
 import com.smartcity.dao.CommentDao;
 import com.smartcity.dto.CommentDto;
+import com.smartcity.dto.UserDto;
 import com.smartcity.mapperDto.CommentDtoMapper;
+import com.smartcity.mapperDto.UserDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +16,13 @@ public class CommentServiceImpl implements CommentService {
 
     private CommentDao commentDao;
     private CommentDtoMapper mapper;
-
+    private UserDtoMapper userMapper;
 
     @Autowired
-    public CommentServiceImpl(CommentDao commentDao, CommentDtoMapper mapper) {
+    public CommentServiceImpl(CommentDao commentDao, CommentDtoMapper mapper, UserDtoMapper userMapper) {
         this.commentDao = commentDao;
         this.mapper = mapper;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -52,6 +55,11 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentDto> findByUserId(Long id) {
         return commentDao.findByUserId(id).stream()
                 .map(t -> mapper.commentToCommentDto(t)).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean addUserToCommentSeen(CommentDto comment, UserDto user) {
+        return commentDao.addUserToCommentSeen(mapper.commentDtoToComment(comment), userMapper.convertUserDtoIntoUser(user));
     }
 
 }
