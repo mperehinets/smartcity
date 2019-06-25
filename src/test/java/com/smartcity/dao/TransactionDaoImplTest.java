@@ -3,7 +3,6 @@ package com.smartcity.dao;
 import com.smartcity.domain.Transaction;
 import com.smartcity.exceptions.DbOperationException;
 import com.smartcity.exceptions.NotFoundException;
-import javafx.util.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -103,9 +101,11 @@ class TransactionDaoImplTest extends BaseTest {
         transDao.create(transaction);
         List<Transaction> initList = asList(this.transaction, transaction);
         List<Transaction> resultList = transDao.findByDate(transaction.getTaskId(), date, LocalDateTime.now());
-        IntStream.range(0, resultList.size())
-                .mapToObj(i -> new Pair<>(initList.get(i), resultList.get(i)))
-                .forEach(t -> assertTransactionsEqual(t.getKey(), t.getValue()));
+
+        for (int i=0;i<resultList.size();i++) {
+            assertTransactionsEqual(resultList.get(i), initList.get(i));
+
+        }
     }
 
     private void assertTransactionsEqual(Transaction t1, Transaction t2) {

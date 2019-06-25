@@ -3,7 +3,6 @@ package com.smartcity.dao;
 import com.smartcity.domain.Task;
 import com.smartcity.exceptions.DbOperationException;
 import com.smartcity.exceptions.NotFoundException;
-import javafx.util.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -147,17 +145,17 @@ class TaskDaoImplTest extends BaseTest {
     }
 
     @Test
-    void testFindUsersOrgsId(){
-        assertEquals(taskDao.findUsersOrgIdByUserIdAndOrgId(1L,1L), 1L);
+    void testFindUsersOrgsId() {
+        assertEquals(taskDao.findUsersOrgIdByUserIdAndOrgId(1L, 1L), 1L);
     }
 
     @Test
-    void testFindUsersOrgsId_InvalidId(){
+    void testFindUsersOrgsId_InvalidId() {
         assertThrows(NotFoundException.class, () -> taskDao.findUsersOrgIdByUserIdAndOrgId(Long.MAX_VALUE, Long.MAX_VALUE));
     }
 
     @Test
-    void testFindTaskByDate(){
+    void testFindTaskByDate() {
         clearTables("Tasks");
         LocalDateTime date = LocalDateTime.now().minusMonths(1L);
         Task task = new Task(3L, "NewTask", "Task for test",
@@ -167,17 +165,17 @@ class TaskDaoImplTest extends BaseTest {
                 1L);
         taskDao.create(task);
         taskDao.create(this.task);
-        List<Task> tasks = asList(task,this.task);
-        List<Task> taskFromDb = taskDao.findByDate(this.task.getUsersOrganizationsId(),date,LocalDateTime.now());
-        IntStream.range(0,taskFromDb.size())
-                .mapToObj(
-                i -> new Pair<>(tasks.get(i),taskFromDb.get(i)))
-                .forEach(t->assertTaskEquals(t.getKey(),t.getValue()));
+        List<Task> tasks = asList(task, this.task);
+        List<Task> taskFromDb = taskDao.findByDate(this.task.getUsersOrganizationsId(), date, LocalDateTime.now());
 
+
+        for (int i=0;i<taskFromDb.size();i++) {
+            assertTaskEquals(taskFromDb.get(i), tasks.get(i));
+        }
     }
 
-    private void assertTaskEquals(Task t1, Task t2){
-        assertThat(t1).isEqualToIgnoringGivenFields(t2,"deadlineDate","createdAt","updatedAt");
+    private void assertTaskEquals(Task t1, Task t2) {
+        assertThat(t1).isEqualToIgnoringGivenFields(t2, "deadlineDate", "createdAt", "updatedAt");
     }
 
     @AfterEach
