@@ -1,6 +1,7 @@
 package com.smartcity.service;
 
 import com.smartcity.dao.OrganizationDao;
+import com.smartcity.dao.UserDao;
 import com.smartcity.domain.Organization;
 import com.smartcity.domain.User;
 import com.smartcity.dto.OrganizationDto;
@@ -28,6 +29,8 @@ class OrganizationServiceImplTest {
 
     @Mock
     private OrganizationDao organizationDao;
+    @Mock
+    private UserDao userDao;
 
     @InjectMocks
     private OrganizationServiceImpl organizationService;
@@ -35,6 +38,7 @@ class OrganizationServiceImplTest {
     private final OrganizationDto organizationDto = new OrganizationDto(1L,
             "komunalna",
             "saharova 13",
+            null,
             LocalDateTime.now(), LocalDateTime.now());
 
     private OrganizationDtoMapper organizationDtoMapper = new OrganizationDtoMapper();
@@ -45,7 +49,7 @@ class OrganizationServiceImplTest {
     @BeforeEach
     void init() {
         MockitoAnnotations.initMocks(this);
-        organizationService = new OrganizationServiceImpl(organizationDao, organizationDtoMapper, userDtoMapper);
+        organizationService = new OrganizationServiceImpl(organizationDao, userDao, organizationDtoMapper, userDtoMapper);
         organization = organizationDtoMapper.organizationDtoToOrganization(organizationDto);
     }
 
@@ -54,7 +58,7 @@ class OrganizationServiceImplTest {
         doReturn(organization).when(organizationDao).create(organization);
         assertThat(organizationService.create(organizationDto))
                 .isEqualToIgnoringGivenFields(organizationDto,
-                        "createdDate", "updatedDate");
+                        "responsiblePersons","createdDate", "updatedDate");
     }
 
     @Test
@@ -62,7 +66,7 @@ class OrganizationServiceImplTest {
         doReturn(organization).when(organizationDao).findById(organization.getId());
         assertThat(organizationService.findById(organizationDto.getId()))
                 .isEqualToIgnoringGivenFields(organizationDto,
-                        "createdDate", "updatedDate");
+                        "responsiblePersons","createdDate", "updatedDate");
     }
 
     @Test
@@ -70,7 +74,7 @@ class OrganizationServiceImplTest {
         doReturn(organization).when(organizationDao).update(organization);
         assertThat(organizationService.update(organizationDto)).isEqualToIgnoringGivenFields(
                 organizationDto,
-                "createdAt", "updatedAt");
+                "responsiblePersons","createdDate", "updatedDate");
     }
 
     @Test
