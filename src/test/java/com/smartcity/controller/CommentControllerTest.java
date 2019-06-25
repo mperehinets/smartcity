@@ -64,7 +64,7 @@ class CommentControllerTest {
         commentDto = new CommentDto(2L, "Comment for Santa",
                 dateTest,
                 dateTest,
-                1L, 1L);
+                1L, 1L,null);
     }
 
     @Test
@@ -100,7 +100,7 @@ class CommentControllerTest {
 
     @Test
     void testUpdateComment_failFlow() throws Exception {
-        CommentDto updatedComments = new CommentDto(1L, "Description for Task $2", null, null, fakeId, 1L);
+        CommentDto updatedComments = new CommentDto(1L, "Description for Task $2", null, null, fakeId, 1L,null);
         Mockito.when(commentService.update(updatedComments))
                 .thenThrow(dbOperationException);
         String json = objMapper.writeValueAsString(updatedComments);
@@ -114,7 +114,7 @@ class CommentControllerTest {
 
     @Test
     void testUpdateComment_successFlow() throws Exception {
-        CommentDto updatedComments = new CommentDto(1L, "Description for Task $2", null, null, 1L, 1L);
+        CommentDto updatedComments = new CommentDto(1L, "Description for Task $2", null, null, 1L, 1L,null);
         Mockito.when(commentService.update(updatedComments)).thenReturn(updatedComments);
         String json = objMapper.writeValueAsString(updatedComments);
         mockMvc.perform(put("/comments/" + updatedComments.getId())
@@ -124,7 +124,8 @@ class CommentControllerTest {
                 .andExpect(jsonPath("id").value(updatedComments.getId()))
                 .andExpect(jsonPath("taskId").value(updatedComments.getTaskId()))
                 .andExpect(jsonPath("userId").value(updatedComments.getUserId()))
-                .andExpect(jsonPath("description").value(updatedComments.getDescription()));
+                .andExpect(jsonPath("description").value(updatedComments.getDescription()))
+                .andExpect(jsonPath("userSeen").value(updatedComments.getUserSeen()));
     }
 
     @Test
