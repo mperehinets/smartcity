@@ -9,8 +9,6 @@ import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@LessThan(groups = {NewRecord.class, ExistingRecord.class},
-        message = "Approved budget should be less than or equals budget")
 public class TaskDto {
 
     @Null(groups = {NewRecord.class},
@@ -44,6 +42,8 @@ public class TaskDto {
             value = 0, message = "Budget must be greater than 0")
     private Long budget;
 
+    @NotNull(groups = {NewRecord.class, ExistingRecord.class},
+            message = "Please, add approved budget")
     private Long approvedBudget;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")

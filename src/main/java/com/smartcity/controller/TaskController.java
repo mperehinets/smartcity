@@ -29,7 +29,9 @@ public class TaskController {
     @PreAuthorize("hasAnyRole" +
             "(@securityConfiguration.getTaskControllerCreateTaskAllowedRoles())")
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
+    @PostMapping(
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public TaskDto createTask(@Validated(NewRecord.class) @RequestBody TaskDto taskDto) {
         return taskService.create(taskDto);
     }

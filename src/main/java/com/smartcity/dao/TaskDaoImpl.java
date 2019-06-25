@@ -79,7 +79,6 @@ public class TaskDaoImpl implements TaskDao {
     }
 
 
-
     public List<Task> findAll() {
         try {
             return this.jdbcTemplate.query(Queries.SQL_GET_ALL_TASKS, mapper);
@@ -130,12 +129,12 @@ public class TaskDaoImpl implements TaskDao {
         } else return true;
     }
 
-    public Long findUsersOrgIdByUserIdAndOrgId(Long userId, Long orgId){
+    public Long findUsersOrgIdByUserIdAndOrgId(Long userId, Long orgId) {
         try {
             return this.jdbcTemplate.queryForObject(Queries.SQL_GET_USERS_ORG_ID, Long.class, userId, orgId);
         } catch (Exception e) {
-            logger.error("Delete Task Dao method error: " + e);
-            throw new NotFoundException("Delete Task Dao method error: " + e);
+            logger.error("FindUserOrgId Task Dao method error for UserId: " + userId + "OrgId: " + orgId + e);
+            throw new NotFoundException("FindUserOrgId Task Dao method error for UserId: " + userId + "OrgId: " + orgId + e);
         }
     }
 
