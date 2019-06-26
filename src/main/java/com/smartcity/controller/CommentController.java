@@ -9,8 +9,10 @@ import com.smartcity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import com.smartcity.domain.User;
 
 import java.util.List;
 
@@ -39,6 +41,9 @@ public class CommentController {
         return commentService.findById(id);
     }
 
+    @PreAuthorize(
+            "hasAnyRole(@securityConfiguration.getCommentControllerUpdateCommentAllowedRoles()) or #id == authentication.principal.id"
+    )
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public CommentDto updateComment(
@@ -49,6 +54,8 @@ public class CommentController {
         return commentService.update(commentDto);
     }
 
+    @PreAuthorize("hasAnyRole" +
+            "(@securityConfiguration.getCommentControlerDeleteCommentAllowedRoles()) or #id == authentication.principal.id")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     public boolean deleteComment(@PathVariable("id") Long id) {
@@ -75,4 +82,5 @@ public class CommentController {
         UserDto user = userService.findById(userId);
         return commentService.addUserToCommentSeen(comment, user);
     }
+
 }

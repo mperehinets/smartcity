@@ -1,5 +1,6 @@
 package com.smartcity.dao;
 
+import com.smartcity.domain.Comment;
 import com.smartcity.domain.Organization;
 import com.smartcity.domain.Role;
 import com.smartcity.domain.User;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +26,8 @@ class UserDaoImplTest extends BaseTest {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private CommentDao commentDao;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -214,6 +218,28 @@ class UserDaoImplTest extends BaseTest {
         }
         else {
             fail();
+        }
+
+    }
+
+    @Test
+    void testFindByCommentId_emptyTable() {
+        clearTables("SeenComments");
+        List<User> resultUser = userDao.findUserByCommentId(1L);
+        assertTrue(resultUser.isEmpty());
+    }
+
+    @Test
+    void testFindByCommentId_successFlow() {
+        clearTables("SeenComments");
+
+        List<User> users = getListOfUsers().stream().map(t-> userDao.create(t)).collect(Collectors.toList());
+        Comment comment = commentDao.findById(1L);
+        users.forEach(t -> commentDao.addUserToCommentSeen(comment,t));
+        List<User> resultUserList = userDao.findUserByCommentId(comment.getId());
+        for (int i = 0; i < users.size(); i++) {
+            assertThat(users.get(i)).isEqualToIgnoringGivenFields(resultUserList.get(i),
+                    "id", "createdDate", "updatedDate");
         }
     }
 
