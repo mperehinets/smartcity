@@ -72,6 +72,20 @@ public class MethodSecurityConfig {
     @Value("#{'${transactionController.createTransaction}'.split(',')}")
     private List<String> transactionControllerCreateTransactionAllowedRoles;
 
+    //CommentController
+    @Value("#{'${commentController.updateComment}'.split(',')}")
+    private List<String> commentControllerUpdateCommentAllowedRoles;
+
+    @Value("#{'${commentController.deleteComment}'.split(',')}")
+    private List<String> commentControlerDeleteCommentAllowedRoles;
+
+    public List<String> getCommentControllerUpdateCommentAllowedRoles() {
+        return commentControllerUpdateCommentAllowedRoles;
+    }
+
+    public List<String> getCommentControlerDeleteCommentAllowedRoles() {
+        return commentControlerDeleteCommentAllowedRoles;
+    }
 
     public List<String> getUserControllerDeleteUserAllowedRoles() {
         return userControllerDeleteUserAllowedRoles;
