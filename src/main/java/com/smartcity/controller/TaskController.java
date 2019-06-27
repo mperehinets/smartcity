@@ -47,8 +47,8 @@ public class TaskController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public TaskDto updateTask(
-            @Validated(ExistingRecord.class)
             @PathVariable("id") Long id,
+            @Validated(ExistingRecord.class)
             @RequestBody TaskDto taskDto) {
         taskDto.setId(id);
         return taskService.update(taskDto);
