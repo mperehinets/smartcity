@@ -10,4 +10,8 @@ public interface BudgetService {
 
     BudgetDto set(BudgetDto budget);
 
+    BudgetDto deposit(Long amount);
+
+    BudgetDto withdraw(Long amount);
+
 }

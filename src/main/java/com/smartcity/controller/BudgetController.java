@@ -34,4 +34,24 @@ public class BudgetController {
     public BudgetDto put(@RequestBody BudgetDto budgetDto) {
         return service.set(budgetDto);
     }
+
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getBudgetControllerPutAllowedRoles())")
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(
+            value = "/deposit",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public BudgetDto deposit(@RequestBody Long amount) {
+        return service.deposit(amount);
+    }
+
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getBudgetControllerPutAllowedRoles())")
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(
+            value = "/withdraw",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public BudgetDto withdraw(@RequestBody Long amount) {
+        return service.withdraw(amount);
+    }
 }
