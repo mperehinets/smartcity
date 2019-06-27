@@ -75,7 +75,10 @@ class CommentServiceImplTest {
         List<CommentDto> commentDtoList = Collections.singletonList(commentDtoMapper.commentToCommentDto(comment));
         doReturn(commentList).when(commentDao).findByUserId(comment.getUserId());
         List<CommentDto> result = commentService.findByUserId(commentDto.getUserId());
-        assertEquals(result, commentDtoList);
+        for (int i =0;i<commentDtoList.size();i++){
+            assertThat(result.get(i)).isEqualToIgnoringGivenFields(result.get(i),
+                    "createdDate", "updatedDate","userSeen");
+        }
     }
 
     @Test
@@ -84,7 +87,10 @@ class CommentServiceImplTest {
         List<CommentDto> commentDtoList = Collections.singletonList(commentDtoMapper.commentToCommentDto(comment));
         doReturn(commentList).when(commentDao).findByTaskId(comment.getTaskId());
         List<CommentDto> result = commentService.findByTaskId(commentDto.getTaskId());
-        assertEquals(result, commentDtoList);
+        for (int i =0;i<commentDtoList.size();i++){
+            assertThat(result.get(i)).isEqualToIgnoringGivenFields(result.get(i),
+                    "createdDate", "updatedDate","userSeen");
+        }
     }
 
 
