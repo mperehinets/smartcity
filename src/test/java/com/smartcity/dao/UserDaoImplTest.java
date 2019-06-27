@@ -1,5 +1,6 @@
 package com.smartcity.dao;
 
+import com.smartcity.domain.Comment;
 import com.smartcity.domain.Organization;
 import com.smartcity.domain.Role;
 import com.smartcity.domain.User;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +26,8 @@ class UserDaoImplTest extends BaseTest {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private CommentDao commentDao;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -215,6 +219,7 @@ class UserDaoImplTest extends BaseTest {
         else {
             fail();
         }
+
     }
 
     @Test

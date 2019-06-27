@@ -148,7 +148,7 @@ class CommentDaoImplTest extends BaseTest {
             commentDao.create(comment);
             list.add(comment);
             assertThat(list.get(i - 1)).isEqualToIgnoringGivenFields(commentDao.findByTaskId(1L).get(i - 1),
-                    "createdDate", "updatedDate");
+                    "id","createdDate", "updatedDate");
         }
     }
 
@@ -160,7 +160,7 @@ class CommentDaoImplTest extends BaseTest {
             commentDao.create(comment);
             list.add(comment);
             assertThat(list.get(i - 1)).isEqualToIgnoringGivenFields(commentDao.findByUserId(1L).get(i - 1),
-                    "createdDate", "updatedDate");
+                    "id","createdDate", "updatedDate");
         }
     }
 

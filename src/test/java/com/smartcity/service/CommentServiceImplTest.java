@@ -2,9 +2,11 @@ package com.smartcity.service;
 
 
 import com.smartcity.dao.CommentDao;
+import com.smartcity.dao.UserDao;
 import com.smartcity.domain.Comment;
 import com.smartcity.dto.CommentDto;
 import com.smartcity.mapperDto.CommentDtoMapper;
+import com.smartcity.mapperDto.UserDtoMapper;
 import name.falgout.jeffrey.testing.junit.mockito.MockitoExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,12 +30,16 @@ class CommentServiceImplTest {
     private CommentDto commentDto = new CommentDto(2L, "Comment for Santa",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            1L, 1L);
+            1L, 1L,null);
 
     @Mock
     private CommentDao commentDao;
 
+    @Mock
+    private UserDao userDao;
+
     private CommentDtoMapper commentDtoMapper = new CommentDtoMapper();
+    private UserDtoMapper userDtoMapper = new UserDtoMapper();
 
     @InjectMocks
     private CommentServiceImpl commentService;
@@ -43,7 +49,7 @@ class CommentServiceImplTest {
     @BeforeEach
     void init() {
         MockitoAnnotations.initMocks(this);
-        commentService = new CommentServiceImpl(commentDao, commentDtoMapper);
+        commentService = new CommentServiceImpl(commentDao, commentDtoMapper,userDtoMapper,userDao);
         comment = commentDtoMapper.commentDtoToComment(commentDto);
     }
 
@@ -52,7 +58,7 @@ class CommentServiceImplTest {
         doReturn(comment).when(commentDao).create(comment);
         CommentDto result = commentService.create(commentDto);
         assertThat(result).isEqualToIgnoringGivenFields(commentDtoMapper.commentToCommentDto(comment),
-                "createdDate", "updatedDate");
+                "createdDate", "updatedDate","userSeen");
     }
 
     @Test
@@ -60,7 +66,7 @@ class CommentServiceImplTest {
         doReturn(comment).when(commentDao).findById(comment.getId());
         CommentDto result = commentService.findById(commentDto.getId());
         assertThat(result).isEqualToIgnoringGivenFields(commentDtoMapper.commentToCommentDto(comment),
-                "createdDate", "updatedDate");
+                "createdDate", "updatedDate","userSeen");
     }
 
     @Test
@@ -69,7 +75,10 @@ class CommentServiceImplTest {
         List<CommentDto> commentDtoList = Collections.singletonList(commentDtoMapper.commentToCommentDto(comment));
         doReturn(commentList).when(commentDao).findByUserId(comment.getUserId());
         List<CommentDto> result = commentService.findByUserId(commentDto.getUserId());
-        assertEquals(result, commentDtoList);
+        for (int i =0;i<commentDtoList.size();i++){
+            assertThat(result.get(i)).isEqualToIgnoringGivenFields(result.get(i),
+                    "createdDate", "updatedDate","userSeen");
+        }
     }
 
     @Test
@@ -78,7 +87,10 @@ class CommentServiceImplTest {
         List<CommentDto> commentDtoList = Collections.singletonList(commentDtoMapper.commentToCommentDto(comment));
         doReturn(commentList).when(commentDao).findByTaskId(comment.getTaskId());
         List<CommentDto> result = commentService.findByTaskId(commentDto.getTaskId());
-        assertEquals(result, commentDtoList);
+        for (int i =0;i<commentDtoList.size();i++){
+            assertThat(result.get(i)).isEqualToIgnoringGivenFields(result.get(i),
+                    "createdDate", "updatedDate","userSeen");
+        }
     }
 
 
@@ -87,7 +99,7 @@ class CommentServiceImplTest {
         doReturn(comment).when(commentDao).update(comment);
         CommentDto result = commentService.update(commentDto);
         assertThat(result).isEqualToIgnoringGivenFields(commentDtoMapper.commentToCommentDto(comment),
-                "createdDate", "updatedDate");
+                "createdDate", "updatedDate","userSeen");
     }
 
     @Test

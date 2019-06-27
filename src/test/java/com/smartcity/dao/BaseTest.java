@@ -77,6 +77,7 @@ class BaseTest {
                 "TRUNCATE TABLE Roles",
                 "TRUNCATE TABLE Users_roles",
                 "TRUNCATE TABLE Budget",
+                "TRUNCATE TABLE SeenComments",
                 "set foreign_key_checks=1");
     }
 

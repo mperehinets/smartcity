@@ -32,4 +32,6 @@ public interface UserService {
     List<RoleDto> getRoles(Long id);
 
     boolean setRoles(Long userId, List<Long> newRolesIds);
+
+    List<UserDto> findUserByCommentId(Long commentId);
 }

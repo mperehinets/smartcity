@@ -193,6 +193,17 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    @Override
+    public List<User> findUserByCommentId(Long commentId) {
+        try {
+            return jdbcTemplate.query(Queries.SQL_SELECT_USERS_BY_COMMENT_ID, mapper, commentId);
+        }
+        catch (Exception e) {
+            logger.error("Find users by comment id exception. Message: {}", e.getMessage());
+            throw new DbOperationException("Find users by comment id exception");
+        }
+    }
+
 
     private NotFoundException getAndLogUserNotFoundException(Long id) {
         NotFoundException notFoundException = new NotFoundException("User not found");
@@ -245,6 +256,10 @@ public class UserDaoImpl implements UserDao {
                 " name, phone_number, active, created_date, updated_date)" +
                 " VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
         static final String SQL_SELECT_ALL_USERS = "SELECT * FROM Users";
+
+        static final String SQL_SELECT_USERS_BY_COMMENT_ID = "" +
+                "SELECT * FROM Users WHERE id IN" +
+                "(SELECT userId FROM SeenComments WHERE commentId = ? )";
     }
 
 }
