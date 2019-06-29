@@ -44,9 +44,8 @@ public class OrganizationController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public OrganizationDto update(
-            @Validated(ExistingRecord.class)
             @PathVariable("id") Long id,
-            @RequestBody OrganizationDto organizationDto) {
+            @Validated(ExistingRecord.class) @RequestBody OrganizationDto organizationDto) {
         organizationDto.setId(id);
         return organizationService.update(organizationDto);
     }
