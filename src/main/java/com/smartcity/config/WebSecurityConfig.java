@@ -74,7 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                    "/auth/signin",
                    "/forgotPassword/",
                    "/forgotPassword/resetPassword",
-                   "/registration").permitAll()
+                   "/registration",
+                   "/socket/**").permitAll()
             //TODO uncomment when there will be a logic for assigning user roles
                 //.antMatchers(HttpMethod.GET).hasRole("USER")
                 //.antMatchers(HttpMethod.DELETE, "**/users/**").hasRole("ADMIN")
