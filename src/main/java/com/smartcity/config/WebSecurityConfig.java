@@ -72,6 +72,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                    "/swagger-ui.html",
                    "/webjars/**",
                    "/auth/signin",
+                   "/forgotPassword/",
+                   "/forgotPassword/resetPassword",
                    "/registration").permitAll()
             //TODO uncomment when there will be a logic for assigning user roles
                 //.antMatchers(HttpMethod.GET).hasRole("USER")
