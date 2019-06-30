@@ -7,6 +7,8 @@ import com.smartcity.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -88,5 +90,11 @@ public class TaskController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Long findUsersOrgIdByUserIdAndOrgId(@RequestParam("userId") Long userId, @RequestParam("orgId") Long orgId){
         return taskService.findUsersOrgIdByUserIdAndOrgId(userId, orgId);
+    }
+
+    @MessageMapping("/sendTask")
+    @SendTo("/topic/activity")
+    public TaskDto changeTask(TaskDto taskDto){
+        return taskService.create(taskDto);
     }
 }
