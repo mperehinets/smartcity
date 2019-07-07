@@ -41,14 +41,14 @@ public class JwtTokenFilter extends GenericFilterBean {
             }
             filterChain.doFilter(req, res);
 
-        } catch (InvalidJwtAuthenticationException zalupa) {
+        } catch (InvalidJwtAuthenticationException exception) {
             ((HttpServletResponse) res).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
             ObjectMapper objectMapper = new ObjectMapper();
             String message = objectMapper.writeValueAsString(ExceptionResponse.builder().url(((HttpServletRequest) req).getRequestURI())
-                    .message("Ne dam resurs, ty ne naw pocik :3 Idy gulyai, kiska ;P").build());
+                    .message("Token is invalid or expired!").build());
 
-            res.getWriter().write(message); ;
+            res.getWriter().write(message);
         }
 
     }
