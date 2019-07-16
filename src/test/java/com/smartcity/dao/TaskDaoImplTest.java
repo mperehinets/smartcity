@@ -145,16 +145,6 @@ class TaskDaoImplTest extends BaseTest {
     }
 
     @Test
-    void testFindUsersOrgsId() {
-        assertEquals(taskDao.findUsersOrgIdByUserIdAndOrgId(1L, 1L), 1L);
-    }
-
-    @Test
-    void testFindUsersOrgsId_InvalidId() {
-        assertThrows(NotFoundException.class, () -> taskDao.findUsersOrgIdByUserIdAndOrgId(Long.MAX_VALUE, Long.MAX_VALUE));
-    }
-
-    @Test
     void testFindTaskByDate() {
         clearTables("Tasks");
         LocalDateTime date = LocalDateTime.now().minusMonths(1L);

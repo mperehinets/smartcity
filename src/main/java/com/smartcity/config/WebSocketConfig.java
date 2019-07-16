@@ -12,8 +12,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");
+        config.enableSimpleBroker("/queue", "/topic", "/exchange", "/user");
         config.setApplicationDestinationPrefixes("/smartcity_war");
+        config.setUserDestinationPrefix("/user");
     }
 
     @Override

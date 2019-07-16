@@ -1,14 +1,14 @@
 package com.smartcity.service;
 
-import com.smartcity.dao.BudgetDao;
-import com.smartcity.dao.TaskDao;
-import com.smartcity.dao.TransactionDao;
+import com.smartcity.dao.*;
 import com.smartcity.domain.Budget;
 import com.smartcity.domain.Task;
 import com.smartcity.domain.Transaction;
 import com.smartcity.dto.TaskDto;
+import com.smartcity.dto.TaskNotificationDto;
 import com.smartcity.mapperDto.TaskDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,23 +23,43 @@ public class TaskServiceImpl implements TaskService {
     private TransactionDao transDao;
     private BudgetDao budgetDao;
     private TaskDtoMapper taskDtoMapper;
-
+    private SimpMessagingTemplate simpMessagingTemplate;
+    private UserDao userDao;
+    private UserOrganizationDao userOrganizationDao;
+    private OrganizationDao organizationDao;
     @Autowired
-    public TaskServiceImpl(TaskDao taskDao, TaskDtoMapper taskDtoMapper, TransactionDao transDao, BudgetDao budgetDao) {
+    public TaskServiceImpl(TaskDao taskDao, TaskDtoMapper taskDtoMapper,
+                           TransactionDao transDao, BudgetDao budgetDao,
+                           UserDao userDao, UserOrganizationDao userOrganizationDao,
+                           OrganizationDao organizationDao) {
         this.taskDao = taskDao;
         this.taskDtoMapper = taskDtoMapper;
         this.transDao = transDao;
         this.budgetDao = budgetDao;
+        this.userDao = userDao;
+        this.userOrganizationDao = userOrganizationDao;
+        this.organizationDao = organizationDao;
     }
 
     @Override
     @Transactional
     public TaskDto create(TaskDto task) {
+        TaskNotificationDto notification = new TaskNotificationDto();
         Task taskResult = taskDao.create(taskDtoMapper.mapDto(task));
-        transDao.create(new Transaction(null, taskResult.getId(), budgetDao.get().getValue(),
-                task.getApprovedBudget(), null, null));
-        Budget budget = new Budget(budgetDao.get().getValue() - taskResult.getApprovedBudget());
-        budgetDao.createOrUpdate(budget);
+        notification.setTitle(task.getTitle());
+        notification.setOrgName(organizationDao.findById(userOrganizationDao.findOrgIdById(task.getUsersOrganizationsId())).getName());
+        if(task.getApprovedBudget()!=0) {
+            notification.setBudget(task.getApprovedBudget());
+            String username = userDao.findById(userOrganizationDao.findUserIdById(task.getUsersOrganizationsId())).getUsername();
+            transDao.create(new Transaction(null, taskResult.getId(), budgetDao.get().getValue(),
+                    task.getApprovedBudget(), null, null));
+            Budget budget = new Budget(budgetDao.get().getValue() - taskResult.getApprovedBudget());
+            budgetDao.createOrUpdate(budget);
+            simpMessagingTemplate.convertAndSend( "/topic/task.create/" + username, notification);
+        } else {
+            notification.setBudget(task.getBudget());
+            simpMessagingTemplate.convertAndSend("/topic/task.create", notification);
+        }
         return taskDtoMapper.mapRow(taskResult);
     }
 
@@ -88,10 +108,15 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Long findUsersOrgIdByUserIdAndOrgId(Long userId, Long orgId) {
-        return taskDao.findUsersOrgIdByUserIdAndOrgId(userId, orgId);
+        return userOrganizationDao.findIdByUserIdAndOrgId(userId, orgId);
     }
 
     private List<TaskDto> mapListDto(List<Task> tasks) {
         return tasks.stream().map(taskDtoMapper::mapRow).collect(Collectors.toList());
+    }
+
+    @Autowired
+    public void setSimpMessagingTemplate(SimpMessagingTemplate simpMessagingTemplate){
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 }
