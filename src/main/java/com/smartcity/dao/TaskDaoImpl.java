@@ -129,15 +129,6 @@ public class TaskDaoImpl implements TaskDao {
         } else return true;
     }
 
-    public Long findUsersOrgIdByUserIdAndOrgId(Long userId, Long orgId) {
-        try {
-            return this.jdbcTemplate.queryForObject(Queries.SQL_GET_USERS_ORG_ID, Long.class, userId, orgId);
-        } catch (Exception e) {
-            logger.error("FindUserOrgId Task Dao method error for UserId: " + userId + "OrgId: " + orgId + e);
-            throw new NotFoundException("FindUserOrgId Task Dao method error for UserId: " + userId + "OrgId: " + orgId + e);
-        }
-    }
-
     private PreparedStatement createStatement(Task task, Connection con) throws SQLException {
         PreparedStatement ps = con.prepareStatement(
                 Queries.SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
@@ -185,7 +176,6 @@ public class TaskDaoImpl implements TaskDao {
 
         static final String SQL_GET_BY_DATE = "Select * from Tasks where created_date between ? and ? " +
                 "and users_organizations_id IN (Select id from Users_organizations where organization_id = ?) order by created_date;";
-        static final String SQL_GET_USERS_ORG_ID = "Select id from Users_organizations where user_id = ? and organization_id = ?;";
     }
 }
 

@@ -1,11 +1,7 @@
 package com.smartcity.service;
 
-import com.smartcity.dao.BudgetDao;
-import com.smartcity.dao.TaskDao;
-import com.smartcity.dao.TransactionDao;
-import com.smartcity.domain.Budget;
-import com.smartcity.domain.Task;
-import com.smartcity.domain.Transaction;
+import com.smartcity.dao.*;
+import com.smartcity.domain.*;
 import com.smartcity.dto.TaskDto;
 import com.smartcity.mapperDto.TaskDtoMapper;
 import name.falgout.jeffrey.testing.junit.mockito.MockitoExtension;
@@ -15,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -45,6 +42,18 @@ class TaskServiceImplTest {
     @Mock
     private BudgetDao budgetDao;
 
+    @Mock
+    private UserDao userDao;
+
+    @Mock
+    private UserOrganizationDao userOrganizationDao;
+
+    @Mock
+    private OrganizationDao organizationDao;
+
+    @Mock
+    private SimpMessagingTemplate simpMessagingTemplate;
+
     private TaskDtoMapper taskDtoMapper = new TaskDtoMapper();
 
     @InjectMocks
@@ -55,7 +64,9 @@ class TaskServiceImplTest {
     @BeforeEach
     void init() {
         MockitoAnnotations.initMocks(this);
-        taskService = new TaskServiceImpl(taskDao, taskDtoMapper, transDao, budgetDao);
+        taskService = new TaskServiceImpl(taskDao, taskDtoMapper, transDao,
+                budgetDao, userDao, userOrganizationDao, organizationDao);
+        taskService.setSimpMessagingTemplate(simpMessagingTemplate);
         task = taskDtoMapper.mapDto(taskDto);
     }
 
@@ -64,6 +75,10 @@ class TaskServiceImplTest {
         Budget budget = new Budget(2000L);
         Transaction trans = new Transaction(null, task.getId(),budget.getValue(),
                 task.getApprovedBudget(), null, null);
+        doReturn(1L).when(userOrganizationDao).findUserIdById(taskDto.getUsersOrganizationsId());
+        doReturn(1L).when(userOrganizationDao).findOrgIdById(taskDto.getUsersOrganizationsId());
+        doReturn(new User()).when(userDao).findById(1L);
+        doReturn(new Organization()).when(organizationDao).findById(1L);
         doReturn(task).when(taskDao).create(task);
         doReturn(budget).when(budgetDao).get();
         doReturn(trans).when(transDao).create(trans);
@@ -117,8 +132,6 @@ class TaskServiceImplTest {
         doReturn(task).when(taskDao).findById(task.getId());
         TaskDto result = taskService.update(taskDto);
         verify(taskDao, times(1)).update(task);
-        verify(budgetDao, times(2)).get();
-        verify(transDao, times(1)).create(trans);
         verify(taskDao, times(1)).findById(task.getId());
         assertThat(result).isEqualToIgnoringGivenFields(taskDtoMapper.mapRow(task),
                 "transactionList", "deadlineDate",
@@ -130,12 +143,5 @@ class TaskServiceImplTest {
         doReturn(true).when(taskDao).delete(task.getId());
         boolean result = taskService.delete(taskDto.getId());
         assertTrue(result);
-    }
-
-    @Test
-    void findUsersOrgsId(){
-        doReturn(1L).when(taskDao).findUsersOrgIdByUserIdAndOrgId(1L, 1L);
-        Long result = taskService.findUsersOrgIdByUserIdAndOrgId(1L, 1L);
-        assertEquals(1L, result);
     }
 }
