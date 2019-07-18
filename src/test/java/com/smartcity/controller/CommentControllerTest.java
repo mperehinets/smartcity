@@ -132,8 +132,10 @@ class CommentControllerTest {
     void testDeleteComment_failFlow() throws Exception {
         Mockito.when(commentService.delete(fakeId))
                 .thenThrow(notFoundException);
+        String json = objMapper.writeValueAsString(commentDto);
         mockMvc.perform(delete("/comments/" + fakeId)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON).content(json)
+        )
                 .andExpect(status().isNotFound()).andExpect(jsonPath("url").value("/comments/" + fakeId))
                 .andExpect(jsonPath("message").value(notFoundException.getLocalizedMessage()));
     }
@@ -141,8 +143,9 @@ class CommentControllerTest {
     @Test
     void testDeleteComment_successFlow() throws Exception {
         Mockito.when(commentService.delete(commentDto.getId())).thenReturn(true);
-        mockMvc.perform(delete("/comments/" + commentDto.getId())
-                .contentType(MediaType.APPLICATION_JSON))
+        String json = objMapper.writeValueAsString(commentDto);
+        mockMvc.perform(delete("/comments/" + commentDto.getId(),commentDto)
+                .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk());
     }
 

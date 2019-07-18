@@ -54,10 +54,10 @@ public class CommentController {
         return commentService.update(commentDto);
     }
 
-    @PreAuthorize("hasAnyRole(@securityConfiguration.getCommentControlerDeleteCommentAllowedRoles()) or #userId == authentication.principal.id")
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getCommentControlerDeleteCommentAllowedRoles()) or #commentDto.userId == authentication.principal.id")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
-    public boolean deleteComment(@PathVariable("id") Long id, @RequestParam(value = "userId" ,required = false) Long userId) {
+    public boolean deleteComment(@PathVariable("id") Long id, @RequestBody CommentDto commentDto) {
         return commentService.delete(id);
     }
 
@@ -81,5 +81,6 @@ public class CommentController {
         UserDto user = userService.findById(userId);
         return commentService.addUserToCommentSeen(comment, user);
     }
+
 
 }
