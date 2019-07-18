@@ -41,6 +41,8 @@ class CommentServiceImplTest {
     private UserOrganizationDao userOrganizationDao;
 
     @Mock
+    private OrganizationService organizationService;
+    @Mock
     private UserDao userDao;
 
     @Mock
@@ -57,7 +59,7 @@ class CommentServiceImplTest {
     @BeforeEach
     void init() {
         MockitoAnnotations.initMocks(this);
-        commentService = new CommentServiceImpl(commentDao, commentDtoMapper,userDtoMapper,userDao,taskDao,userOrganizationDao);
+        commentService = new CommentServiceImpl(commentDao, commentDtoMapper,userDtoMapper,userDao,taskDao,userOrganizationDao,organizationService);
         comment = commentDtoMapper.commentDtoToComment(commentDto);
     }
 
