@@ -49,8 +49,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<UserDto> findAll() {
-        List<User> users = userDao.findAll();
+    public List<UserDto> findAll(int pageId, int total) {
+        List<User> users = userDao.findAll(pageId, total);
         return this.convertUsersListToUsersDtosList(users);
     }
 

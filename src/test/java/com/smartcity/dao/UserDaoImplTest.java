@@ -110,7 +110,7 @@ class UserDaoImplTest extends BaseTest {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
-        List<User> resultUserList = userDao.findAll();
+        List<User> resultUserList = userDao.findAll(1,5);
         for (int i = 0; i < users.size(); i++) {
             assertThat(users.get(i)).isEqualToIgnoringGivenFields(resultUserList.get(i),
                     "id", "createdDate", "updatedDate");
@@ -121,7 +121,7 @@ class UserDaoImplTest extends BaseTest {
     @Test
     void findAll_EmptyUsersTable() {
         clearTables("Users");
-        List<User> resultUserList = userDao.findAll();
+        List<User> resultUserList = userDao.findAll(1,5);
 
         assertTrue(resultUserList.isEmpty());
     }
