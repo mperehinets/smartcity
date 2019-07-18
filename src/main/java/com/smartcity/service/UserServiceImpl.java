@@ -2,6 +2,7 @@ package com.smartcity.service;
 
 import com.smartcity.dao.RoleDao;
 import com.smartcity.dao.UserDao;
+import com.smartcity.dao.UserOrganizationDao;
 import com.smartcity.domain.Role;
 import com.smartcity.domain.User;
 import com.smartcity.dto.RoleDto;
@@ -23,11 +24,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private UserDtoMapper userDtoMapper;
     private RoleDtoMapper roleDtoMapper;
     private UserDao userDao;
+    private UserOrganizationDao userOrgDao;
     private RoleDao roleDao;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, UserDtoMapper userDtoMapper, RoleDao roleDao, RoleDtoMapper roleDtoMapper) {
+    public UserServiceImpl(UserDao userDao, UserOrganizationDao userOrgDao, UserDtoMapper userDtoMapper, RoleDao roleDao, RoleDtoMapper roleDtoMapper) {
         this.userDao = userDao;
+        this.userOrgDao = userOrgDao;
         this.userDtoMapper = userDtoMapper;
         this.roleDao = roleDao;
         this.roleDtoMapper = roleDtoMapper;
@@ -57,6 +60,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDto findByEmail(String email) {
         return userDtoMapper.convertUserIntoUserDto(userDao.findByEmail(email));
+    }
+
+    @Override
+    public UserDto findByUsersOrganizationsId(Long usersOrgId) {
+        return userDtoMapper.convertUserIntoUserDto(userDao.findById(userOrgDao.findUserIdById(usersOrgId)));
     }
 
     @Override

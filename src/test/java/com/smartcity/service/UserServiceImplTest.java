@@ -2,6 +2,7 @@ package com.smartcity.service;
 
 import com.smartcity.dao.RoleDao;
 import com.smartcity.dao.UserDao;
+import com.smartcity.dao.UserOrganizationDao;
 import com.smartcity.domain.Role;
 import com.smartcity.domain.User;
 import com.smartcity.dto.RoleDto;
@@ -35,6 +36,9 @@ class UserServiceImplTest {
     @Mock
     private RoleDao roleDao;
 
+    @Mock
+    private UserOrganizationDao userOrgDao;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -52,7 +56,7 @@ class UserServiceImplTest {
         MockitoAnnotations.initMocks(this);
         userDtoMapper = new UserDtoMapper();
         roleDtoMapper = new RoleDtoMapper();
-        userService = new UserServiceImpl(userDao, userDtoMapper, roleDao, roleDtoMapper);
+        userService = new UserServiceImpl(userDao, userOrgDao, userDtoMapper, roleDao, roleDtoMapper);
         userDto = new UserDto();
         userDto.setName("User");
         userDto.setSurname("Test");
