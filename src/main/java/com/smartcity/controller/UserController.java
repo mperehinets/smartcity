@@ -57,6 +57,12 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/users-organizations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserDto getByUsersOrganizationsId(@PathVariable("id") Long usersOrgId) {
+        return userService.findByUsersOrganizationsId(usersOrgId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/role/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UserDto> findUsersByRoleId(@PathVariable("id") Long roleId) {
         return userService.findByRoleId(roleId);
