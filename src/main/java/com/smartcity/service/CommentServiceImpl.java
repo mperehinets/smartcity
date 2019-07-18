@@ -7,6 +7,7 @@ import com.smartcity.dao.UserOrganizationDao;
 import com.smartcity.domain.Task;
 import com.smartcity.dto.CommentDto;
 import com.smartcity.dto.CommentNotificationDto;
+import com.smartcity.dto.OrganizationDto;
 import com.smartcity.dto.UserDto;
 import com.smartcity.mapperDto.CommentDtoMapper;
 import com.smartcity.mapperDto.UserDtoMapper;
@@ -24,34 +25,41 @@ public class CommentServiceImpl implements CommentService {
     private CommentDtoMapper mapper;
     private UserOrganizationDao userOrganizationDao;
     private UserDtoMapper userMapper;
+    private OrganizationService organizationService;
     private UserDao userDao;
     private TaskDao taskDao;
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
-    public CommentServiceImpl(CommentDao commentDao, CommentDtoMapper mapper, UserDtoMapper userMapper, UserDao userDao, TaskDao taskDao, UserOrganizationDao userOrganizationDao) {
+    public CommentServiceImpl(CommentDao commentDao, CommentDtoMapper mapper, UserDtoMapper userMapper, UserDao userDao, TaskDao taskDao, UserOrganizationDao userOrganizationDao, OrganizationService organizationService) {
         this.commentDao = commentDao;
         this.mapper = mapper;
         this.userMapper = userMapper;
         this.userDao = userDao;
         this.taskDao = taskDao;
         this.userOrganizationDao = userOrganizationDao;
+        this.organizationService = organizationService;
     }
 
     @Override
     public CommentDto create(CommentDto commentDto) {
-        CommentNotificationDto notification = new CommentNotificationDto();
+
         CommentDto result = mapper.commentToCommentDto(commentDao.create(mapper.commentDtoToComment(commentDto)));
-        notification.setDescription(result.getDescription());
+
         UserDto userDto = userMapper.convertUserIntoUserDto(userDao.findById(result.getUserId()));
         Task task = taskDao.findById(result.getTaskId());
-        Long organization = userOrganizationDao.findOrgIdById(task.getUsersOrganizationsId());
-        notification.setOrganizationId(organization);
+        Long organizationId = userOrganizationDao.findOrgIdById(task.getUsersOrganizationsId());
+        CommentNotificationDto notification = new CommentNotificationDto();
+        OrganizationDto organizationDto = organizationService.findById(organizationId);
+        notification.setDescription(result.getDescription());
         notification.setUser(userDto.getSurname() + " " + userDto.getName());
         notification.setTask(task.getTitle());
         notification.setId(result.getId());
         notification.setUserId(result.getUserId());
-        notification.setOrganizationId(userOrganizationDao.findOrgIdById(task.getUsersOrganizationsId()));
+
+        organizationDto.getResponsiblePersons().forEach(item -> {
+            simpMessagingTemplate.convertAndSend("/topic/comment.create/" + item.getEmail(), notification);
+        });
         simpMessagingTemplate.convertAndSend("/topic/comment.create", notification);
         return setUserSeen(result);
     }
