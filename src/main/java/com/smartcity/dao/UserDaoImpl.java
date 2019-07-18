@@ -76,9 +76,12 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> findAll() {
+    public List<User> findAll(int pageId, int total) {
+
+        String limitUsers = "SELECT * FROM Users LIMIT "+(pageId-1)+","+total;
+
         try {
-            return jdbcTemplate.query(Queries.SQL_SELECT_ALL_USERS, mapper);
+            return jdbcTemplate.query(limitUsers, mapper);
         }
         catch (Exception e) {
             logger.error("Get user all users exception. Message: {}", e.getMessage());

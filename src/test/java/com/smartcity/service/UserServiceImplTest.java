@@ -91,9 +91,9 @@ class UserServiceImplTest {
         // Initializing users list
         List<User> users = this.getListOfUsers();
 
-        Mockito.when(userDao.findAll()).thenReturn(users);
+        Mockito.when(userDao.findAll(1,5)).thenReturn(users);
 
-        List<UserDto> resultUserList = userService.findAll();
+        List<UserDto> resultUserList = userService.findAll(1,5);
 
         for (int i = 0; i < users.size(); i++) {
             assertThat(users.get(i)).isEqualToIgnoringGivenFields(

@@ -89,9 +89,9 @@ class UserControllerTest {
         // Initializing list of UserDto
         List<UserDto> users = this.getListOfUserDto();
 
-        Mockito.when(userService.findAll()).thenReturn(users);
+        Mockito.when(userService.findAll(1,5)).thenReturn(users);
 
-        mockMvc.perform(get("/users/all")
+        mockMvc.perform(get("/users/all/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))

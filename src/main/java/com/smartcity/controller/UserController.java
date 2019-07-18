@@ -33,9 +33,15 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserDto> findAll() {
-        return userService.findAll();
+    @GetMapping(value = "/all/{pageId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserDto> findAll(@PathVariable int pageId) {
+        int total = 5;
+        if(pageId == 1) {
+
+        } else {
+            pageId = (pageId - 1) * total+1;
+        }
+        return userService.findAll(pageId, total);
     }
 
     @ResponseStatus(HttpStatus.OK)
