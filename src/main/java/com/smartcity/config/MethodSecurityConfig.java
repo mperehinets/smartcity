@@ -49,12 +49,34 @@ public class MethodSecurityConfig {
     @Value("#{'${taskController.createTask}'.split(',')}")
     private List<String> taskControllerCreateTaskAllowedRoles;
 
-    @Value("#{'${taskController.createTask}'.split(',')}")
+    @Value("#{'${taskController.updateTask}'.split(',')}")
     private List<String> taskControllerUpdateTaskAllowedRoles;
 
-    @Value("#{'${taskController.createTask}'.split(',')}")
+    @Value("#{'${taskController.deleteTask}'.split(',')}")
     private List<String> taskControllerDeleteTaskAllowedRoles;
 
+    @Value("#{'${taskController.findByOrganizationId}'.split(',')}")
+    private List<String> taskControllerFindByOrganizationIdAllowedRoles;
+
+    public List<String> getTaskControllerFindByIdAllowedRoles() {
+        return taskControllerFindByIdAllowedRoles;
+    }
+
+    public void setTaskControllerFindByIdAllowedRoles(List<String> taskControllerFindByIdAllowedRoles) {
+        this.taskControllerFindByIdAllowedRoles = taskControllerFindByIdAllowedRoles;
+    }
+
+    @Value("#{'${taskController.findById}'.split(',')}")
+    private List<String> taskControllerFindByIdAllowedRoles;
+
+
+    public List<String> getTaskControllerFindByOrganizationIdAllowedRoles() {
+        return taskControllerFindByOrganizationIdAllowedRoles;
+    }
+
+    public void setTaskControllerFindByOrganizationIdAllowedRoles(List<String> taskControllerFindByOrganizationIdAllowedRoles) {
+        this.taskControllerFindByOrganizationIdAllowedRoles = taskControllerFindByOrganizationIdAllowedRoles;
+    }
 
     // TransactionController
     @Value("#{'${transactionController.findById}'.split(',')}")
@@ -75,6 +97,17 @@ public class MethodSecurityConfig {
     //CommentController
     @Value("#{'${commentController.updateComment}'.split(',')}")
     private List<String> commentControllerUpdateCommentAllowedRoles;
+
+    @Value("#{'${commentController.findByTaskId}'.split(',')}")
+    private List<String> commentControllerFindByTaskIdAllowedRoles;
+
+    public List<String> getCommentControllerFindByTaskIdAllowedRoles() {
+        return commentControllerFindByTaskIdAllowedRoles;
+    }
+
+    public void setCommentControllerFindByTaskIdAllowedRoles(List<String> commentControllerFindByTaskIdAllowedRoles) {
+        this.commentControllerFindByTaskIdAllowedRoles = commentControllerFindByTaskIdAllowedRoles;
+    }
 
     @Value("#{'${commentController.deleteComment}'.split(',')}")
     private List<String> commentControlerDeleteCommentAllowedRoles;

@@ -38,6 +38,8 @@ public class TaskController {
         return taskService.create(taskDto);
     }
 
+    @PreAuthorize("hasAnyRole" +
+            "(@securityConfiguration.getTaskControllerFindByIdAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TaskDto findById(@PathVariable("id") Long id) {
@@ -64,6 +66,8 @@ public class TaskController {
         return taskService.delete(id);
     }
 
+    @PreAuthorize("hasAnyRole" +
+            "(@securityConfiguration.getTaskControllerFindByOrganizationIdAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/organizationId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TaskDto> findByOrganizationId(@PathVariable("id") Long id) {

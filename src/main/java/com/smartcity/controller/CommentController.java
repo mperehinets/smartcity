@@ -34,6 +34,7 @@ public class CommentController {
         return commentService.create(commentDto);
     }
 
+    @PreAuthorize("hasAnyRole(@securityConfiguration.getCommentControllerFindByTaskIdAllowedRoles())")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CommentDto findById(@PathVariable("id") Long id) {

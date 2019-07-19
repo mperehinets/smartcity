@@ -43,7 +43,9 @@ public class TaskDto {
     private Long budget;
 
     @NotNull(groups = {NewRecord.class, ExistingRecord.class},
-            message = "Please, add approved budget")
+            message = "Please, add budget")
+    @Min(groups = {NewRecord.class, ExistingRecord.class},
+            value = 0, message = "Budget must be greater than 0")
     private Long approvedBudget;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
